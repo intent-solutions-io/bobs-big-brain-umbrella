@@ -21,7 +21,10 @@
 </p>
 
 <p align="center">
-  <strong>Live work →</strong>
+  <strong>▸ Get the plugin:</strong>
+  <a href="https://github.com/jeremylongshore/governed-second-brain-plugin"><strong>governed-second-brain-plugin</strong></a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <strong>Engines:</strong>
   <a href="https://github.com/jeremylongshore/intentional-cognition-os">intentional-cognition-os</a> ·
   <a href="https://github.com/jeremylongshore/qmd-team-intent-kb">qmd-team-intent-kb</a>
 </p>
@@ -72,6 +75,7 @@ The category optimizes one axis: recall. We compete on a different one: **govern
 | **[intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os)** (`ico`) | **Compile** | Local-first knowledge OS. Ingests raw corpus (PDF / markdown / web clips) and compiles it into semantic knowledge through six passes, runs episodic research tasks, and emits a governance spool. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (Claude). 5 workspace packages, Apache-2.0. |
 | **[qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb)** (INTKB) | **Govern** | Governed team-memory platform. Consumes ICO's spool, runs every candidate through dedupe → policy → promotion, keeps an append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 8 packages, Apache-2.0. |
 | **[qmd](https://github.com/tobi/qmd)** (`@tobilu/qmd`) | **Retrieve** | On-device hybrid search for markdown — BM25 + vector + LLM reranking, by [@tobi](https://github.com/tobi). The retrieval substrate. Every hit is a `qmd://<collection>/<path>` URI — the citation. |
+| **[governed-second-brain-plugin](https://github.com/jeremylongshore/governed-second-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles** the engines into one in-process stdio MCP server — cited search **and** governed capture (capture → govern → promote, with a hash-chained receipt), no daemon, no network. |
 
 ## How it works
 
@@ -209,7 +213,11 @@ Not a claim — a trail:
 
 ## Getting started
 
-The fastest way to see the chain run — no API key, no secrets:
+**Most people want the plugin** — the packaged product that runs the whole stack locally inside Claude Code or Cowork:
+
+→ **[jeremylongshore/governed-second-brain-plugin](https://github.com/jeremylongshore/governed-second-brain-plugin)** *(one-command `npx … init <folder>` installer in progress)*
+
+To instead see the raw chain run from source — no API key, no secrets:
 
 ```bash
 # 1. clone both flagships
