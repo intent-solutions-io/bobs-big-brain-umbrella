@@ -238,7 +238,8 @@ For the full chain (including ICO's compile step) set `ANTHROPIC_API_KEY` and ru
 
 | Repo | Version | License |
 |------|---------|---------|
-| [intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os) | v1.12.0 | Apache-2.0 |
+| [governed-second-brain-plugin](https://github.com/jeremylongshore/governed-second-brain-plugin) (the installable product) | v0.1.4 ([npm](https://www.npmjs.com/package/governed-second-brain), SLSA-provenanced) | Apache-2.0 |
+| [intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os) | v1.14.0 | Apache-2.0 |
 | [qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb) | v0.6.0 | Apache-2.0 |
 | [qmd](https://github.com/tobi/qmd) (upstream dependency) | 2.5.3 — pinned · Dependabot-tracked · integration-test-gated | MIT |
 
