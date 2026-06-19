@@ -93,16 +93,26 @@ tamper-proof, immutable, non-repudiation (for local mode), blockchain.
 
 ## Retrieval backend decision (2026-06-18)
 
-Retrieval is **BM25-on-qmd today** and stays that way for now (`brain_search` → `qmd search`;
-zero ML, cited hits work). The thinker-canon council decided the long-run path: **ship BM25 now
-→ build a Recall@10/nDCG@10 eval → then a *lean* native sqlite-vec semantic backend on
-EmbeddingGemma-300M only (~320 MB)**, dropping qmd's 1.7 B query-expander + 0.6 B reranker.
-**Skip** qmd's 2.2 GB hybrid (heavier *and* unwired in the adapter); **reject** the stale NEXUS
-RAG stack. Semantic recall is eval-gated and deferred.
+Retrieval is **BM25-on-qmd today** and stays that way until the eval says otherwise
+(`brain_search` → `qmd search`; zero ML, cited hits work). The thinker-canon council decided the
+long-run path: ship BM25 now → measure → then a *lean* native sqlite-vec semantic backend on
+EmbeddingGemma-300M only (~320 MB). **Skip** qmd's 2.2 GB hybrid (heavier *and* unwired in the
+adapter); **reject** the stale NEXUS RAG stack.
 
-**Non-negotiable before any semantic path:** the retrieval model weights are currently
-unsigned/unpinned (the manifest hashes the spool, never the GGUFs) — they get SHA-256-pinned +
-fail-closed first. A govern-by-receipts brand can't ship an unverified retrieval brain.
+**Foundation shipped** (epic `qmd-team-intent-kb-0t9`, all in the INTKB `qmd-adapter` package):
+
+- `0t9.5` — the qmd binary + GGUF weights are **SHA-256-pinned, fail-closed**
+  (`packages/qmd-adapter/src/weights`). Non-negotiable before any semantic path: a
+  govern-by-receipts brand can't ship an unverified retrieval brain.
+- `0t9.6` — a Recall@10 / nDCG@10 **eval harness** (`packages/qmd-adapter/src/eval`),
+  backend-agnostic, carrying the ADR's `0.85` BM25-sufficiency gate.
+- `0t9.2` — a **native FTS5 (BM25) backend** (`packages/qmd-adapter/src/native`), model-free,
+  in-process, dropping the external Bun binary for keyword search.
+
+**Deferred by design:** `0t9.3` (the lean sqlite-vec + EmbeddingGemma-300M semantic path) builds
+**only when** the eval shows BM25 below ~0.85 Recall@10 on a real labeled query set *and* a user
+logs a genuine recall miss. Building it before that signal is the premature optimization the
+council ruled out.
 
 Canonical record: `qmd-team-intent-kb/000-docs/038-AT-DECR`. Tracked in epic
 `qmd-team-intent-kb-0t9` (GH `jeremylongshore/qmd-team-intent-kb#170` / Plane INTKB-7);
