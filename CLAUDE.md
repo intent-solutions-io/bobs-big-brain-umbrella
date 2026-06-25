@@ -57,9 +57,31 @@ and the correct backup/DR scope are **code-verified** in
   truth), `brain/wiki/` (compiled Markdown, expensive-derived), `brain/audit/` + `audit_events`
   (hash-chained receipts), `kb-export/` + `qmd-index/` (cheaply derived), `tokens.json` (a **SECRET** → SOPS).
 - **Distribution — two channels, don't conflate:** the **public plugin**
-  `jeremylongshore/governed-second-brain-plugin` (installable artifact for outsiders) vs the **private team
-  marketplace** `intent-solutions-io/claude-plugins`, where the internal **`intent-brain`** plugin is
-  published — that's how Jeremy's team (e.g. Ope) installs the brain.
+  `jeremylongshore/governed-second-brain-plugin` (the unified installable artifact; its *local mode* is the
+  outsider showcase) vs the **private team marketplace** `intent-solutions-io/claude-plugins`. The same
+  unified plugin in **team mode** is how Jeremy's team (e.g. Ope) reaches the one remote brain; the old
+  standalone `intent-brain` plugin is being folded into that team mode and retired (`650.4`).
+- **Local↔team bridge — ALREADY BUILT. It is the single remote brain (ratified decision D27,
+  "build-not-decide" — NOT an open architecture choice, and NOT Cloudflare R2).** There is exactly ONE
+  governed brain; teammates reach it over the tailnet, they do not each run their own. Two shipped pieces:
+  (1) the INTKB **Fastify HTTP API** (`qmd-team-intent-kb/apps/api`, scrypt-hashed per-user bearer tokens,
+  tailnet-bound) — **deployed live** on the team-server (`650.5` closed); (2) the **one unified plugin**
+  (`governed-second-brain-plugin` v1.0.0, `650.1` closed) with two runtime modes dispatched by
+  `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`) and **team** (remote proxy to the live
+  brain over the tailnet with a per-user token). **Local mode exposes the FULL `brain_*` surface
+  in-process** (read: `brain_search` / `brain_status` / `brain_audit_verify`; write: `brain_capture` /
+  `brain_govern` / `brain_transition`); **team mode today proxies only the read tool `brain_search`** to
+  the remote brain (`src/remote-server.ts`) — the remote write path follows as the API + `650.2` mature.
+  Only the DATA + `TEAMKB_API_URL` + token are private. What's left is **activation/publish, not
+  architecture**: `650.2` (point team mode at the live URL + per-user token activation, extend the remote
+  surface beyond search), `650.3` (publish to the marketplaces), `650.6` (API hardening: token
+  expiry/rotation, anon health probe, dedicated tailnet VM).
+- **Cloudflare R2 is NOT the bridge — it is off-host BACKUP only (`c5k.6`).** The bridge is an
+  authenticated, governed HTTP API (above); R2 is dumb blob storage with no auth, no governed write-path,
+  no live query proxy — wrong tool for the bridge. The genuinely-deferred **distributed** model (each
+  teammate runs a *local* brain that clones/pulls/**merges** into the team brain) is demand-gated EPIC 1
+  (`8da`), and its substrate is **Dolt** (git-for-data: clone/pull/merge with govern-at-merge + an
+  audit-readable commit graph) — also not R2. R2 touches neither the live bridge nor the future merge layer.
 - **Backup/DR (`c5k.4`) — DONE: scope-complete, restore-tested, off-host live.**
   `~/bin/teamkb-backup.sh` captures the full brain in one age-encrypted archive
   (`~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age`): Tier A (`teamkb.db` + `brain/.ico/state.db`,
