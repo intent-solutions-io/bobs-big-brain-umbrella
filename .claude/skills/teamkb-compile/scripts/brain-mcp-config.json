@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "governed-brain": {
+      "command": "node",
+      "args": [
+        "/home/jeremy/000-projects/governed-second-brain-plugin/plugin-runtime/governed-brain.cjs"
+      ],
+      "env": {
+        "TEAMKB_TENANT_ID": "intent-solutions"
+      }
+    }
+  }
+}
