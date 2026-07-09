@@ -271,7 +271,7 @@ Practical consequences for notes:
 - **plugin**: `build` + `typecheck` + `smoke` only — **no unit-test / lint job yet** (a gap; see §7).
 - **umbrella**: docs-honesty + changelog aggregation (docs repo).
 
-**AI reviewer = Greptile** (the GitHub App; adopted 2026-06-23, replacing CodeRabbit + Gemini). Read its review when present. It is advisory; the *deterministic* gate is the required checks. A stray `gemini-code-assist[bot]`/`coderabbitai[bot]` thread on an old PR is being retired — treat it like any review (address or resolve).
+**AI reviewer = Gemini Code Assist and/or Greptile — either is acceptable** (Gemini is actively used; Greptile is the org standard where its quota is available). Read whichever bot reviews the PR and address or resolve its comments. The review is advisory; the *deterministic* gate is the required CI checks. Keep the in-repo `.gemini` config — Gemini stays.
 
 **⚠️ Honest gap:** **branch protection is currently OFF on all four repos** — so "wait for the gate before merging" is a *discipline this standard enforces*, not something GitHub blocks. Until protection is enabled, the human/agent merging is the gate. Tracked in §7.
 
@@ -281,7 +281,7 @@ Practical consequences for notes:
 
 1. **No branch protection** on any GSB repo → required checks aren't enforced at merge. Enable required-status-checks (+ up-to-date branch) on `main` for ICO/INTKB/plugin.
 2. **Plugin CI is thin** — add a `test` + `lint` job so the repo that receives the review's riskiest changes (R4/R8/R9/B1) is actually gated.
-3. **Reviewer cleanup** — remove the stale `.gemini` config from INTKB; confirm the Greptile App is installed + reviewing on all three code repos (bot login on the first PR).
+3. **Confirm a reviewer is active** — an AI reviewer (Gemini Code Assist and/or Greptile) actually reviews PRs on all three code repos (confirm by the bot login on the first PR). Gemini stays — no config removal needed.
 
 All three are tracked as *"Firm up the CI review-gate"* (`jfv.6.17`) under the remediation epic `compile-then-govern-jfv.6` (see AAR `012-AA-AACR`).
 
