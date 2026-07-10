@@ -25,12 +25,18 @@ You talk to it through three tools inside Claude Code: `brain_search` (read), `b
 
 ## Prerequisites (one-time)
 
-1. **You're on the Intent Solutions tailnet.** Run `tailscale status` — you should see the
-   `dev` node. If not, get added to the tailnet first (ask Jeremy). The brain is **tailnet-only**;
-   it is not reachable from the public internet.
-2. **Claude Code is installed** and you can run it (`claude` on the CLI, or the desktop/IDE app).
-3. **You have your token.** Jeremy hands you a per-user bearer token privately. It identifies you
-   in the brain's audit trail — don't share it, don't paste it in chat or a repo.
+0. **GitHub access.** You must be a member of the `intent-solutions-io` GitHub org (or a
+   collaborator on `team-intent-claude-plugins`) with `gh auth login` / git credentials working on
+   your machine — otherwise Step 2's `/plugin marketplace add` fails with "repository not found."
+   Ask Jeremy to add you first.
+1. **Tailscale installed + on the Intent Solutions tailnet.** Install Tailscale
+   (<https://tailscale.com/download>), accept Jeremy's invite, then `tailscale status` should list
+   the `dev` node. The brain is **tailnet-only** — not reachable from the public internet.
+2. **Claude Code installed** (a recent version — private marketplaces + plugin env interpolation
+   need a current build) and you can log in and run it. **Launch it from a terminal** (see the
+   desktop caveat in Step 1).
+3. **Your token.** Jeremy hands you a per-user bearer token privately. It identifies you in the
+   brain's audit trail — don't share it, don't paste it in chat or a repo.
 
 ---
 
@@ -47,6 +53,11 @@ That's the whole switch: **`TEAMKB_API_URL` being set is what puts the plugin in
 points it at the one shared brain. (With it unset, the same plugin runs in *local* mode over your
 own files — that's the solo/showcase mode, not the team brain.)
 
+> ⚠️ **Launch Claude Code from a terminal** where `echo $TEAMKB_API_URL` prints the URL. A
+> desktop/Dock-launched app does **not** read your `~/.zshrc`/`~/.bashrc`, so the env vars won't be
+> set and the plugin silently falls back to *local* mode (searching an empty brain on your laptop).
+> If `echo $TEAMKB_API_URL` is blank, re-open the terminal after editing your profile, then start `claude`.
+
 ## Step 2 — install the plugin from the private marketplace
 
 Inside Claude Code:
@@ -60,7 +71,15 @@ Then **restart Claude Code** so it loads the plugin and reads your env vars.
 
 ## Step 3 — smoke test (you're in)
 
-Ask Claude:
+**First, the reliable check** (works even if the plugin is misconfigured) — from your terminal:
+
+```bash
+curl -fsS http://dev.tail70fc2c.ts.net:3847/api/health
+# → {"status":"healthy",...}   the brain is reachable and you're on the tailnet
+# curl error / hang            you're NOT on the tailnet (fix Tailscale) or the API is down (ping Jeremy)
+```
+
+Then, inside Claude Code, ask:
 
 > Use brain_search to find what we've decided about governance and receipts.
 
