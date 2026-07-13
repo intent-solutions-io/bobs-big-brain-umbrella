@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/intentional-cognition-os/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-07-06T07:23:03Z -->
+<!-- fetched-at: 2026-07-13T08:39:16Z -->
 
 # Changelog
 

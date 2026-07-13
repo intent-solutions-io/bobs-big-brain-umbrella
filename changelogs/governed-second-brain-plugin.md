@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/governed-second-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-07-06T07:23:03Z -->
+<!-- fetched-at: 2026-07-13T08:39:16Z -->
 
 # Changelog
 
@@ -11,6 +11,44 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [1.1.0] - 2026-07-11
+
+### Added
+
+- **`~/.teamkb/team.json` config-file fallback for team mode.** `src/index.ts` now fills any absent
+  `TEAMKB_API_URL` / `TEAMKB_API_TOKEN` / `TEAMKB_TENANT_ID` from a `team.json` on disk **before**
+  mode dispatch, so a GUI/Dock-launched Claude (which never sources `~/.zshrc`) reaches team mode
+  without shell env vars. Precedence: real env → `team.json` → local. New `src/team-config.ts`.
+- **Fail-closed mode resolution.** A present-but-unusable `team.json` — group/world-readable,
+  unreadable, invalid JSON, non-object, or missing a usable `apiUrl` (e.g. a snake_case `api_url`
+  typo) — makes the plugin **refuse to start** with a clear message instead of silently running the
+  empty local brain. A genuinely-empty environment still runs local (the public showcase).
+- **`onboarding/install-bobs-big-brain.command`** — a readable, double-clickable macOS installer:
+  checks tailnet reachability, takes the token via a hidden prompt (never argv/history), writes
+  `team.json` at mode `600`, and installs the plugin from the private marketplace.
+- **`smoke/mode-dispatch.test.mjs`** — drives the shipped bundle through all four dispatch /
+  fail-closed paths (loose-perms → refuse; valid 0600 + no env → team; no file → local; snake_case →
+  refuse). Wired into the smoke workflow.
+
+### Security
+
+- The team bearer token now lives only in `~/.teamkb/team.json` (mode `600`) — never in
+  `~/.claude.json`, shell history, argv, or a chat transcript. The plugin refuses to load a
+  group/world-readable `team.json`, and a malformed-`team.json` error is content-free so no token
+  fragment can reach the MCP debug log.
+
+### Fixed
+
+- **`plugin-runtime/` is now self-contained.** Added `plugin-runtime/package.json` and a `build.mjs`
+  postbuild step that installs the externalized native modules (`better-sqlite3`, `bindings`,
+  `fs-ext`) into `plugin-runtime/node_modules`. Previously a copied / marketplace `plugin-runtime/`
+  had no `better-sqlite3` and **local mode** failed with `better-sqlite3 not built for this machine`
+  (`brain_status` returned `total: 0`); it only worked in-repo by resolving `require()` upward to the
+  parent `node_modules`. **Team mode was unaffected** (the mode dispatcher never imports sqlite), and
+  the npm-publish path was already fine (deps declared). Verified by running the runtime from an
+  isolated copy with no ancestor `node_modules` → `brain_status total: 2189`. (#22, bead
+  `compile-then-govern-jfv.6.18`)
 
 ## [1.0.0] - 2026-06-20
 
