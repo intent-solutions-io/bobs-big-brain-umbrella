@@ -77,7 +77,7 @@ mitigation in their `bd show … Design` field.
   serialiser). 3-state result = a **post-processor** over existing `verifyAuditChain` `breaks[]`, not a
   new walk. `CHAIN_FORK` must **not** collapse to `verified`.
 - **R8 — redact the read surface.** Replace the hard-coded `'⚠ TAMPER DETECTED'` in
-  `governed-second-brain-plugin/src/local-server.ts:170` with the newcomer-safe 3-state summary; any
+  `bobs-big-brain-plugin/src/local-server.ts:170` with the newcomer-safe 3-state summary; any
   internet-facing verifier returns counts only, never the raw `breaks[]`/`anchorBreaks[]`.
 - **R9/R10 — server-stamp identity + widen the scanner.** `apps/api` `candidate-service.ts intake()`
   must overwrite `tenantId`/`author` from the bearer identity (fail-closed tenancy-guard); extend
@@ -219,7 +219,7 @@ session / ultracode run does not re-derive them:
 | umbrella `governed-second-brain` | `002-AT-DECR` (merge-gate + forbidden words + trust boundary), `005-AT-ARCH` (data/state map), `007-AT-SMAP` (topology), `README.md` |
 | ICO `intentional-cognition-os` | `007-PP-PLAN-master-blueprint` (§6.3 staleness), `003-AT-ARCH` (deterministic/probabilistic boundary), `010-AT-DBSC` (`compilations.stale`), `packages/kernel/src/{uuid.ts,spool.ts}`, `epics/epic-06-knowledge-compiler.md` |
 | INTKB `qmd-team-intent-kb` | `001-AT-ARCH-repo-blueprint`, `000-PP-PLAN-mega-blueprint`, `038-AT-DECR` (retrieval ADR), `packages/store/src/{audit-anchor.ts,audit-chain.ts,audit-verify.ts}`, `packages/policy-engine/src/{pipeline.ts,rules/index.ts}`, `packages/eval-surface/src/provenance-integrity.ts`, `apps/api/…/candidate-service.ts` |
-| plugin `governed-second-brain-plugin` | `src/local-server.ts` (the `brain_*` MCP surface + the `TAMPER DETECTED` string), `bin/init.mjs` |
+| plugin `bobs-big-brain-plugin` | `src/local-server.ts` (the `brain_*` MCP surface + the `TAMPER DETECTED` string), `bin/init.mjs` |
 
 ---
 

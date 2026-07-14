@@ -16,7 +16,7 @@ program-level beads tracker, the topology manifest [`repos.yml`](repos.yml), and
 here** — the `bin/` scripts are orchestration/mapping over the sub-repos, not the product.
 
 **The plugin moved out (2026-06-16).** The installable **Governed Second Brain plugin** now lives in
-its own personal repo, **[`jeremylongshore/governed-second-brain-plugin`](https://github.com/jeremylongshore/governed-second-brain-plugin)**.
+its own personal repo, **[`jeremylongshore/bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin)**.
 This company-org repo is the **umbrella / landing**: the thesis, the competitive teardown, and the map
 that *points at* the plugin + the engines. The README is the primary deliverable — treat it as the
 product page — alongside the working-surface tooling (`repos.yml` + `bin/gsb` + `bin/teamkb-systemmap.sh`)
@@ -27,7 +27,7 @@ that makes the umbrella the one place to operate the whole stack from.
 | Layer | Repo | Owner |
 |---|---|---|
 | Umbrella / landing (this repo) | `governed-second-brain` | `intent-solutions-io` (company) |
-| Public plugin (installable code) | `governed-second-brain-plugin` | `jeremylongshore` (personal) |
+| Public plugin (installable code) | `bobs-big-brain-plugin` | `jeremylongshore` (personal) |
 | Engines | `intentional-cognition-os` (ICO · compile) · `qmd-team-intent-kb` (INTKB · govern) | `jeremylongshore` (personal) |
 
 Program-level beads + the GitHub tracking issue (#1, epic `compile-then-govern-qy7`) live **here** — the
@@ -53,14 +53,17 @@ This umbrella is the **single working surface** for the whole stack — the one 
   when the `CHANGELOG_AGGREGATION_TOKEN` repo secret is set (else it warn-skips).
 
 **The exact local↔remote map** (5 repos + 1 live-data dir across 2 orgs; local dir name == remote
-repo name for all of them):
+repo name for all of them **except the plugin** — its remote was renamed
+`governed-second-brain-plugin` → `bobs-big-brain-plugin`, but the local dir stays
+`governed-second-brain-plugin/` because the compile/review crons + backup anchor-verify hardcode
+that path; `gsb` clones remote → `local_path`, so the divergence is intentional):
 
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Role |
 |---|---|---|---|---|
 | `governed-second-brain/` | `intent-solutions-io/governed-second-brain` | company | public | **umbrella (here)** |
 | `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | ICO · compile engine |
 | `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | INTKB · govern engine |
-| `governed-second-brain-plugin/` | `jeremylongshore/governed-second-brain-plugin` | personal | public | public unified plugin (local + team modes) |
+| `governed-second-brain-plugin/` *(local dir unchanged)* | `jeremylongshore/bobs-big-brain-plugin` | personal | public | public unified plugin (local + team modes) |
 | `team-intent-claude-plugins/` | `intent-solutions-io/team-intent-claude-plugins` | company | private | private team marketplace (renamed from `claude-plugins` on 2026-06-24) |
 | `~/.teamkb/` | *(not a repo)* | — | — | the live brain data (one dir; backed up by `~/bin/teamkb-backup.sh`) |
 
@@ -81,7 +84,7 @@ flagship repos:
 | [`intentional-cognition-os`](https://github.com/jeremylongshore/intentional-cognition-os) (ICO) | **Compile** | Local-first knowledge OS. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (Claude). 6 compiler passes → emits a governance spool. |
 | [`qmd-team-intent-kb`](https://github.com/jeremylongshore/qmd-team-intent-kb) (INTKB) | **Govern** | Deterministic control plane. Consumes ICO's spool, runs dedupe → policy → promotion, append-only audit log. |
 | [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | On-device hybrid search (BM25 + vector + LLM rerank). Pinned upstream dependency; every result is a `qmd://` citation. |
-| [`governed-second-brain-plugin`](https://github.com/jeremylongshore/governed-second-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles the engines; this umbrella points at it. |
+| [`bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles the engines; this umbrella points at it. |
 
 Per `CONTRIBUTING.md`: code/feature PRs go to the flagship repos (or the plugin repo). Only
 **ecosystem-level doc fixes** (this README, the dependency map, the status table, the diagrams) belong here.
@@ -100,7 +103,7 @@ and the correct backup/DR scope are **code-verified** in
   truth), `brain/wiki/` (compiled Markdown, expensive-derived), `brain/audit/` + `audit_events`
   (hash-chained receipts), `kb-export/` + `qmd-index/` (cheaply derived), `tokens.json` (a **SECRET** → SOPS).
 - **Distribution — two channels, don't conflate:** the **public plugin**
-  `jeremylongshore/governed-second-brain-plugin` (the unified installable artifact; its *local mode* is the
+  `jeremylongshore/bobs-big-brain-plugin` (the unified installable artifact; its *local mode* is the
   outsider showcase) vs the **private team marketplace** `intent-solutions-io/team-intent-claude-plugins`
   (renamed from `claude-plugins` on 2026-06-24). The same
   unified plugin in **team mode** is how Jeremy's team (e.g. Ope) reaches the one remote brain; the old
@@ -110,7 +113,7 @@ and the correct backup/DR scope are **code-verified** in
   governed brain; teammates reach it over the tailnet, they do not each run their own. Two shipped pieces:
   (1) the INTKB **Fastify HTTP API** (`qmd-team-intent-kb/apps/api`, scrypt-hashed per-user bearer tokens,
   tailnet-bound) — **deployed live** on the team-server (`650.5` closed); (2) the **one unified plugin**
-  (`governed-second-brain-plugin` v1.0.0, `650.1` closed) with two runtime modes dispatched by
+  (`bobs-big-brain-plugin` v1.0.0, `650.1` closed) with two runtime modes dispatched by
   `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`) and **team** (remote proxy to the live
   brain over the tailnet with a per-user token). **Local mode exposes the FULL `brain_*` surface
   in-process** (read: `brain_search` / `brain_status` / `brain_audit_verify`; write: `brain_capture` /

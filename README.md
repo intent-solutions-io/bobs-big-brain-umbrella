@@ -23,7 +23,7 @@
 
 <p align="center">
   <strong>▸ Get the plugin:</strong>
-  <a href="https://github.com/jeremylongshore/governed-second-brain-plugin"><strong>governed-second-brain-plugin</strong></a>
+  <a href="https://github.com/jeremylongshore/bobs-big-brain-plugin"><strong>bobs-big-brain-plugin</strong></a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <strong>Engines:</strong>
   <a href="https://github.com/jeremylongshore/intentional-cognition-os">intentional-cognition-os</a> ·
@@ -76,7 +76,7 @@ The category optimizes one axis: recall. We compete on a different one: **govern
 | **[intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os)** (`ico`) | **Compile** | Local-first knowledge OS. Ingests raw corpus (PDF / markdown / web clips) and compiles it into semantic knowledge through six passes, runs episodic research tasks, and emits a governance spool. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (Claude). 5 workspace packages, Apache-2.0. |
 | **[qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb)** (INTKB) | **Govern** | Governed team-memory platform. Consumes ICO's spool, runs every candidate through dedupe → policy → promotion, keeps a hash-chained, append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 8 packages, Apache-2.0. |
 | **[qmd](https://github.com/tobi/qmd)** (`@tobilu/qmd`) | **Retrieve** | On-device hybrid search for markdown — BM25 + vector + LLM reranking, by [@tobi](https://github.com/tobi). The retrieval substrate. Every hit is a `qmd://<collection>/<path>` URI — the citation. |
-| **[governed-second-brain-plugin](https://github.com/jeremylongshore/governed-second-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles** the engines into one in-process stdio MCP server — cited search **and** governed capture (capture → govern → promote, with a hash-chained receipt), no daemon, no network. |
+| **[bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles** the engines into one in-process stdio MCP server — cited search **and** governed capture (capture → govern → promote, with a hash-chained receipt), no daemon, no network. |
 
 **How the repos fit together** — this umbrella maps them; the plugin bundles the engines; the engines + qmd form the compile → govern → retrieve pipeline. Each box is its own independently released repo:
 
@@ -91,7 +91,7 @@ flowchart TB
         INTKB["<b>qmd-team-intent-kb</b><br/>INTKB · govern"]
     end
     QMD["<b>qmd</b> (by @tobi)<br/>retrieve · upstream, pinned"]
-    PLUG["<b>governed-second-brain-plugin</b><br/>the installable product"]
+    PLUG["<b>bobs-big-brain-plugin</b><br/>the installable product"]
 
     UMB -. documents .-> ICO
     UMB -. documents .-> INTKB
@@ -241,7 +241,7 @@ Not a claim — a trail:
 
 **Most people want the plugin** — the packaged product that runs the whole stack locally inside Claude Code or Cowork:
 
-→ **[jeremylongshore/governed-second-brain-plugin](https://github.com/jeremylongshore/governed-second-brain-plugin)** — one command: `npx governed-second-brain init <folder>` *(`--index-only` for zero egress)*
+→ **[jeremylongshore/bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** — one command: `npx governed-second-brain init <folder>` *(`--index-only` for zero egress)*
 
 To instead see the raw chain run from source — no API key, no secrets:
 
@@ -264,7 +264,7 @@ For the full chain (including ICO's compile step) set `ANTHROPIC_API_KEY` and ru
 
 | Repo | Version | License |
 |------|---------|---------|
-| [governed-second-brain-plugin](https://github.com/jeremylongshore/governed-second-brain-plugin) (the installable product) | v0.1.6 ([npm](https://www.npmjs.com/package/governed-second-brain), SLSA-provenanced) | Apache-2.0 |
+| [bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin) (the installable product) | v1.1.1 ([npm](https://www.npmjs.com/package/governed-second-brain), SLSA-provenanced) | Apache-2.0 |
 | [intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os) | v1.14.0 | Apache-2.0 |
 | [qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb) | v0.7.0 | Apache-2.0 |
 | [qmd](https://github.com/tobi/qmd) (upstream dependency) | 2.5.3 — pinned · Dependabot-tracked · integration-test-gated | MIT |

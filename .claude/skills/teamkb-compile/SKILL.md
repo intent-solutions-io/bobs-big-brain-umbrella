@@ -22,7 +22,7 @@ tags:
 - backfill
 argument-hint: '[YYYY-MM-DD [YYYY-MM-DD]] [--auto | --digest]'
 model: opus
-compatibility: 'Designed for Claude Code. Runs locally on the box that owns ~/.teamkb (the brain). Requires the governed-brain MCP server (governed-second-brain-plugin local mode) — the cron wrapper passes it via --mcp-config. Requires qmd on PATH for the post-promote index refresh.'
+compatibility: 'Designed for Claude Code. Runs locally on the box that owns ~/.teamkb (the brain). Requires the governed-brain MCP server (bobs-big-brain-plugin local mode) — the cron wrapper passes it via --mcp-config. Requires qmd on PATH for the post-promote index refresh.'
 disable-model-invocation: true
 ---
 # teamkb-compile

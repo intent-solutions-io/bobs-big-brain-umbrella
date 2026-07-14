@@ -4,7 +4,7 @@
 |---|---|
 | **Audience** | The 6 team leaders who read/feed the one governed brain (Ezekiel · Tim · Ope · Max · Pablo · Jeremy) |
 | **Status** | Ready to socialize. Auto-capture ships **built, off, opt-in**; rollout is **gated on this doc + each person's explicit consent** — never a silent push. |
-| **What this governs** | The auto-capture Stop hook (`governed-second-brain-plugin` `hooks/`, bead `compile-then-govern-jfv.7`). |
+| **What this governs** | The auto-capture Stop hook (`bobs-big-brain-plugin` `hooks/`, bead `compile-then-govern-jfv.7`). |
 | **Decision it implements** | [`014-AT-DECR`](014-AT-DECR-agent-reviewed-capture-inbox-and-r8-evolution.md) (agent-reviewed capture) — the govern + receipts guarantee that makes auto-capture safe. |
 | **Companion** | [`011-AT-RNBK`](011-AT-RNBK-teammate-brain-onboarding.md) (how you plug into the brain in the first place). |
 
@@ -62,7 +62,7 @@ These are enforced by code, not by promise:
 
 ## 4. You stay in control
 
-> Run these from the **plugin's directory** — where the `governed-second-brain-plugin`
+> Run these from the **plugin's directory** — where the `bobs-big-brain-plugin`
 > is checked out / installed (the `hooks/` folder lives there) — or give the full path
 > to `hooks/enable-autocapture.mjs`. It edits only your own `~/.claude/settings.json`.
 
@@ -138,7 +138,7 @@ this and said yes.
 
 - [`014-AT-DECR`](014-AT-DECR-agent-reviewed-capture-inbox-and-r8-evolution.md) — the agent-reviewed-capture decision (the govern + receipts guarantee).
 - [`011-AT-RNBK`](011-AT-RNBK-teammate-brain-onboarding.md) — plugging into the brain (team mode, tokens).
-- `governed-second-brain-plugin` `hooks/` — the hook, the consent-gated enable flow, and their README.
+- `bobs-big-brain-plugin` `hooks/` — the hook, the consent-gated enable flow, and their README.
 
 - Jeremy Longshore
 intentsolutions.io

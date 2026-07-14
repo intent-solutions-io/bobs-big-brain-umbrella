@@ -41,9 +41,13 @@ repos:
     layer: engine
     role: "INTKB — the GOVERN engine (deterministic control plane, audit chain) + the brain HTTP API"
 
-  - name: governed-second-brain-plugin
+  - name: bobs-big-brain-plugin
+    # local_path intentionally diverges from the remote name: the repo was renamed
+    # governed-second-brain-plugin -> bobs-big-brain-plugin, but the local dir stays
+    # governed-second-brain-plugin because the nightly compile/review crons and the
+    # daily backup anchor-verify hardcode that path. gsb clones remote -> local_path.
     local_path: governed-second-brain-plugin
-    remote: https://github.com/jeremylongshore/governed-second-brain-plugin.git
+    remote: https://github.com/jeremylongshore/bobs-big-brain-plugin.git
     org: jeremylongshore
     visibility: public
     layer: plugin

@@ -25,7 +25,7 @@ flowchart TB
   subgraph JL["org: jeremylongshore  ·  PERSONAL"]
     ICO["<b>intentional-cognition-os</b> (ICO)<br/>COMPILE engine"]
     INTKB["<b>qmd-team-intent-kb</b> (INTKB)<br/>GOVERN engine"]
-    PLUG["<b>governed-second-brain-plugin</b><br/>PUBLIC unified plugin<br/>local + team runtime modes"]
+    PLUG["<b>bobs-big-brain-plugin</b><br/>PUBLIC unified plugin<br/>local + team runtime modes"]
   end
   DATA[("<b>~/.teamkb</b> — NOT a repo<br/>the live compiled + governed brain<br/>governed memories + wiki pages (live counts in 005-AT-ARCH §0)<br/>backed up by teamkb-backup.sh")]
   CRUFT["second-brain/ — ✗ DELETED<br/>dead local-only scaffold (no remote)"]
@@ -52,17 +52,22 @@ flowchart TB
 
 ## 2. Local ↔ remote (the exact map)
 
-Every dir below is directly under `~/000-projects/`. **The local dir name now equals the remote
-repo name for every repo** (the one historical mismatch — the marketplace cloned as
-`intent-solutions-marketplace/` while its remote was `claude-plugins` — was fixed 2026-06-24 by
-renaming the remote to `team-intent-claude-plugins` and the local dir to match).
+Every dir below is directly under `~/000-projects/`. **The local dir name equals the remote
+repo name for every repo except the plugin.** The plugin's remote was renamed
+`governed-second-brain-plugin` → `bobs-big-brain-plugin` on 2026-07-13, but its local dir stays
+`governed-second-brain-plugin/` because the nightly compile/review crons and the daily backup
+anchor-verify hardcode that path; `gsb` clones the remote into `local_path`, so the divergence is
+intentional (the local-dir rename is a deferred, coordinated follow-up). (The one earlier mismatch —
+the marketplace cloned as `intent-solutions-marketplace/` while its remote was `claude-plugins` —
+was fixed 2026-06-24 by renaming the remote to `team-intent-claude-plugins` and the local dir to
+match.)
 
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Layer / role |
 |---|---|---|---|---|
 | `governed-second-brain/` | `intent-solutions-io/governed-second-brain` | company | public | **Umbrella / landing — you are here** |
 | `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | **ICO** · compile engine |
 | `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | **INTKB** · govern engine |
-| `governed-second-brain-plugin/` | `jeremylongshore/governed-second-brain-plugin` | personal | public | the **public unified plugin** (local + team modes) |
+| `governed-second-brain-plugin/` *(local dir unchanged)* | `jeremylongshore/bobs-big-brain-plugin` | personal | public | the **public unified plugin** (local + team modes) |
 | `team-intent-claude-plugins/` | `intent-solutions-io/team-intent-claude-plugins` | company | private | **private team marketplace** (publishes `intent-brain`) |
 | `~/.teamkb/` | *(not a repo)* | — | — | **the live brain data** — one directory; backed up via `~/bin/teamkb-backup.sh` |
 

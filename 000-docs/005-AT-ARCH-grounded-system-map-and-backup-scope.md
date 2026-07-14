@@ -104,7 +104,7 @@ raw corpus (brain/raw/)
   `brain_capture`/`brain_govern`/`brain_transition` (write). Daemon-free, zero network in local mode.
 
 ### Distribution — two channels (don't conflate them)
-- **Public plugin** → `jeremylongshore/governed-second-brain-plugin` (personal). The single
+- **Public plugin** → `jeremylongshore/bobs-big-brain-plugin` (personal). The single
   installable artifact, with two runtime modes dispatched by `TEAMKB_API_URL`: **local** (default,
   in-process `~/.teamkb`, full `brain_*` surface) and **team** (remote proxy to the one shared brain
   over the tailnet). Shipped as npm `governed-second-brain` (SLSA-provenanced) + a self-hosted
@@ -178,6 +178,6 @@ Operational runbook + exact restore steps: [`006-AT-RNBK`](006-AT-RNBK-brain-bac
 - ICO kernel migrations + compiler passes + spool: `intentional-cognition-os/packages/{kernel/migrations,compiler/src/passes,types/src/spool.ts}`
 - Spool boundary threat model: `qmd-team-intent-kb/000-docs/036-AT-THRT-spool-boundary-threat-model.md`
 - Ecosystem thesis: `034-AT-NTRP-ecosystem-thesis.md` (in both flagships)
-- Plugin MCP server: `governed-second-brain-plugin/src/local-server.ts`
+- Plugin MCP server: `bobs-big-brain-plugin/src/local-server.ts`
 - Backup script + timer + live-stats updater: `~/bin/teamkb-backup.sh`, `~/.config/systemd/user/teamkb-backup.{service,timer}`, `bin/teamkb-systemmap.sh`
 - Repo topology + working surface: [`007-AT-SMAP`](007-AT-SMAP-repo-topology-and-working-surface.md), `../repos.yml`, `../bin/gsb`

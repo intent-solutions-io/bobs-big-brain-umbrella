@@ -37,7 +37,7 @@ REPOS=(
   "governed-second-brain|intent-solutions-io|main|public|Umbrella / landing — the single working surface"
   "intentional-cognition-os|jeremylongshore|main|public|ICO — the COMPILE engine (deterministic kernel + Claude compiler)"
   "qmd-team-intent-kb|jeremylongshore|main|public|INTKB — the GOVERN engine (control plane, audit chain) + brain HTTP API"
-  "governed-second-brain-plugin|jeremylongshore|main|public|The public unified plugin — local + team runtime modes"
+  "bobs-big-brain-plugin|jeremylongshore|main|public|The public unified plugin — local + team runtime modes"
   "team-intent-claude-plugins|intent-solutions-io|main|private|Private team marketplace — publishes the unified plugin"
 )
 

@@ -22,7 +22,7 @@ tags:
 - second-brain
 argument-hint: '[--dry-run]'
 model: opus
-compatibility: 'Designed for Claude Code. Runs on the box that can reach the governed brain API over the tailnet. Requires the governed-brain MCP server in TEAM mode (governed-second-brain-plugin) with a dedicated ADMIN token — the cron wrapper passes it via --mcp-config scripts/review-mcp-config.json and exports TEAMKB_REVIEW_AGENT_TOKEN + TEAMKB_API_URL. If the token is not provisioned the wrapper SKIPS this phase cleanly.'
+compatibility: 'Designed for Claude Code. Runs on the box that can reach the governed brain API over the tailnet. Requires the governed-brain MCP server in TEAM mode (bobs-big-brain-plugin) with a dedicated ADMIN token — the cron wrapper passes it via --mcp-config scripts/review-mcp-config.json and exports TEAMKB_REVIEW_AGENT_TOKEN + TEAMKB_API_URL. If the token is not provisioned the wrapper SKIPS this phase cleanly.'
 disable-model-invocation: true
 ---
 # teamkb-review

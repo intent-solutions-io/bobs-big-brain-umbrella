@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Date** | 2026-07-09 |
-| **Applies to** | the Governed Second Brain stack — `intentional-cognition-os` (ICO), `qmd-team-intent-kb` (INTKB), `governed-second-brain-plugin`, and this umbrella |
+| **Applies to** | the Governed Second Brain stack — `intentional-cognition-os` (ICO), `qmd-team-intent-kb` (INTKB), `bobs-big-brain-plugin`, and this umbrella |
 | **Status** | canonical standard, **v1.1 — strengthened 2026-07-09 per external review**: decision rationale, evidence requirements, risk assessment, operational impact, deferred-work tracking, architectural-layer declaration, and the 7-question outsider test are now first-class. Referenced from each repo's `CONTRIBUTING.md` |
 | **Companion** | global workflow rules in `~/.claude/CLAUDE.md` § "Workflow Orchestration" (this doc is the *how-to-write-it* layer + worked examples) |
 
