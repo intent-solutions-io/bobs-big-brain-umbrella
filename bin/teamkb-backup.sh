@@ -250,7 +250,7 @@ fi
 # did NOT survive the restore intact — treat the backup as unrestorable. WARN (exit 0, e.g.
 # the restored audit repo has no remote) is fine. Absent verifier / node → NOTE, not fail
 # (the presence gate above still stands, and a backup must not hard-fail on optional tooling).
-ANCHOR_VERIFIER="${TEAMKB_ANCHOR_VERIFIER:-$HOME/000-projects/governed-second-brain-plugin/scripts/verify-anchors.mjs}"
+ANCHOR_VERIFIER="${TEAMKB_ANCHOR_VERIFIER:-$HOME/000-projects/bobs-big-brain-plugin/scripts/verify-anchors.mjs}"
 if [ -d "$TEAMKB_HOME/audit" ] && [ -s "$rdir/audit/anchors.jsonl" ]; then
   if [ -f "$ANCHOR_VERIFIER" ] && command -v node >/dev/null 2>&1; then
     # if/else (not `A && B || C`) so the verifier's exit is evaluated as the `if`

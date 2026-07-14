@@ -3,7 +3,7 @@
     "governed-brain": {
       "command": "node",
       "args": [
-        "${HOME}/000-projects/governed-second-brain-plugin/plugin-runtime/governed-brain.cjs"
+        "${HOME}/000-projects/bobs-big-brain-plugin/plugin-runtime/governed-brain.cjs"
       ],
       "env": {
         "TEAMKB_API_URL": "${TEAMKB_API_URL}",

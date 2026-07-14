@@ -53,17 +53,16 @@ This umbrella is the **single working surface** for the whole stack — the one 
   when the `CHANGELOG_AGGREGATION_TOKEN` repo secret is set (else it warn-skips).
 
 **The exact local↔remote map** (5 repos + 1 live-data dir across 2 orgs; local dir name == remote
-repo name for all of them **except the plugin** — its remote was renamed
-`governed-second-brain-plugin` → `bobs-big-brain-plugin`, but the local dir stays
-`governed-second-brain-plugin/` because the compile/review crons + backup anchor-verify hardcode
-that path; `gsb` clones remote → `local_path`, so the divergence is intentional):
+repo name for all of them — the plugin's local dir was renamed
+`governed-second-brain-plugin/` → `bobs-big-brain-plugin/` on 2026-07-14 to match its remote, and
+the compile/review crons + backup anchor-verify + `~/.claude.json` MCP path were repointed):
 
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Role |
 |---|---|---|---|---|
 | `governed-second-brain/` | `intent-solutions-io/governed-second-brain` | company | public | **umbrella (here)** |
 | `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | ICO · compile engine |
 | `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | INTKB · govern engine |
-| `governed-second-brain-plugin/` *(local dir unchanged)* | `jeremylongshore/bobs-big-brain-plugin` | personal | public | public unified plugin (local + team modes) |
+| `bobs-big-brain-plugin/` | `jeremylongshore/bobs-big-brain-plugin` | personal | public | public unified plugin (local + team modes) |
 | `team-intent-claude-plugins/` | `intent-solutions-io/team-intent-claude-plugins` | company | private | private team marketplace (renamed from `claude-plugins` on 2026-06-24) |
 | `~/.teamkb/` | *(not a repo)* | — | — | the live brain data (one dir; backed up by `~/bin/teamkb-backup.sh`) |
 
