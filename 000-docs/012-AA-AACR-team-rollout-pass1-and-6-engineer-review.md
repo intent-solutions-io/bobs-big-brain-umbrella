@@ -5,7 +5,7 @@
 | **Date** | 2026-07-09 |
 | **Author** | Claude (Opus 4.8) for Jeremy Longshore |
 | **Program** | Governed Second Brain — team production rollout |
-| **Epic** | `compile-then-govern-jfv` ↔ GH `intent-solutions-io/governed-second-brain#35` ↔ Plane BRAIN-9 |
+| **Epic** | `compile-then-govern-jfv` ↔ GH `intent-solutions-io/bobs-big-brain-umbrella#35` ↔ Plane BRAIN-9 |
 | **Scope** | (1) what shipped in Pass 1, (2) post-mortem of three flawed calls, (3) verbatim findings of a 6-engineer Fable adversarial review, (4) consolidated risk register, (5) gated action plan |
 | **Verdict** | **Do NOT go all-at-once, and do NOT email tokens, until Gate 0 clears.** The all-at-once shape is right for six people — but only after one person proves the path end-to-end and the Gate-0 blockers are fixed. |
 

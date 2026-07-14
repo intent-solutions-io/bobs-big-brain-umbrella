@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The **umbrella / landing repo** for **Governed Second Brain** — the local-first knowledge stack
 built on the *compile, then govern* architecture. (Renamed from `compile-then-govern` on
-2026-06-16; the GitHub repo is now `intent-solutions-io/governed-second-brain` and the old URL
+2026-06-16; the GitHub repo is now `intent-solutions-io/bobs-big-brain-umbrella` and the old URL
 auto-redirects. The local working directory was renamed to match — it is
-`~/000-projects/governed-second-brain/` (the bead prefix stays `compile-then-govern`).) It contains
+`~/000-projects/bobs-big-brain-umbrella/` (the bead prefix stays `compile-then-govern`).) It contains
 **ecosystem-level documentation plus the cross-repo working-surface helpers** — the landing README,
 governance files (`CONTRIBUTING.md`/`SECURITY.md`/`LICENSE`), `assets/` (banner + social-card), the
 program-level beads tracker, the topology manifest [`repos.yml`](repos.yml), and the `bin/` helpers
@@ -59,7 +59,7 @@ the compile/review crons + backup anchor-verify + `~/.claude.json` MCP path were
 
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Role |
 |---|---|---|---|---|
-| `governed-second-brain/` | `intent-solutions-io/governed-second-brain` | company | public | **umbrella (here)** |
+| `bobs-big-brain-umbrella/` | `intent-solutions-io/bobs-big-brain-umbrella` | company | public | **umbrella (here)** |
 | `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | ICO · compile engine |
 | `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | INTKB · govern engine |
 | `bobs-big-brain-plugin/` | `jeremylongshore/bobs-big-brain-plugin` | personal | public | public unified plugin (local + team modes) |

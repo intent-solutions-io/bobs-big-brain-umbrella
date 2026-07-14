@@ -230,7 +230,7 @@ session / ultracode run does not re-derive them:
 - The 5 invariants are in **bd memory** (`bd memories` / auto-injected at `bd prime`).
 - Code-anchored follow-ups (the standalone verifier, R9 tenant-binding, R10 boundary-scanner) belong on
   the **plugin/INTKB repos** (the umbrella is docs-only), cross-referenced to epic `e06` ↔ GitHub
-  `intent-solutions-io/governed-second-brain#27`. Mirror via `bd-sync` (never raw `bd close`).
+  `intent-solutions-io/bobs-big-brain-umbrella#27`. Mirror via `bd-sync` (never raw `bd close`).
 - Sequencing check any future session can run: `bd ready` must show only `e06.3/.7/.8/.11/.12/.13`;
   `e06.1` is blocked until `e06.11` (anchor-backup) lands.
 

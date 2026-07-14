@@ -279,7 +279,7 @@ log "restore round-trip OK: govern+compile integrity verified, corpus($raw_files
 
 # 5b. refresh the umbrella system map's live-stats block now that the brain is
 #     provably backed up. Non-fatal: the map is documentation, not the backup.
-SYSTEMMAP="${TEAMKB_SYSTEMMAP:-$HOME/000-projects/governed-second-brain/bin/teamkb-systemmap.sh}"
+SYSTEMMAP="${TEAMKB_SYSTEMMAP:-$HOME/000-projects/bobs-big-brain-umbrella/bin/teamkb-systemmap.sh}"
 if [ -x "$SYSTEMMAP" ]; then
   if "$SYSTEMMAP" >>"$LOG" 2>&1; then
     log "system map refreshed via $SYSTEMMAP"

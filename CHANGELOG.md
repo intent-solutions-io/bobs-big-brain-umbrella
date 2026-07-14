@@ -38,7 +38,7 @@ engine and plugin repos. Format based on
 ### Changed
 
 - Repo renamed `intent-solutions-io/compile-then-govern` →
-  `intent-solutions-io/governed-second-brain` (the old URL auto-redirects).
+  `intent-solutions-io/bobs-big-brain-umbrella` (the old URL auto-redirects).
 - Audit trail framed as **tamper-evident** (detection), never tamper-proof; the
   external chain-head anchor is implemented and verifiable via `ico audit verify`.
 

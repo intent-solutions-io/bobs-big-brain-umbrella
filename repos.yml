@@ -17,9 +17,9 @@
 base: ~/000-projects
 
 repos:
-  - name: governed-second-brain
-    local_path: governed-second-brain
-    remote: https://github.com/intent-solutions-io/governed-second-brain.git
+  - name: bobs-big-brain-umbrella
+    local_path: bobs-big-brain-umbrella
+    remote: https://github.com/intent-solutions-io/bobs-big-brain-umbrella.git
     org: intent-solutions-io
     visibility: public
     layer: umbrella

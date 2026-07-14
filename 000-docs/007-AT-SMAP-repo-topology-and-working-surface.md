@@ -7,7 +7,7 @@ which maps *where the data lives*. **007 = which repos · 005 = where the state 
 maps, deliberately split.
 
 > **One-line orientation:** there are **5 real repos + 1 live-data directory**, spread across **2
-> GitHub orgs**. The **umbrella** (`intent-solutions-io/governed-second-brain`, this repo) is the
+> GitHub orgs**. The **umbrella** (`intent-solutions-io/bobs-big-brain-umbrella`, this repo) is the
 > **single working surface** — start every session here, and the `bin/gsb` helper reaches every
 > sub-repo. The machine-readable version of this map is [`repos.yml`](../repos.yml) at the repo root;
 > `bin/gsb` and this doc both read it.
@@ -62,7 +62,7 @@ cloned as `intent-solutions-marketplace/` while its remote was `claude-plugins` 
 
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Layer / role |
 |---|---|---|---|---|
-| `governed-second-brain/` | `intent-solutions-io/governed-second-brain` | company | public | **Umbrella / landing — you are here** |
+| `governed-second-brain/` | `intent-solutions-io/bobs-big-brain-umbrella` | company | public | **Umbrella / landing — you are here** |
 | `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | **ICO** · compile engine |
 | `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | **INTKB** · govern engine |
 | `bobs-big-brain-plugin/` | `jeremylongshore/bobs-big-brain-plugin` | personal | public | the **public unified plugin** (local + team modes) |
@@ -120,4 +120,4 @@ answer is one of: this doc (§2 for repos), `005-AT-ARCH` (for data/state), or t
   `~/000-projects/intentsolutions-vps-runbook/docs/secrets-inventory.md`.
 - **Manifest + helper:** [`repos.yml`](../repos.yml), [`bin/gsb`](../bin/gsb).
 - Program tracker: bead epic `compile-then-govern-aht` (this work) + the program GitHub issue
-  `intent-solutions-io/governed-second-brain#1`.
+  `intent-solutions-io/bobs-big-brain-umbrella#1`.
