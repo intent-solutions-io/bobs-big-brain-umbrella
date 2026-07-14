@@ -111,7 +111,14 @@ _backup_on_exit() {
   rm -rf "${work:-}" "${shm:-}" 2>/dev/null || true
   mkdir -p "$HOME/.local/state/notify-lib" 2>/dev/null || true
   : > "$HOME/.local/state/notify-lib/teamkb-backup.beat" 2>/dev/null || true
-  [ "$rc" -eq 0 ] && return 0
+  if [ "$rc" -eq 0 ]; then
+    # SUCCESS marker: touch <job>.ok (two-marker doctrine — .beat every run, .ok only on rc==0).
+    # The merged EXIT trap replaced notify-lib's arm_fail_trap, which dropped this write; without it
+    # the liveness sweep + the Epic-1.8 harness see fresh .beat + stale .ok and mis-report a WORKING
+    # backup as running-but-failing. Restored here.
+    : > "$HOME/.local/state/notify-lib/teamkb-backup.ok" 2>/dev/null || true
+    return 0
+  fi
   local detail="exited rc=${rc}"
   [ -f "$LOG" ] && detail="${detail}; last log: $(tail -n 3 "$LOG" 2>/dev/null | tr '\n' ' ' | cut -c1-400)"
   # Guarded so the EXIT trap still cleans up + drops the heartbeat even when the
