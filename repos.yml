@@ -2,8 +2,12 @@
 #
 # Single source of truth for the repo topology. Read by `bin/gsb` (the cross-repo
 # helper) and documented in `000-docs/007-AT-SMAP-repo-topology-and-working-surface.md`.
-# The five repos stay independent (own CI / releases / visibility) — this manifest is
+# The four repos stay independent (own CI / releases / visibility) — this manifest is
 # the orchestration layer, NOT git submodules.
+#
+# (The private `team-intent-claude-plugins` marketplace was RETIRED + archived
+#  2026-07-17 — it was a redirect-only catalog pointing at the public plugin, no
+#  private content; "team" is a runtime mode of the public plugin, not a separate repo.)
 #
 # Fields per repo:
 #   name        canonical name (== local dir name == remote repo name, post-2026-06-24 rename)
@@ -11,7 +15,7 @@
 #   remote      git clone URL
 #   org         github org/owner
 #   visibility  public | private
-#   layer       umbrella | engine | plugin | marketplace
+#   layer       umbrella | engine | plugin
 #   role        one-line human description
 
 base: ~/000-projects
@@ -48,14 +52,6 @@ repos:
     visibility: public
     layer: plugin
     role: "The PUBLIC unified plugin — local (in-process ~/.teamkb) + team (remote proxy) runtime modes"
-
-  - name: team-intent-claude-plugins
-    local_path: team-intent-claude-plugins
-    remote: https://github.com/intent-solutions-io/team-intent-claude-plugins.git
-    org: intent-solutions-io
-    visibility: private
-    layer: marketplace
-    role: "Private team marketplace — publishes intent-brain (folding into the unified plugin team mode)"
 
 # Live brain data — NOT a git repo, listed so the map is complete. gsb never clones/pulls this.
 data:

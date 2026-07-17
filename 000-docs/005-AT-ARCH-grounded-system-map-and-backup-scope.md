@@ -103,17 +103,19 @@ raw corpus (brain/raw/)
   server** (`src/local-server.ts`), tools `brain_search`/`brain_status`/`brain_audit_verify` (read) +
   `brain_capture`/`brain_govern`/`brain_transition` (write). Daemon-free, zero network in local mode.
 
-### Distribution — two channels (don't conflate them)
+### Distribution — one channel (the two-channel split is retired)
 - **Public plugin** → `jeremylongshore/bobs-big-brain-plugin` (personal). The single
-  installable artifact, with two runtime modes dispatched by `TEAMKB_API_URL`: **local** (default,
-  in-process `~/.teamkb`, full `brain_*` surface) and **team** (remote proxy to the one shared brain
-  over the tailnet). Shipped as npm `governed-second-brain` (SLSA-provenanced) + a self-hosted
-  `marketplace.json`.
+  installable artifact — and now the whole distribution surface — with two runtime modes dispatched by
+  `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`, full `brain_*` surface) and **team**
+  (remote proxy to the one shared brain over the tailnet, how Jeremy's team e.g. Ope reaches it).
+  Shipped as npm `governed-second-brain` (SLSA-provenanced) + a self-hosted `marketplace.json`.
 - **Private team marketplace** → `intent-solutions-io/team-intent-claude-plugins` (private catalog;
-  **renamed from `claude-plugins` on 2026-06-24**). Publishes the internal **`intent-brain`** entry
-  (built from `qmd-team-intent-kb/.claude-plugin/`) — being folded into the unified plugin's team
-  mode and retired (`compile-then-govern-650.4`). This is how Jeremy's team (e.g. Ope) reaches the
-  one remote brain.
+  renamed from `claude-plugins` on 2026-06-24) was **RETIRED + archived 2026-07-17**. It was a
+  redirect-only catalog whose only entry (`intent-brain`, built from
+  `qmd-team-intent-kb/.claude-plugin/`) pointed at the public plugin — indirection with no private
+  content. "Team" is a runtime mode of the public plugin, not a separate build, so distribution is
+  now the single public plugin in two runtime modes. (`intent-brain` was folded into team mode and
+  retired — `compile-then-govern-650.4`.)
 - Full repo topology + local↔remote map: [`007-AT-SMAP`](007-AT-SMAP-repo-topology-and-working-surface.md).
 
 ---

@@ -6,8 +6,9 @@ one lives (local path **and** GitHub remote), and how they relate*. It is the du
 which maps *where the data lives*. **007 = which repos · 005 = where the state lives.** Two distinct
 maps, deliberately split.
 
-> **One-line orientation:** there are **5 real repos + 1 live-data directory**, spread across **2
-> GitHub orgs**. The **umbrella** (`intent-solutions-io/bobs-big-brain-umbrella`, this repo) is the
+> **One-line orientation:** there are **4 real repos + 1 live-data directory**, spread across **2
+> GitHub orgs** (the private `team-intent-claude-plugins` marketplace was **retired + archived
+> 2026-07-17** — see §2). The **umbrella** (`intent-solutions-io/bobs-big-brain-umbrella`, this repo) is the
 > **single working surface** — start every session here, and the `bin/gsb` helper reaches every
 > sub-repo. The machine-readable version of this map is [`repos.yml`](../repos.yml) at the repo root;
 > `bin/gsb` and this doc both read it.
@@ -20,7 +21,7 @@ maps, deliberately split.
 flowchart TB
   subgraph ISO["org: intent-solutions-io  ·  COMPANY"]
     UMB["<b>governed-second-brain</b><br/>UMBRELLA · landing<br/>docs + map only<br/><b>◀ you are here</b>"]
-    MKT["<b>team-intent-claude-plugins</b><br/>PRIVATE team marketplace<br/>publishes intent-brain →<br/>folding into the unified plugin"]
+    MKT["<b>team-intent-claude-plugins</b><br/>✗ RETIRED + archived 2026-07-17<br/>was private team marketplace<br/>(redirect-only, no private content)"]
   end
   subgraph JL["org: jeremylongshore  ·  PERSONAL"]
     ICO["<b>intentional-cognition-os</b> (ICO)<br/>COMPILE engine"]
@@ -33,16 +34,15 @@ flowchart TB
   UMB -. points at .-> ICO
   UMB -. points at .-> INTKB
   UMB -. points at .-> PLUG
-  UMB -. points at .-> MKT
   PLUG --> ICO
   PLUG --> INTKB
   ICO -- compile --> DATA
   INTKB -- govern --> DATA
-  MKT -. team mode (remote) .-> DATA
+  PLUG -. team mode (remote) .-> DATA
 
   style UMB fill:#1f6feb,stroke:#0b3d91,stroke-width:3px,color:#ffffff
   style DATA fill:#196c2e,stroke:#0b3d91,color:#ffffff
-  style MKT fill:#6e4400,stroke:#3d2600,color:#ffffff
+  style MKT fill:#5a1e1e,stroke:#a33,stroke-dasharray:5 5,color:#ffffff
   style CRUFT fill:#5a1e1e,stroke:#a33,stroke-dasharray:5 5,color:#ffffff
 ```
 
@@ -66,7 +66,7 @@ cloned as `intent-solutions-marketplace/` while its remote was `claude-plugins` 
 | `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | **ICO** · compile engine |
 | `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | **INTKB** · govern engine |
 | `bobs-big-brain-plugin/` | `jeremylongshore/bobs-big-brain-plugin` | personal | public | the **public unified plugin** (local + team modes) |
-| `team-intent-claude-plugins/` | `intent-solutions-io/team-intent-claude-plugins` | company | private | **private team marketplace** (publishes `intent-brain`) |
+| ~~`team-intent-claude-plugins/`~~ | `intent-solutions-io/team-intent-claude-plugins` | company | private | **RETIRED + archived 2026-07-17** — was the private team marketplace; a redirect-only catalog whose only entry (`intent-brain`) pointed at the public plugin, so no private content. "Team" is a runtime mode of the public plugin, not a repo. Dropped from `repos.yml`. |
 | `~/.teamkb/` | *(not a repo)* | — | — | **the live brain data** — one directory; backed up via `~/bin/teamkb-backup.sh` |
 
 **Removed cruft:** `~/000-projects/second-brain/` was a **dead local-only scaffold** — empty
@@ -83,17 +83,18 @@ in `repos.yml`.
 
 ### `intent-brain` — there is no standalone repo
 
-`intent-brain` is **not** a repo in either org. It exists only as a *published entry* inside the
-private `team-intent-claude-plugins` marketplace (built from `qmd-team-intent-kb/.claude-plugin/`),
-and it is being **folded into the unified plugin's team mode and retired** (bead
-`compile-then-govern-650.4`). Don't go looking for a repo named `intent-brain`.
+`intent-brain` is **not** a repo in either org. It existed only as a *published entry* inside the
+private `team-intent-claude-plugins` marketplace (built from `qmd-team-intent-kb/.claude-plugin/`) —
+and that marketplace was **retired + archived 2026-07-17**. `intent-brain` was **folded into the
+unified plugin's team mode and retired** (bead `compile-then-govern-650.4`). Don't go looking for a
+repo named `intent-brain`, or for the marketplace that used to publish it.
 
 ---
 
 ## 3. Doctrine — the umbrella is the single working surface
 
-The five repos stay **independent** (each has its own CI, releases, and visibility — collapsing them
-would be wrong; e.g. the marketplace is private, the engines are public). What makes the umbrella the
+The four repos stay **independent** (each has its own CI, releases, and visibility — collapsing them
+would be wrong; e.g. the plugin ships on its own release cadence, the engines are separate). What makes the umbrella the
 "one place to work from" is an **orchestration layer**, not a monorepo and **not git submodules**
 (submodules add pinning / detached-HEAD pain for zero gain here):
 
