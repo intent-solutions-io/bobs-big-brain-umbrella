@@ -30,6 +30,7 @@ flowchart TB
   end
   DATA[("<b>~/.teamkb</b> — NOT a repo<br/>the live compiled + governed brain<br/>governed memories + wiki pages (live counts in 005-AT-ARCH §0)<br/>backed up by teamkb-backup.sh")]
   CRUFT["second-brain/ — ✗ DELETED<br/>dead local-only scaffold (no remote)"]
+  AGP["<b>agent-governance-plane</b> (AGP)<br/>EXTERNAL · separate ecosystem<br/>signed journal · CrossChainPointer"]
 
   UMB -. points at .-> ICO
   UMB -. points at .-> INTKB
@@ -39,11 +40,13 @@ flowchart TB
   ICO -- compile --> DATA
   INTKB -- govern --> DATA
   PLUG -. team mode (remote) .-> DATA
+  AGP -. "cross-chain pointer (§5)" .-> DATA
 
   style UMB fill:#1f6feb,stroke:#0b3d91,stroke-width:3px,color:#ffffff
   style DATA fill:#196c2e,stroke:#0b3d91,color:#ffffff
   style MKT fill:#5a1e1e,stroke:#a33,stroke-dasharray:5 5,color:#ffffff
   style CRUFT fill:#5a1e1e,stroke:#a33,stroke-dasharray:5 5,color:#ffffff
+  style AGP fill:#2d2d3a,stroke:#8888aa,stroke-dasharray:5 5,color:#ffffff
 ```
 
 *(GitHub renders Mermaid in the web view; there is no local preview build — verify there after edits.)*
@@ -79,7 +82,8 @@ eval" epic) into the canonical store.
 
 `claude-code-slack-channel`, `agent-governance-plane`, and `claude-code-plugins-plus-skills` are a
 **different** Intent Solutions ecosystem. They are not part of the Governed Second Brain and are not
-in `repos.yml`.
+in `repos.yml`. The agent-governance-plane does, however, integrate with the brain **at a contract
+seam** — see §5.
 
 ### `intent-brain` — there is no standalone repo
 
@@ -122,3 +126,26 @@ answer is one of: this doc (§2 for repos), `005-AT-ARCH` (for data/state), or t
 - **Manifest + helper:** [`repos.yml`](../repos.yml), [`bin/gsb`](../bin/gsb).
 - Program tracker: bead epic `compile-then-govern-aht` (this work) + the program GitHub issue
   `intent-solutions-io/bobs-big-brain-umbrella#1`.
+
+---
+
+## 5. The agent↔brain seam — composed, not absorbed
+
+The **Agent Governance Plane** (`jeremylongshore/agent-governance-plane`, AGP) and CCSC are a
+**separate** Intent Solutions ecosystem (§2): they stay out of `repos.yml`, out of `gsb sync`, and
+out of this umbrella's release story. The integration between an agent and the brain happens **at a
+contract**, not by absorbing repos:
+
+- **The contract:** every AGP journal event carries a signed **`CrossChainPointer`** —
+  `correlation_id` + `gsb_receipt_tip_hash` (AGP `src/contracts/journal-event.ts`; ADR
+  `agent-governance-plane/000-docs/058-AT-ADR-cross-chain-causal-pointer-2026-07-12.md`). The
+  pointer binds an agent action in AGP's signed, hash-chained journal ("what the agent **did**") to
+  the tip of Bob's Big Brain's hash-chained receipt log ("what the agent **knew**"), so *"what did
+  it know when it acted X?"* is answerable across the two chains. The pointer lives inside AGP's
+  signed event bytes, so it is tamper-evident, not merely embedded.
+- **Naming:** the `gsb_` field prefix is the pre-rename product name (GSB — Governed Second Brain,
+  productized as Bob's Big Brain on 2026-07-10) frozen into the wire contract. The identifier does
+  not get renamed; docs on both sides carry the clarifier.
+- **Future work (brain side):** a stable **receipt-tip read endpoint** so an agent can stamp and a
+  verifier can check `gsb_receipt_tip_hash` against the live chain tip — bead
+  `qmd-team-intent-kb-1fx`.
