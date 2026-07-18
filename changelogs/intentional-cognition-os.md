@@ -1,8 +1,20 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/intentional-cognition-os/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-07-16T20:50:45Z -->
+<!-- fetched-at: 2026-07-18T13:42:03Z -->
 
 # Changelog
+
+## [Unreleased]
+
+### Added
+
+- `ico spool emit --bulk` stamps every emitted candidate `source: bulk_import` + `trustLevel: untrusted`, so a whole-machine digestion is distinguishable from a curated import and INTKB's `source_trust` policy can flag it for review (default emit stays `import`/`medium`). (#168)
+- Advisory-only MiniMax-M3 PR reviewer with two independent lanes (defect + claims); non-blocking, fork-safe (runs on `pull_request`, never hands the API key to forked code), gated behind `ENABLE_MINIMAX_REVIEW`. (#166)
+- On any merge that touches `CHANGELOG.md`, dispatch a `changelog-updated` event to the umbrella so its aggregated changelog mirror refreshes immediately instead of waiting for the weekly cron. (#155)
+
+### Fixed
+
+- README corrected for the current compile engine: the model backend is a pluggable provider registry (Claude by default, or any OpenAI-/Anthropic-wire provider / local server via `ICO_PROVIDER`), not Claude-only; and the ecosystem link repointed to the renamed umbrella repo `intent-solutions-io/bobs-big-brain-umbrella`. (#167)
 
 ## [v1.21.0] - 2026-07-01
 
