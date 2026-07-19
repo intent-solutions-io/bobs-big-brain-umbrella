@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/intent-solutions-io/bobs-big-brain-umbrella/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-07-19T20:48:24Z -->
+<!-- fetched-at: 2026-07-19T22:04:52Z -->
 
 # Changelog
 
@@ -23,6 +23,19 @@ engine and plugin repos. Format based on
 
 ### Changed
 
+- **Engine repos renamed to carry the product brand** (2026-07-19): the compile
+  engine `jeremylongshore/intentional-cognition-os` is now
+  **`jeremylongshore/bobs-big-brain-compiler`** (public name: Bob's Big Brain
+  Compiler) and the govern engine `jeremylongshore/qmd-team-intent-kb` is now
+  **`jeremylongshore/bobs-big-brain-registrar`** (public name: Bob's Big Brain
+  Registrar). GitHub 301-redirects the old URLs. Deliberately **unchanged**: the
+  npm package `intentional-cognition-os`, the `@qmd-team-intent-kb/*` and
+  `@ico/*` npm scopes, the GHCR image name, and bead prefixes — artifact
+  identifiers keep their history. The ICO/INTKB acronyms are retired on public
+  surfaces; `repos.yml`, the aggregation script, the README engine table,
+  diagrams, and the living topology docs (`005-AT-ARCH`, `007-AT-SMAP`) now use
+  Compiler/Registrar. Stale changelog mirrors under the old filenames were
+  deleted (they don't self-clean).
 - **Private plugin marketplace retired from the topology + system map**: the
   redirect-only private repo `intent-solutions-io/team-intent-claude-plugins`
   was archived (2026-07-17), so `repos.yml` (now 4 repos, dropped the dead
