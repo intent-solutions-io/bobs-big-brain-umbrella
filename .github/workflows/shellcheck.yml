@@ -1,0 +1,45 @@
+name: shellcheck
+
+# Validates the repo's shell tooling (bin/ + scripts/ + tracked git hooks).
+# Runs on every PR and every push to main so it can serve as a required check.
+# No path filter on purpose: keep it simple to mark as a single required-check
+# context, and never skip validation just because a change looked unrelated.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Shellcheck all tracked shell scripts
+        run: |
+          set -euo pipefail
+          # Lint every tracked file with a shell shebang. Shebang-detection
+          # (not a hardcoded list) auto-covers new scripts + bin/gsb the moment
+          # they gain a bash/sh shebang, with no workflow edit.
+          mapfile -t FILES < <(git ls-files | while read -r f; do
+            head -1 "$f" 2>/dev/null | grep -qE '^#!.*(bash|sh)\b' && echo "$f"
+          done)
+          if [ "${#FILES[@]}" -eq 0 ]; then
+            echo "No shell scripts found to lint."
+            exit 0
+          fi
+          printf 'Linting %d shell script(s):\n' "${#FILES[@]}"
+          printf '  %s\n' "${FILES[@]}"
+          # severity=warning: the current scripts are clean at this level. Default
+          # severity surfaces ~20 info-only style notes (SC2317 trap-handler false
+          # positives, SC2029 intentional ssh client-side expansion, SC2012/SC2015
+          # style) that are noisy-but-safe — gating on those would be a wall of nits.
+          shellcheck --severity=warning "${FILES[@]}"
