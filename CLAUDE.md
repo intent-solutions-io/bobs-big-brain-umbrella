@@ -29,7 +29,7 @@ that makes the umbrella the one place to operate the whole stack from.
 |---|---|---|
 | Umbrella / landing (this repo) | `bobs-big-brain-umbrella` | `intent-solutions-io` (company) |
 | Public plugin (installable code) | `bobs-big-brain-plugin` | `jeremylongshore` (personal) |
-| Engines | `intentional-cognition-os` (ICO · compile) · `qmd-team-intent-kb` (INTKB · govern) | `jeremylongshore` (personal) |
+| Engines | `bobs-big-brain-compiler` (compile; npm: `intentional-cognition-os`) · `bobs-big-brain-registrar` (govern) — renamed 2026-07-19 from `intentional-cognition-os` / `qmd-team-intent-kb` | `jeremylongshore` (personal) |
 
 Program-level beads + the GitHub tracking issue (#1, epic `compile-then-govern-qy7`) live **here** — the
 umbrella is the program tracker. Plugin build + architecture details live in the plugin repo's CLAUDE.md.
@@ -62,8 +62,8 @@ the compile/review crons + backup anchor-verify + `~/.claude.json` MCP path were
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Role |
 |---|---|---|---|---|
 | `bobs-big-brain-umbrella/` | `intent-solutions-io/bobs-big-brain-umbrella` | company | public | **umbrella (here)** |
-| `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | ICO · compile engine |
-| `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | INTKB · govern engine |
+| `bobs-big-brain-compiler/` | `jeremylongshore/bobs-big-brain-compiler` | personal | public | Compiler · compile engine (renamed 2026-07-19 from `intentional-cognition-os`; npm name + `@ico/*` scope unchanged; bead prefix stays `intentional-cognition-os`) |
+| `bobs-big-brain-registrar/` | `jeremylongshore/bobs-big-brain-registrar` | personal | public | Registrar · govern engine (renamed 2026-07-19 from `qmd-team-intent-kb`; `@qmd-team-intent-kb/*` scope + GHCR image unchanged; bead prefix stays `qmd-team-intent-kb`) |
 | `bobs-big-brain-plugin/` | `jeremylongshore/bobs-big-brain-plugin` | personal | public | public unified plugin (local + team modes) |
 | ~~`team-intent-claude-plugins/`~~ | `intent-solutions-io/team-intent-claude-plugins` | company | private | **RETIRED + archived 2026-07-17** — was the private team marketplace (renamed from `claude-plugins` on 2026-06-24); a redirect-only catalog pointing at the public plugin, no private content. "Team" is a runtime mode of the public plugin, not a repo. |
 | `~/.teamkb/` | *(not a repo)* | — | — | the live brain data (one dir; backed up by `~/bin/teamkb-backup.sh`) |
@@ -82,8 +82,8 @@ flagship repos:
 
 | Repo | Layer | Role |
 |------|-------|------|
-| [`intentional-cognition-os`](https://github.com/jeremylongshore/intentional-cognition-os) (ICO) | **Compile** | Local-first knowledge OS. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (Claude). 6 compiler passes → emits a governance spool. |
-| [`qmd-team-intent-kb`](https://github.com/jeremylongshore/qmd-team-intent-kb) (INTKB) | **Govern** | Deterministic control plane. Consumes ICO's spool, runs dedupe → policy → promotion, hash-chained append-only audit log. |
+| [`bobs-big-brain-compiler`](https://github.com/jeremylongshore/bobs-big-brain-compiler) | **Compile** | Local-first knowledge OS (npm: `intentional-cognition-os`). Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 6 compiler passes → emits a governance spool. |
+| [`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) | **Govern** | Deterministic control plane. Consumes the Compiler's spool, runs dedupe → policy → promotion, hash-chained by-protocol append-only audit log. |
 | [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | On-device hybrid search (BM25 + vector + LLM rerank). Pinned upstream dependency; every result is a `qmd://` citation. |
 | [`bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles the engines; this umbrella points at it. |
 
@@ -116,7 +116,7 @@ and the correct backup/DR scope are **code-verified** in
 - **Local↔team bridge — ALREADY BUILT. It is the single remote brain (ratified decision D27,
   "build-not-decide" — NOT an open architecture choice, and NOT Cloudflare R2).** There is exactly ONE
   governed brain; teammates reach it over the tailnet, they do not each run their own. Two shipped pieces:
-  (1) the INTKB **Fastify HTTP API** (`qmd-team-intent-kb/apps/api`, scrypt-hashed per-user bearer tokens,
+  (1) the Registrar's **Fastify HTTP API** (`bobs-big-brain-registrar/apps/api`, scrypt-hashed per-user bearer tokens,
   tailnet-bound) — **deployed live** on the team-server (`650.5` closed); (2) the **one unified plugin**
   (`bobs-big-brain-plugin` v1.0.0, `650.1` closed) with two runtime modes dispatched by
   `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`) and **team** (remote proxy to the live
@@ -226,8 +226,9 @@ adapter); **reject** the stale NEXUS RAG stack.
 logs a genuine recall miss. Building it before that signal is the premature optimization the
 council ruled out.
 
-Canonical record: `qmd-team-intent-kb/000-docs/038-AT-DECR`. Tracked in epic
-`qmd-team-intent-kb-0t9` (GH `jeremylongshore/qmd-team-intent-kb#170` / Plane INTKB-7);
+Canonical record: `bobs-big-brain-registrar/000-docs/038-AT-DECR`. Tracked in epic
+`qmd-team-intent-kb-0t9` (the bead prefix keeps the pre-rename name;
+GH `jeremylongshore/bobs-big-brain-registrar#170` / Plane INTKB-7);
 `compile-then-govern-qy7.13` folds in.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->

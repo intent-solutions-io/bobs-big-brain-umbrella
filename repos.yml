@@ -1,4 +1,4 @@
-# repos.yml — Governed Second Brain topology manifest.
+# repos.yml — Bob's Big Brain topology manifest.
 #
 # Single source of truth for the repo topology. Read by `bin/gsb` (the cross-repo
 # helper) and documented in `000-docs/007-AT-SMAP-repo-topology-and-working-surface.md`.
@@ -29,21 +29,21 @@ repos:
     layer: umbrella
     role: "Umbrella / landing — the single working surface (this repo)"
 
-  - name: intentional-cognition-os
-    local_path: intentional-cognition-os
-    remote: https://github.com/jeremylongshore/intentional-cognition-os.git
+  - name: bobs-big-brain-compiler
+    local_path: bobs-big-brain-compiler
+    remote: https://github.com/jeremylongshore/bobs-big-brain-compiler.git
     org: jeremylongshore
     visibility: public
     layer: engine
-    role: "ICO — the COMPILE engine (deterministic kernel + Claude compiler, 6 passes)"
+    role: "Compiler — the COMPILE engine (deterministic kernel + LLM compiler, 6 passes; npm: intentional-cognition-os)"
 
-  - name: qmd-team-intent-kb
-    local_path: qmd-team-intent-kb
-    remote: https://github.com/jeremylongshore/qmd-team-intent-kb.git
+  - name: bobs-big-brain-registrar
+    local_path: bobs-big-brain-registrar
+    remote: https://github.com/jeremylongshore/bobs-big-brain-registrar.git
     org: jeremylongshore
     visibility: public
     layer: engine
-    role: "INTKB — the GOVERN engine (deterministic control plane, audit chain) + the brain HTTP API"
+    role: "Registrar — the GOVERN engine (deterministic control plane, audit chain) + the brain HTTP API"
 
   - name: bobs-big-brain-plugin
     local_path: bobs-big-brain-plugin

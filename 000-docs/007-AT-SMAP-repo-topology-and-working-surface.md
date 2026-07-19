@@ -20,12 +20,12 @@ maps, deliberately split.
 ```mermaid
 flowchart TB
   subgraph ISO["org: intent-solutions-io  ·  COMPANY"]
-    UMB["<b>governed-second-brain</b><br/>UMBRELLA · landing<br/>docs + map only<br/><b>◀ you are here</b>"]
+    UMB["<b>bobs-big-brain-umbrella</b><br/>UMBRELLA · landing<br/>docs + map only<br/><b>◀ you are here</b>"]
     MKT["<b>team-intent-claude-plugins</b><br/>✗ RETIRED + archived 2026-07-17<br/>was private team marketplace<br/>(redirect-only, no private content)"]
   end
   subgraph JL["org: jeremylongshore  ·  PERSONAL"]
-    ICO["<b>intentional-cognition-os</b> (ICO)<br/>COMPILE engine"]
-    INTKB["<b>qmd-team-intent-kb</b> (INTKB)<br/>GOVERN engine"]
+    ICO["<b>bobs-big-brain-compiler</b><br/>COMPILE engine"]
+    INTKB["<b>bobs-big-brain-registrar</b><br/>GOVERN engine"]
     PLUG["<b>bobs-big-brain-plugin</b><br/>PUBLIC unified plugin<br/>local + team runtime modes"]
   end
   DATA[("<b>~/.teamkb</b> — NOT a repo<br/>the live compiled + governed brain<br/>governed memories + wiki pages (live counts in 005-AT-ARCH §0)<br/>backed up by teamkb-backup.sh")]
@@ -62,9 +62,9 @@ cloned as `intent-solutions-marketplace/` while its remote was `claude-plugins` 
 
 | Local dir (`~/000-projects/`) | GitHub remote | Org | Vis | Layer / role |
 |---|---|---|---|---|
-| `governed-second-brain/` | `intent-solutions-io/bobs-big-brain-umbrella` | company | public | **Umbrella / landing — you are here** |
-| `intentional-cognition-os/` | `jeremylongshore/intentional-cognition-os` | personal | public | **ICO** · compile engine |
-| `qmd-team-intent-kb/` | `jeremylongshore/qmd-team-intent-kb` | personal | public | **INTKB** · govern engine |
+| `bobs-big-brain-umbrella/` | `intent-solutions-io/bobs-big-brain-umbrella` | company | public | **Umbrella / landing — you are here** |
+| `bobs-big-brain-compiler/` | `jeremylongshore/bobs-big-brain-compiler` | personal | public | **Compiler** · compile engine (renamed 2026-07-19 from `intentional-cognition-os`; npm name unchanged) |
+| `bobs-big-brain-registrar/` | `jeremylongshore/bobs-big-brain-registrar` | personal | public | **Registrar** · govern engine (renamed 2026-07-19 from `qmd-team-intent-kb`; npm scope + GHCR image unchanged) |
 | `bobs-big-brain-plugin/` | `jeremylongshore/bobs-big-brain-plugin` | personal | public | the **public unified plugin** (local + team modes) |
 | ~~`team-intent-claude-plugins/`~~ | `intent-solutions-io/team-intent-claude-plugins` | company | private | **RETIRED + archived 2026-07-17** — was the private team marketplace; a redirect-only catalog whose only entry (`intent-brain`) pointed at the public plugin, so no private content. "Team" is a runtime mode of the public plugin, not a repo. Dropped from `repos.yml`. |
 | `~/.teamkb/` | *(not a repo)* | — | — | **the live brain data** — one directory; backed up via `~/bin/teamkb-backup.sh` |
@@ -84,7 +84,7 @@ in `repos.yml`.
 ### `intent-brain` — there is no standalone repo
 
 `intent-brain` is **not** a repo in either org. It existed only as a *published entry* inside the
-private `team-intent-claude-plugins` marketplace (built from `qmd-team-intent-kb/.claude-plugin/`) —
+private `team-intent-claude-plugins` marketplace (built from the registrar repo's `.claude-plugin/`, then named `qmd-team-intent-kb`) —
 and that marketplace was **retired + archived 2026-07-17**. `intent-brain` was **folded into the
 unified plugin's team mode and retired** (bead `compile-then-govern-650.4`). Don't go looking for a
 repo named `intent-brain`, or for the marketplace that used to publish it.

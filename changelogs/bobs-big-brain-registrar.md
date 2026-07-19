@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
-<!-- source: https://raw.githubusercontent.com/jeremylongshore/qmd-team-intent-kb/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-07-18T17:49:38Z -->
+<!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
+<!-- fetched-at: 2026-07-19T20:48:24Z -->
 
 # Changelog
 

@@ -7,8 +7,8 @@ contains the public product narrative and cross-repository working surface; it
 does not contain application code. Keep implementation, runtime configuration,
 and code-level security work in the owning repository:
 
-- `intentional-cognition-os` (ICO) compiles source material into a spool.
-- `qmd-team-intent-kb` (INTKB) deterministically governs that spool.
+- `bobs-big-brain-compiler` (npm: `intentional-cognition-os`) compiles source material into a spool.
+- `bobs-big-brain-registrar` deterministically governs that spool.
 - `bobs-big-brain-plugin` packages the local and team experiences.
 
 At the root, `README.md` is the landing page, `000-docs/` holds architecture,

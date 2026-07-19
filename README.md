@@ -14,9 +14,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/jeremylongshore/intentional-cognition-os/actions/workflows/ci.yml"><img src="https://github.com/jeremylongshore/intentional-cognition-os/actions/workflows/ci.yml/badge.svg" alt="ICO CI"></a>
-  <a href="https://github.com/jeremylongshore/qmd-team-intent-kb/actions/workflows/ci.yml"><img src="https://github.com/jeremylongshore/qmd-team-intent-kb/actions/workflows/ci.yml/badge.svg" alt="INTKB CI"></a>
-  <a href="https://www.npmjs.com/package/intentional-cognition-os"><img src="https://img.shields.io/npm/v/intentional-cognition-os?style=flat-square&logo=npm&label=ico" alt="ico on npm"></a>
+  <a href="https://github.com/jeremylongshore/bobs-big-brain-compiler/actions/workflows/ci.yml"><img src="https://github.com/jeremylongshore/bobs-big-brain-compiler/actions/workflows/ci.yml/badge.svg" alt="Compiler CI"></a>
+  <a href="https://github.com/jeremylongshore/bobs-big-brain-registrar/actions/workflows/ci.yml"><img src="https://github.com/jeremylongshore/bobs-big-brain-registrar/actions/workflows/ci.yml/badge.svg" alt="Registrar CI"></a>
+  <a href="https://www.npmjs.com/package/intentional-cognition-os"><img src="https://img.shields.io/npm/v/intentional-cognition-os?style=flat-square&logo=npm&label=compiler" alt="the compiler on npm"></a>
   <img src="https://img.shields.io/badge/License-Apache--2.0-10b981?style=flat-square" alt="License: Apache-2.0">
   <img src="https://img.shields.io/badge/local--first-on--device-0ea5e9?style=flat-square" alt="local-first">
 </p>
@@ -26,8 +26,8 @@
   <a href="https://github.com/jeremylongshore/bobs-big-brain-plugin"><strong>bobs-big-brain-plugin</strong></a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <strong>Engines:</strong>
-  <a href="https://github.com/jeremylongshore/intentional-cognition-os">intentional-cognition-os</a> ·
-  <a href="https://github.com/jeremylongshore/qmd-team-intent-kb">qmd-team-intent-kb</a>
+  <a href="https://github.com/jeremylongshore/bobs-big-brain-compiler">bobs-big-brain-compiler</a> ·
+  <a href="https://github.com/jeremylongshore/bobs-big-brain-registrar">bobs-big-brain-registrar</a>
 </p>
 
 ---
@@ -73,14 +73,14 @@ The category optimizes one axis: recall. We compete on a different one: **govern
 
 | Repo | Layer | What it does |
 |------|-------|--------------|
-| **[intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os)** (`ico`) | **Compile** | Local-first knowledge OS. Ingests raw corpus (PDF / markdown / web clips) and compiles it into semantic knowledge through six passes, runs episodic research tasks, and emits a governance spool. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (Claude). 5 workspace packages, Apache-2.0. |
-| **[qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb)** (INTKB) | **Govern** | Governed team-memory platform. Consumes ICO's spool, runs every candidate through dedupe → policy → promotion, keeps a hash-chained, append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 9 packages, Apache-2.0. |
+| **[bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler)** | **Compile** | Reads and organizes raw sources (npm: `intentional-cognition-os`). Ingests raw corpus (PDF / markdown / web clips) and compiles it into semantic knowledge through six passes, runs episodic research tasks, and emits a governance spool. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 5 workspace packages, Apache-2.0. |
+| **[bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar)** | **Govern** | Decides what's admitted to team memory (by code) and keeps the tamper-evident record. Consumes the Compiler's spool, runs every candidate through dedupe → policy → promotion, keeps a hash-chained, by-protocol append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 9 packages, Apache-2.0. |
 | **[qmd](https://github.com/tobi/qmd)** (`@tobilu/qmd`) | **Retrieve** | On-device search for markdown, by [@tobi](https://github.com/tobi). The retrieval substrate. The brain's serving path is **deterministic and model-free**: qmd's keyword (BM25) results are fused with a native in-process FTS5 (BM25) backend via reciprocal-rank fusion (RRF, k=60), then freshness/category reranked — no query-time LLM call. Every hit is a `qmd://<collection>/<path>` URI — the citation. |
 | **[bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles** the engines into one in-process stdio MCP server — cited search **and** governed capture (capture → govern → promote, with a hash-chained receipt), no daemon, no network. |
 
 **Powered by [tobi/qmd](https://github.com/tobi/qmd).** We pin `@tobilu/qmd`, track bumps with Dependabot, and gate upgrades with canary + integration tests. We **do not fork** the search engine — Bob's Big Brain is the product surround (compile + govern + receipts + plugin).
 
-**Operator tip (local team brain):** bare `qmd` uses your personal `~/.cache/qmd`. The team index lives under `~/.teamkb/qmd-index/<tenant>/`. From an [qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb) checkout: `./scripts/bbb-qmd status` (pinned `@tobilu/qmd` binary + team XDG) and `pnpm search-canary`. Full runbook: [000-docs/042-OD-OPSM-bbb-qmd-operator-runbook.md](https://github.com/jeremylongshore/qmd-team-intent-kb/blob/main/000-docs/042-OD-OPSM-bbb-qmd-operator-runbook.md) (lands with INTKB PR that adds `bbb-qmd`).
+**Operator tip (local team brain):** bare `qmd` uses your personal `~/.cache/qmd`. The team index lives under `~/.teamkb/qmd-index/<tenant>/`. From a [bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar) checkout: `./scripts/bbb-qmd status` (pinned `@tobilu/qmd` binary + team XDG) and `pnpm search-canary`. Full runbook: [000-docs/042-OD-OPSM-bbb-qmd-operator-runbook.md](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/main/000-docs/042-OD-OPSM-bbb-qmd-operator-runbook.md).
 
 **How the repos fit together** — this umbrella maps them; the plugin bundles the engines; the engines + qmd form the compile → govern → retrieve pipeline. Each box is its own independently released repo:
 
@@ -91,8 +91,8 @@ The category optimizes one axis: recall. We compete on a different one: **govern
 flowchart TB
     UMB["<b>bobs-big-brain-umbrella</b><br/>the map (you are here)"]
     subgraph ENG["Engines"]
-        ICO["<b>intentional-cognition-os</b><br/>ICO · compile"]
-        INTKB["<b>qmd-team-intent-kb</b><br/>INTKB · govern"]
+        ICO["<b>bobs-big-brain-compiler</b><br/>compile"]
+        INTKB["<b>bobs-big-brain-registrar</b><br/>govern"]
     end
     QMD["<b>qmd</b> (by @tobi)<br/>retrieve · upstream, pinned"]
     PLUG["<b>bobs-big-brain-plugin</b><br/>the installable product"]
@@ -119,9 +119,9 @@ A single fact's journey from raw source to cited, audited answer:
   'noteBkgColor':'#0c4a6e','noteTextColor':'#e5e7eb'}}}%%
 sequenceDiagram
     participant S as Raw source
-    participant ICO as ICO — compile
+    participant ICO as Compiler — compile
     participant SP as Spool (JSONL contract)
-    participant KB as INTKB — govern
+    participant KB as Registrar — govern
     participant Q as qmd — retrieve
     participant A as Agent / Human
 
@@ -148,11 +148,11 @@ flowchart TB
     subgraph SRC["Raw corpus"]
         D["PDF · markdown · web clips"]
     end
-    subgraph ICO["ICO — intentional-cognition-os (Compile)"]
+    subgraph ICO["bobs-big-brain-compiler (Compile)"]
         K["Kernel — SQLite + JSONL<br/>state · provenance · audit"]
-        C["Compiler — Claude<br/>6 passes · ask · research"]
+        C["Compiler — LLM<br/>6 passes · ask · research"]
     end
-    subgraph KB["INTKB — qmd-team-intent-kb (Govern)"]
+    subgraph KB["bobs-big-brain-registrar (Govern)"]
         CUR["Curator — dedupe → policy → promote"]
         AUD["Hash-chained append-only audit + git-exporter"]
         MCP["MCP server / REST"]
@@ -170,13 +170,13 @@ flowchart TB
 
 ## The two flagships, up close
 
-### ICO — the compiler
+### The Compiler — reads and organizes
 
-[`intentional-cognition-os`](https://github.com/jeremylongshore/intentional-cognition-os) is a local-first knowledge OS with a CLI (`ico`). It **derives** rather than indexes: across six passes it computes source summaries, concepts, topic pages, backlinks, contradictions, and gaps from your corpus — and keeps raw and derived strictly separate, with provenance from the first byte. Hard questions get an episodic research workspace (a five-agent collector→summarizer→skeptic→integrator→orchestrator flow) that's archived when done. When knowledge is ready to leave the building, ICO **emits a spool**: the tenant-scoped JSONL contract INTKB consumes.
+[`bobs-big-brain-compiler`](https://github.com/jeremylongshore/bobs-big-brain-compiler) (npm: `intentional-cognition-os`) is a local-first knowledge OS with a CLI (`ico`). It **derives** rather than indexes: across six passes it computes source summaries, concepts, topic pages, backlinks, contradictions, and gaps from your corpus — and keeps raw and derived strictly separate, with provenance from the first byte. Hard questions get an episodic research workspace (a five-agent collector→summarizer→skeptic→integrator→orchestrator flow) that's archived when done. When knowledge is ready to leave the building, the Compiler **emits a spool**: the tenant-scoped JSONL contract the Registrar consumes.
 
-### INTKB — the governance layer
+### The Registrar — the governance layer
 
-[`qmd-team-intent-kb`](https://github.com/jeremylongshore/qmd-team-intent-kb) is the deterministic control plane for team memory. It ingests ICO's spool and runs every candidate through **dedupe → policy → promotion** — secret detection, trust levels, and tenant isolation all live here, enforced by code, not by a model. Promotions and rejections are written to an **append-only audit log**; curated memory is exported to a category-routed markdown tree and indexed by qmd. An MCP server exposes governed, curated-only search to agents.
+[`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) is the deterministic control plane for team memory. It ingests the Compiler's spool and runs every candidate through **dedupe → policy → promotion** — secret detection, trust levels, and tenant isolation all live here, enforced by code, not by a model. Promotions and rejections are written to a **hash-chained, by-protocol append-only audit log**; curated memory is exported to a category-routed markdown tree and indexed by qmd. An MCP server exposes governed, curated-only search to agents.
 
 ### qmd — the retrieval substrate
 
@@ -186,7 +186,7 @@ flowchart TB
 
 This is the wedge. Three artifacts make "what did the agent know and do" provable.
 
-**1. The spool candidate** — ICO's hand-off contract. Tenant-scoped, schema-versioned, content-capped, with a SHA-256 manifest:
+**1. The spool candidate** — the Compiler's hand-off contract. Tenant-scoped, schema-versioned, content-capped, with a SHA-256 manifest:
 
 ```json
 {
@@ -239,7 +239,7 @@ Not a claim — a trail:
 
 - **End-to-end, on a real corpus.** `scripts/demo-e2e.sh` drives the whole chain: compile → spool → govern → index → search → audit verify. Latest run: **7/7 stages green, 21 candidates promoted, 20 `qmd://` citations returned, 61 audit-chain events, 0 breaks.**
 - **Continuously guarded.** A key-free nightly CI smoke replays the deterministic half (govern → retrieve → cite) off a frozen fixture — any regression in the chain trips a red build, with no API calls and no secrets.
-- **Public dog-food trail.** ICO eats its own cooking against real corpora and publishes the citation-verify-rate trend over time. The metrics are public; the source content stays private.
+- **Public dog-food trail.** The Compiler eats its own cooking against real corpora and publishes the citation-verify-rate trend over time. The metrics are public; the source content stays private.
 
 ## Getting started
 
@@ -250,27 +250,27 @@ Not a claim — a trail:
 To instead see the raw chain run from source — no API key, no secrets:
 
 ```bash
-# 1. clone both flagships
-git clone https://github.com/jeremylongshore/intentional-cognition-os.git
-git clone https://github.com/jeremylongshore/qmd-team-intent-kb.git
+# 1. clone both engines
+git clone https://github.com/jeremylongshore/bobs-big-brain-compiler.git
+git clone https://github.com/jeremylongshore/bobs-big-brain-registrar.git
 
-# 2. build INTKB (installs the pinned qmd binary)
-cd qmd-team-intent-kb && pnpm install && pnpm build && cd ..
+# 2. build the Registrar (installs the pinned qmd binary)
+cd bobs-big-brain-registrar && pnpm install && pnpm build && cd ..
 
 # 3. run the deterministic half of the chain off a fixture (govern → retrieve → cite)
-cd intentional-cognition-os
+cd bobs-big-brain-compiler
 scripts/demo-e2e.sh --from-spool dogfood/fixtures/smoke-spool
 ```
 
-For the full chain (including ICO's compile step) set `ANTHROPIC_API_KEY` and run `scripts/demo-e2e.sh`. Per-repo quickstarts live in each flagship's README.
+For the full chain (including the compile step) set `ANTHROPIC_API_KEY` and run `scripts/demo-e2e.sh`. Per-repo quickstarts live in each engine's README.
 
 ## Status
 
 | Repo | Version | License |
 |------|---------|---------|
 | [bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin) (the installable product) | v1.1.2 ([npm](https://www.npmjs.com/package/governed-second-brain), SLSA-provenanced) | Apache-2.0 |
-| [intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os) | v1.21.0 | Apache-2.0 |
-| [qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb) | v0.7.0 | Apache-2.0 |
+| [bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler) (npm: `intentional-cognition-os`) | v1.22.0 | Apache-2.0 |
+| [bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar) | v0.8.0 | Apache-2.0 |
 | [qmd](https://github.com/tobi/qmd) (upstream dependency) | 2.5.3 — pinned · Dependabot-tracked · integration-test-gated | MIT |
 
 ## Documentation

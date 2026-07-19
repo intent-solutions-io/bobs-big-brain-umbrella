@@ -6,8 +6,8 @@ no application code here.
 
 Work happens in the flagship repos:
 
-- **[intentional-cognition-os](https://github.com/jeremylongshore/intentional-cognition-os)** (ICO) — the compiler
-- **[qmd-team-intent-kb](https://github.com/jeremylongshore/qmd-team-intent-kb)** (INTKB) — the governance layer
+- **[bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler)** — the compiler (npm: `intentional-cognition-os`)
+- **[bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar)** — the governance layer
 
 Please open issues and pull requests in the relevant flagship repo, not here. Each carries its
 own `CONTRIBUTING.md`, test gates, and architecture docs.

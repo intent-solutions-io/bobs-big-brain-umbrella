@@ -1,8 +1,9 @@
 # 005-AT-ARCH — Grounded system map + backup/DR scope
 
-**What this is:** a code-verified map of the Governed Second Brain's live state and data flow, plus
-the correct backup/DR scope. First derived 2026-06-21 by reading the real engine repos (ICO
-`intentional-cognition-os`, INTKB `qmd-team-intent-kb`), the plugin, and the live `~/.teamkb`
+**What this is:** a code-verified map of Bob's Big Brain's live state and data flow, plus
+the correct backup/DR scope. First derived 2026-06-21 by reading the real engine repos (the
+Compiler `bobs-big-brain-compiler`, the Registrar `bobs-big-brain-registrar` — renamed 2026-07-19
+from `intentional-cognition-os` / `qmd-team-intent-kb`), the plugin, and the live `~/.teamkb`
 directory — so future sessions don't re-explore from scratch. Every claim cites a real file.
 Companion map: [`007-AT-SMAP`](007-AT-SMAP-repo-topology-and-working-surface.md) covers *which repos*
 make up the system; **this** doc covers *where the data/state lives*.
@@ -62,7 +63,7 @@ _Snapshot 2026-07-16T10:44:05Z · auto-updated by [`bin/teamkb-systemmap.sh`](..
 *(Live sizes + row/file counts: §0.)*
 
 ### teamkb.db tables (INTKB)
-- `candidates` — raw pre-governance inbox; insert-only; the immutable record of what was proposed.
+- `candidates` — raw pre-governance inbox; insert-only; the durable record of what was proposed.
 - `curated_memories` — **the canonical governed brain**: promoted memories, lifecycle-managed
   (`active`/`superseded`/`deprecated`/`archived`), with `policy_evaluations_json` proof.
 - `audit_events` — **tamper-evident SHA-256 hash-chain** (`entry_hash` + `prev_entry_hash`,
@@ -111,8 +112,8 @@ raw corpus (brain/raw/)
   Shipped as npm `governed-second-brain` (SLSA-provenanced) + a self-hosted `marketplace.json`.
 - **Private team marketplace** → `intent-solutions-io/team-intent-claude-plugins` (private catalog;
   renamed from `claude-plugins` on 2026-06-24) was **RETIRED + archived 2026-07-17**. It was a
-  redirect-only catalog whose only entry (`intent-brain`, built from
-  `qmd-team-intent-kb/.claude-plugin/`) pointed at the public plugin — indirection with no private
+  redirect-only catalog whose only entry (`intent-brain`, built from the registrar repo's
+  `.claude-plugin/`, then named `qmd-team-intent-kb`) pointed at the public plugin — indirection with no private
   content. "Team" is a runtime mode of the public plugin, not a separate build, so distribution is
   now the single public plugin in two runtime modes. (`intent-brain` was folded into team mode and
   retired — `compile-then-govern-650.4`.)
@@ -174,11 +175,11 @@ Operational runbook + exact restore steps: [`006-AT-RNBK`](006-AT-RNBK-brain-bac
 
 ## 5. Key references
 
-- INTKB store schema + audit verify: `qmd-team-intent-kb/packages/store/src/{schema.ts,audit-verify.ts}`
-- INTKB govern pipeline: `qmd-team-intent-kb/apps/curator/src/{curator.ts,promotion/promoter.ts}`
-- INTKB export: `qmd-team-intent-kb/apps/git-exporter/src/exporter.ts`
-- ICO kernel migrations + compiler passes + spool: `intentional-cognition-os/packages/{kernel/migrations,compiler/src/passes,types/src/spool.ts}`
-- Spool boundary threat model: `qmd-team-intent-kb/000-docs/036-AT-THRT-spool-boundary-threat-model.md`
+- Registrar store schema + audit verify: `bobs-big-brain-registrar/packages/store/src/{schema.ts,audit-verify.ts}`
+- Registrar govern pipeline: `bobs-big-brain-registrar/apps/curator/src/{curator.ts,promotion/promoter.ts}`
+- Registrar export: `bobs-big-brain-registrar/apps/git-exporter/src/exporter.ts`
+- Compiler kernel migrations + compiler passes + spool: `bobs-big-brain-compiler/packages/{kernel/migrations,compiler/src/passes,types/src/spool.ts}`
+- Spool boundary threat model: `bobs-big-brain-registrar/000-docs/036-AT-THRT-spool-boundary-threat-model.md`
 - Ecosystem thesis: `034-AT-NTRP-ecosystem-thesis.md` (in both flagships)
 - Plugin MCP server: `bobs-big-brain-plugin/src/local-server.ts`
 - Backup script + timer + live-stats updater: `~/bin/teamkb-backup.sh`, `~/.config/systemd/user/teamkb-backup.{service,timer}`, `bin/teamkb-systemmap.sh`
