@@ -148,3 +148,32 @@ Rationale: an architectural-conflict resolution, not a coding task. Per the esta
 - **Grounding invariant (cross-cutting, `[imp-grounding]`):** C5 is the standing audit; its frozen-rule and anchor instances are B2 (seam firewall), C1 (real-query anchor), F1 + G1 + G2 (receipt/completeness anchors), and `017` (targets chosen from outside).
 
 Every bead in this blueprint is grounded in a file the audit read, a success criterion in `017`, and (where a mechanism, not a doc) a citation in `018`. Beads that extend an existing epic (`intentional-cognition-os-l13`, `compile-then-govern-8da`, `qmd-team-intent-kb-0t9`, `038-AT-DECR`) are marked so we do not duplicate open work. Hand to the per-repo bead process for creation after review.
+
+---
+
+## Status addendum — Wave 1 SHIPPED (2026-07-20)
+
+Status note only; the plan above is unchanged. All listed PRs are merged as of
+this note; the per-track CI and review-lane evidence lives on each PR itself
+(check runs + the two MiniMax lane comments), which is the recorded gates
+surface for this program — this doc intentionally carries pointers, not
+copies.
+
+| Track | Where it landed | Outcome |
+|---|---|---|
+| B2 seam firewall | registrar PR #294 (carried d239caa) | Branded `DeterministicScore` + dep-cruiser barrier + two-way `@ts-expect-error` proofs vs the real `RerankScore` |
+| B1 reranker | registrar PR #294 | Built + **measured: ship gate MISS** — semantic Δ structurally zero (20/28 semantic queries retrieve ≤1 fused candidate: candidate *generation* is the wall, not ranking); lexical nDCG −0.026; ~2.1–4.6 s/doc CPU. Stays behind the explicit opt-in flag; plugin NOT wired; `bbb-reranker` installed but disabled. Committed artifact: registrar `eval-results/governed-brain-v1-rerank.json` |
+| C1 eval anchor | registrar PR #292 | Frozen-snapshot harness + committed floor (overall R@10 0.5595 / lexical 1.0000 / semantic 0.3393) + daily `bbb-eval-governed` timer with Slack-on-regression |
+| F1 anchor witness | estate + PR #290 docs | Private `bobs-big-brain-anchors` remote, force-push/deletion-blocking ruleset (GH013-proven), auto-push proven end-to-end (govern → anchor `6675c3a` → remote tip match); divergence runbook 045-OD-RNBK |
+| F2 anchor cross-check | registrar PR #290 | Provenance integrity consumes fork-classified anchor verdicts (never the raw `ok`); truncation AND true re-hash-forward fail closed while intra-chain sees nothing |
+| G2 substrate guard | registrar PR #289 | `verify-corpus-accounting` (accepted class exactly `promoted`); planted raw-INSERT bypass detected; nightly gate requires ≥1 accounted row |
+| E1 contradiction ordering | registrar PR #288 | `contradiction_check` flag-only rule; structural two-phase pipeline — a reject rule cannot skip the contradiction flag |
+| D1+D2 freshness | registrar PR #293 | Promote-then-searchable via post-commit refresher + derived dirty signal (migration v10); `stalenessSeconds` in health + nightly canary threshold |
+| G1+G3 receipts floor | compiler PR #176 | Receipts precede visibility (tmp→receipts→rename, six writers) + `ico audit reconcile` quarantine + cross-day trace chaining (mid-chain day-file deletion detectable) |
+
+**Measured consequence for later waves:** the Wave-3 dense-arm bead's gate
+condition ("a measured conceptual-slice gap surviving the reranker") is now
+met with committed evidence; the dense arm remains deferred per the ratified
+Wave-0 decision (registrar 044-AT-DECR: dense behind a measured P2 gate) and
+the Wave-3 bead deferral (registrar store, deferred until 2026-09-01).
+Wave 2 (B3, C2, C3, C5, E2, E3, F3–F6, H1–H5, G4, G5) starts on this floor.
