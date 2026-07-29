@@ -142,6 +142,11 @@ contract**, not by absorbing repos:
   pointer binds an agent action in AGP's signed, hash-chained journal ("what the agent **did**") to
   the tip of Bob's Big Brain's hash-chained receipt log ("what the agent **knew**"). The pointer
   lives inside AGP's signed event bytes, so it is tamper-evident, not merely embedded.
+  **Grounding, so neither side is taken on faith:** the brain-side "hash-chained receipt log" is
+  `audit_events` — a tamper-evident SHA-256 chain (`entry_hash` + `prev_entry_hash`) per
+  [`005-AT-ARCH` §2](005-AT-ARCH-grounded-system-map-and-backup-scope.md), this repo's own
+  code-verified authority — and the AGP-side field names are `CROSS_CHAIN_FIELD_NAMES` in the cited
+  contract. Both cited AGP paths are on AGP `main` today; they do **not** depend on any open AGP PR.
 - **What the seam does and does not do yet.** The binding is **structural today**: a stamped
   `gsb_receipt_tip_hash` records, tamper-evidently, which brain-receipt tip the agent claims it acted
   on. *"What did it know when it acted X?"* is **not yet operationally answerable** — resolving that
