@@ -140,9 +140,14 @@ contract**, not by absorbing repos:
   `correlation_id` + `gsb_receipt_tip_hash` (AGP `src/contracts/journal-event.ts`; ADR
   `agent-governance-plane/000-docs/058-AT-ADR-cross-chain-causal-pointer-2026-07-12.md`). The
   pointer binds an agent action in AGP's signed, hash-chained journal ("what the agent **did**") to
-  the tip of Bob's Big Brain's hash-chained receipt log ("what the agent **knew**"), so *"what did
-  it know when it acted X?"* is answerable across the two chains. The pointer lives inside AGP's
-  signed event bytes, so it is tamper-evident, not merely embedded.
+  the tip of Bob's Big Brain's hash-chained receipt log ("what the agent **knew**"). The pointer
+  lives inside AGP's signed event bytes, so it is tamper-evident, not merely embedded.
+- **What the seam does and does not do yet.** The binding is **structural today**: a stamped
+  `gsb_receipt_tip_hash` records, tamper-evidently, which brain-receipt tip the agent claims it acted
+  on. *"What did it know when it acted X?"* is **not yet operationally answerable** — resolving that
+  hash against the live chain needs the brain-side read endpoint below, which is not built. Until it
+  is, the pointer **records** the claim; it does not yet let a verifier **check** it. Treat the seam
+  as a defined contract, not a working end-to-end provenance query.
 - **Naming:** the `gsb_` field prefix is the pre-rename product name (GSB — Governed Second Brain,
   productized as Bob's Big Brain on 2026-07-10) frozen into the wire contract. The identifier does
   not get renamed; docs on both sides carry the clarifier.
