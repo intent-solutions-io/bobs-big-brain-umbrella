@@ -97,8 +97,8 @@ and the correct backup/DR scope are **code-verified** in
 [`000-docs/005-AT-ARCH-grounded-system-map-and-backup-scope.md`](000-docs/005-AT-ARCH-grounded-system-map-and-backup-scope.md)
 (start there — don't re-derive from scratch; also the auto-memory `governed-brain-architecture-and-backup-scope`). Key facts:
 
-- **The whole live brain is ONE directory on the dev box (itself a VPS): `~/.teamkb/`** (~860 MB as
-  of 2026-07-16 — don't trust a number written here; the live size + row counts auto-update in
+- **The whole live brain is ONE directory on the dev box (itself a VPS): `~/.teamkb/`** (~3.4 GB as
+  of 2026-07-29 — don't trust a number written here; the live size + row counts auto-update in
   [`005-AT-ARCH` §0](000-docs/005-AT-ARCH-grounded-system-map-and-backup-scope.md) on each backup).
   The production VPS `intentsolutions` holds **no brain** (verified). Two SQLite DBs: ICO
   `brain/.ico/state.db` (compile) + INTKB `teamkb.db` (govern). Plus `brain/raw/` (corpus = source of
