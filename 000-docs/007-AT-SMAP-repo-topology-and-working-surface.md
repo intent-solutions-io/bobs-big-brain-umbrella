@@ -146,7 +146,11 @@ contract**, not by absorbing repos:
   `audit_events` — a tamper-evident SHA-256 chain (`entry_hash` + `prev_entry_hash`) per
   [`005-AT-ARCH` §2](005-AT-ARCH-grounded-system-map-and-backup-scope.md), this repo's own
   code-verified authority — and the AGP-side field names are `CROSS_CHAIN_FIELD_NAMES` in the cited
-  contract. Both cited AGP paths are on AGP `main` today; they do **not** depend on any open AGP PR.
+  contract. Both cited AGP paths are on AGP `main` — they landed together in AGP
+  [`02b5495`](https://github.com/jeremylongshore/agent-governance-plane/commit/02b5495742e6cc1d627929fef0bd46904a6c1db5)
+  (2026-07-12, AGP PR #127, merged), so this seam does **not** depend on any open AGP PR. Re-check
+  with `git -C agent-governance-plane log -1 origin/main -- src/contracts/journal-event.ts` if the
+  paths ever look stale.
 - **What the seam does and does not do yet.** The binding is **structural today**: a stamped
   `gsb_receipt_tip_hash` records, tamper-evidently, which brain-receipt tip the agent claims it acted
   on. *"What did it know when it acted X?"* is **not yet operationally answerable** — resolving that
