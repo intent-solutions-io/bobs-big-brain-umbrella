@@ -1,0 +1,26 @@
+# Extra harness-hash pin patterns for bobs-big-brain-umbrella.
+#
+# This repo is docs + shell + python — it has no test suite, no coverage config,
+# and no architecture-rule config, so NONE of audit-harness's default canonical
+# patterns match here and a bare `init` pins zero files. A manifest pinning
+# nothing still reports "harness-hash: OK", which is a hollow gate: it verifies
+# that nothing changed about nothing.
+#
+# What this repo DOES have is one real enforcement artifact — the docs-honesty
+# linter. It encodes the ISEDC 009-AT-DECR D1 / CISO binding that a public claim
+# may never assert tamper-proof / immutable / non-repudiation / blockchain (the
+# trust model is tamper-EVIDENT). Quietly relaxing that script's word list or
+# its negation handling would weaken a governance gate while leaving CI green —
+# exactly the escape class harness-hash exists to detect.
+#
+# Deliberately NOT pinned:
+#   repos.yml  — it is a topology manifest, not an enforcement gate. Its observed
+#                failure mode is going STALE (nobody edited it when two repos were
+#                renamed), and a content hash cannot detect an edit that never
+#                happened. Pinning it would add re-init ceremony to every
+#                legitimate topology change while catching nothing real.
+#   bin/gsb    — an operator convenience tool; it enforces no policy.
+#
+# After any REVIEWED edit to a pinned file, re-pin with:
+#   ./scripts/audit-harness init
+scripts/lint-forbidden-words.sh
