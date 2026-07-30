@@ -150,6 +150,18 @@ and the correct backup/DR scope are **code-verified** in
   `.age` to `r2-teamkb:teamkb-backups`; S3 keys in runbook `secrets.prod.sops.yaml` (`r2_teamkb_*`) +
   `rclone.conf`. R2 is **backup only** (encrypted blobs), **not** the team bridge — see line 113.
 
+### The agent↔brain seam (AGP) — composed at a contract, not absorbed
+
+`agent-governance-plane` (AGP) and CCSC remain a **separate** ecosystem (not in `repos.yml`), but
+AGP's journal events carry a signed `CrossChainPointer` (`correlation_id` + `gsb_receipt_tip_hash`,
+AGP ADR 058) binding an agent action in AGP's hash-chained journal to the tip of Bob's Big Brain's
+hash-chained receipt log — the `gsb_` prefix is the pre-rename name frozen into the wire contract.
+**The binding is structural, not yet operational:** the pointer tamper-evidently *records* which
+brain-receipt tip an agent claims it acted on, but nothing can *check* that claim until the brain-side
+receipt-tip read endpoint exists (bead `qmd-team-intent-kb-1fx`). Describe it as a defined contract,
+never as a working cross-chain provenance query.
+Full seam doc: [`000-docs/007-AT-SMAP` §5](000-docs/007-AT-SMAP-repo-topology-and-working-surface.md).
+
 ## The Architecture Thesis (why the README says what it says)
 
 Understanding the wording matters more than any file structure here. The whole pitch rests on

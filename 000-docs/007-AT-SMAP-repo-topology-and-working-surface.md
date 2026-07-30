@@ -30,6 +30,7 @@ flowchart TB
   end
   DATA[("<b>~/.teamkb</b> — NOT a repo<br/>the live compiled + governed brain<br/>governed memories + wiki pages (live counts in 005-AT-ARCH §0)<br/>backed up by teamkb-backup.sh")]
   CRUFT["second-brain/ — ✗ DELETED<br/>dead local-only scaffold (no remote)"]
+  AGP["<b>agent-governance-plane</b> (AGP)<br/>EXTERNAL · separate ecosystem<br/>signed journal · CrossChainPointer"]
 
   UMB -. points at .-> ICO
   UMB -. points at .-> INTKB
@@ -39,11 +40,13 @@ flowchart TB
   ICO -- compile --> DATA
   INTKB -- govern --> DATA
   PLUG -. team mode (remote) .-> DATA
+  AGP -. "cross-chain pointer (§5)" .-> DATA
 
   style UMB fill:#1f6feb,stroke:#0b3d91,stroke-width:3px,color:#ffffff
   style DATA fill:#196c2e,stroke:#0b3d91,color:#ffffff
   style MKT fill:#5a1e1e,stroke:#a33,stroke-dasharray:5 5,color:#ffffff
   style CRUFT fill:#5a1e1e,stroke:#a33,stroke-dasharray:5 5,color:#ffffff
+  style AGP fill:#2d2d3a,stroke:#8888aa,stroke-dasharray:5 5,color:#ffffff
 ```
 
 *(GitHub renders Mermaid in the web view; there is no local preview build — verify there after edits.)*
@@ -79,7 +82,8 @@ eval" epic) into the canonical store.
 
 `claude-code-slack-channel`, `agent-governance-plane`, and `claude-code-plugins-plus-skills` are a
 **different** Intent Solutions ecosystem. They are not part of the Governed Second Brain and are not
-in `repos.yml`.
+in `repos.yml`. The agent-governance-plane does, however, integrate with the brain **at a contract
+seam** — see §5.
 
 ### `intent-brain` — there is no standalone repo
 
@@ -122,3 +126,40 @@ answer is one of: this doc (§2 for repos), `005-AT-ARCH` (for data/state), or t
 - **Manifest + helper:** [`repos.yml`](../repos.yml), [`bin/gsb`](../bin/gsb).
 - Program tracker: bead epic `compile-then-govern-aht` (this work) + the program GitHub issue
   `intent-solutions-io/bobs-big-brain-umbrella#1`.
+
+---
+
+## 5. The agent↔brain seam — composed, not absorbed
+
+The **Agent Governance Plane** (`jeremylongshore/agent-governance-plane`, AGP) and CCSC are a
+**separate** Intent Solutions ecosystem (§2): they stay out of `repos.yml`, out of `gsb sync`, and
+out of this umbrella's release story. The integration between an agent and the brain happens **at a
+contract**, not by absorbing repos:
+
+- **The contract:** every AGP journal event carries a signed **`CrossChainPointer`** —
+  `correlation_id` + `gsb_receipt_tip_hash` (AGP `src/contracts/journal-event.ts`; ADR
+  `agent-governance-plane/000-docs/058-AT-ADR-cross-chain-causal-pointer-2026-07-12.md`). The
+  pointer binds an agent action in AGP's signed, hash-chained journal ("what the agent **did**") to
+  the tip of Bob's Big Brain's hash-chained receipt log ("what the agent **knew**"). The pointer
+  lives inside AGP's signed event bytes, so it is tamper-evident, not merely embedded.
+  **Grounding, so neither side is taken on faith:** the brain-side "hash-chained receipt log" is
+  `audit_events` — a tamper-evident SHA-256 chain (`entry_hash` + `prev_entry_hash`) per
+  [`005-AT-ARCH` §2](005-AT-ARCH-grounded-system-map-and-backup-scope.md), this repo's own
+  code-verified authority — and the AGP-side field names are `CROSS_CHAIN_FIELD_NAMES` in the cited
+  contract. Both cited AGP paths are on AGP `main` — they landed together in AGP
+  [`02b5495`](https://github.com/jeremylongshore/agent-governance-plane/commit/02b5495742e6cc1d627929fef0bd46904a6c1db5)
+  (2026-07-12, AGP PR #127, merged), so this seam does **not** depend on any open AGP PR. Re-check
+  with `git -C agent-governance-plane log -1 origin/main -- src/contracts/journal-event.ts` if the
+  paths ever look stale.
+- **What the seam does and does not do yet.** The binding is **structural today**: a stamped
+  `gsb_receipt_tip_hash` records, tamper-evidently, which brain-receipt tip the agent claims it acted
+  on. *"What did it know when it acted X?"* is **not yet operationally answerable** — resolving that
+  hash against the live chain needs the brain-side read endpoint below, which is not built. Until it
+  is, the pointer **records** the claim; it does not yet let a verifier **check** it. Treat the seam
+  as a defined contract, not a working end-to-end provenance query.
+- **Naming:** the `gsb_` field prefix is the pre-rename product name (GSB — Governed Second Brain,
+  productized as Bob's Big Brain on 2026-07-10) frozen into the wire contract. The identifier does
+  not get renamed; docs on both sides carry the clarifier.
+- **Future work (brain side):** a stable **receipt-tip read endpoint** so an agent can stamp and a
+  verifier can check `gsb_receipt_tip_hash` against the live chain tip — bead
+  `qmd-team-intent-kb-1fx`.
