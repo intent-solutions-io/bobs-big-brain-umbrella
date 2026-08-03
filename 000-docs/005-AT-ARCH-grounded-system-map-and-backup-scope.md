@@ -153,7 +153,12 @@ populated) are source-of-truth; `memory_links`, `export_state`, `schema_migratio
   over the tailnet with a `sha256` byte-match + remote retention. The VPS can decrypt its own copy
   with the host key (`/etc/intentsolutions/age.key`) — DR-loop verified end-to-end (the VPS is cold
   storage: `age` + `zstd` present, no `sqlite3`).
-- **Daily** systemd user timer `teamkb-backup.timer` (04:30, after borg).
+- **Daily** systemd user timer `teamkb-backup.timer` (04:30, after borg). The canonical source is
+  `bobs-big-brain-umbrella/bin/teamkb-backup.sh`; the deployed `~/bin` copy owns no separate
+  semantics. Failure presentation routes through Intent OS `af_dispatch/sys-backups` with
+  MiniMax-M3 normalization requested. Owner-neutral liveness is
+  `~/.local/state/intent-os/liveness/teamkb-backup.{beat,ok,skipped}`; `.ok` is restore-gated and a
+  lock skip is explicit rather than false-green.
 
 **Second off-host target — Cloudflare R2 (`c5k.6`) — LIVE as of 2026-06-25.** `~/bin/teamkb-backup.sh`
 now also pushes each `.age` to `r2-teamkb:teamkb-backups` (rclone S3; default `TEAMKB_R2_REMOTE`). The
