@@ -1,4 +1,4 @@
-# System Dependency Graph — the machine-readable model of Bob's Big Brain
+# System dependency graph — the machine-readable model of Bob's Big Brain
 
 **Source of truth:** [`system-graph.yml`](../system-graph.yml) (repo root, next to `repos.yml`).
 **This doc's diagram is generated** — the block between the AUTOGEN markers is written only by
@@ -26,7 +26,7 @@ evidenced edges — verdict: moderate.** The split matters:
 - **The core pipeline is genuinely simple**: capture → spool → govern (dedupe/policy/promote) →
   export → index → search, all over one directory (`~/.teamkb`), ~10 nodes end to end.
 - **The operational shell is where the count lives**: 15 workspace packages + 6 apps across 3
-  repos, the plugin coupled to the registrar tree via 8 `link:` deps, 4 always-on services,
+  repos, the plugin coupled to the registrar tree via 8 `link:` deps (the graph models the 3 load-bearing ones as edges), 4 always-on services,
   a 4-stage nightly pipeline, 2 flocks, weight pins, and a CI ratchet that can only measure the
   synthetic corpus. The committed model curates this to ~50 load-bearing nodes.
 
@@ -144,6 +144,7 @@ graph LR
     cross_session_log["cross-session-log"]
     beads_umbrella["beads-umbrella"]
     beads_000_projects["beads-000-projects"]
+    system_graph_yml["system-graph-yml"]
     brain_search["brain-search"]
   end
   ico_cli --> ico_kernel
@@ -192,11 +193,12 @@ graph LR
   weight_pins -->|gates| bbb_reranker
   registrar_ci -->|invokes| retrieval_ratchet
   import_discipline_guard -.->|gates| qmd_adapter
-  graph_sync_gate -.->|gates| repos_yml
+  graph_sync_gate -.->|gates| system_graph_yml
   beads_umbrella -.->|mirrors| beads_000_projects
   cross_session_log -.->|mirrors| beads_000_projects
+  brain_search -->|invokes| brain_api_svc
 ```
 
-_49 nodes · 49 edges (43 derived / 6 semantic) · solid = mechanically derived · dotted = hand-curated invariant_
+_50 nodes · 50 edges (44 derived / 6 semantic) · solid = mechanically derived · dotted = hand-curated invariant_
 
 <!-- /AUTOGEN:system-graph -->

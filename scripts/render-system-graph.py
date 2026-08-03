@@ -84,6 +84,11 @@ def load() -> dict:
     edges = data.get("edges") or []
 
     ids: set[str] = set()
+    # Mermaid ids are the NORMALIZED form (mid() maps '-' and '.' to '_'), so
+    # `foo-bar`, `foo.bar`, and `foo_bar` would silently render as ONE node —
+    # distinct model nodes merging in the diagram with CI still green. Reject
+    # the collision at validation instead (CodeRabbit finding, PR #78).
+    normalized: dict[str, str] = {}
     for n in nodes:
         nid = n.get("id", "")
         if not nid:
@@ -92,6 +97,13 @@ def load() -> dict:
         if nid in ids:
             errors.append(f"duplicate node id: {nid}")
         ids.add(nid)
+        m = mid(nid)
+        if m in normalized and normalized[m] != nid:
+            errors.append(
+                f"node ids {normalized[m]!r} and {nid!r} collide after mermaid "
+                f"normalization ({m!r}) — rename one"
+            )
+        normalized[m] = nid
         if n.get("kind") not in NODE_KINDS:
             errors.append(f"node {nid}: bad kind {n.get('kind')!r}")
         if n.get("layer") not in layers:

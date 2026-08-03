@@ -261,10 +261,15 @@ nodes:
     layer: coordination
     locus: ~/000-projects/.beads/ (prefix bd_000-projects, label cross-session)
     note: "check `bd list --label cross-session` here BEFORE engine-repo feature work — the #327/#328 duplicate was cross-STORE routing: one feature, two beads, two stores"
+  - id: system-graph-yml
+    kind: artifact
+    layer: coordination
+    locus: umbrella system-graph.yml + rendered 000-docs/020-AT-SMAP (this model)
+    note: "self-referential on purpose: the model models its own drift guard"
   - id: brain-search
     kind: external
     layer: coordination
-    locus: governed-brain MCP brain_search — durable estate knowledge (same-day work invisible until the nightly compile)
+    locus: "plugin brain_search MCP surface — LOCAL mode is in-process over ~/.teamkb; TEAM mode proxies the INTKB HTTP API (brain-api-svc :3847). Durable estate knowledge; same-day work invisible until the nightly compile"
 
 edges:
   # engines — internal
@@ -323,8 +328,9 @@ edges:
   - { from: weight-pins, to: bbb-reranker, kind: gates, tier: derived, evidence: "unit ExecStartPre sha256sum -c reranker-weights.sha256 (fail-closed)" }
   - { from: registrar-ci, to: retrieval-ratchet, kind: invokes, tier: derived, evidence: "ci.yml:154 retrieval-eval job — synthetic corpus, individually-named required check" }
   - { from: import-discipline-guard, to: qmd-adapter, kind: gates, tier: semantic, evidence: "INVARIANT: the eval harness must never consume the production serving policy, and the CI ratchet must stay lexical — enforced by dense-policy-import-discipline.test.ts, not by convention" }
-  - { from: graph-sync-gate, to: repos-yml, kind: gates, tier: semantic, evidence: "INVARIANT: this model and its rendered doc cannot drift apart — system-graph-sync.yml runs render-system-graph.py --check on every touching PR" }
+  - { from: graph-sync-gate, to: system-graph-yml, kind: gates, tier: semantic, evidence: "INVARIANT: this model and its rendered doc cannot drift apart — system-graph-sync.yml runs render-system-graph.py --check on every touching PR" }
 
   # coordination
   - { from: beads-umbrella, to: beads-000-projects, kind: mirrors, tier: semantic, evidence: "TRAP: one feature must route to exactly ONE store. #327/#328 root cause was cross-store duplicate routing (umbrella 39z.6 unclaimed vs 000-projects gybo.3 claimed+mirrored to GH#326) — bd claim cannot collide across stores" }
   - { from: cross-session-log, to: beads-000-projects, kind: mirrors, tier: semantic, evidence: "journal lines point at their bead when one exists (~/CLAUDE.md cross-session protocol §3); freeform prose, unenforced" }
+  - { from: brain-search, to: brain-api-svc, kind: invokes, tier: derived, evidence: "TEAM mode only: plugin remote proxy dispatched by TEAMKB_API_URL → :3847 (005-AT-ARCH bridge = the authenticated HTTP API); LOCAL mode is in-process and never touches the API" }
