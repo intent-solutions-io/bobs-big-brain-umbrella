@@ -1,0 +1,45 @@
+# system-graph-sync — the architectural fitness function for system-graph.yml.
+#
+# Fails the PR when the rendered mermaid in 020-AT-SMAP drifts from the
+# machine-readable model (or when the model itself is structurally invalid:
+# duplicate ids, edges to undefined nodes, missing evidence). This is what
+# keeps the dependency graph a MODEL rather than a drawing: the doc cannot be
+# hand-edited out from under the YAML, and the YAML cannot be edited without
+# re-rendering the doc. Same discipline as docs-honesty.yml, applied to
+# architecture instead of prose.
+#
+# Deliberately NOT run here: --check-local (systemd units / crontab / paths).
+# Those assertions describe the dev box; a GitHub runner has none of them and
+# would fail vacuously. Box-tier verification is run locally — see the doc.
+name: system-graph-sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'system-graph.yml'
+      - '000-docs/020-AT-SMAP-system-dependency-graph.md'
+      - 'scripts/render-system-graph.py'
+      - '.github/workflows/system-graph-sync.yml'
+  pull_request:
+    paths:
+      - 'system-graph.yml'
+      - '000-docs/020-AT-SMAP-system-dependency-graph.md'
+      - 'scripts/render-system-graph.py'
+      - '.github/workflows/system-graph-sync.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - name: Model ↔ doc sync + structural validation
+        run: python3 scripts/render-system-graph.py --check
