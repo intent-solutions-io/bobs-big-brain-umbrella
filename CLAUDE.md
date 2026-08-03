@@ -41,6 +41,15 @@ This umbrella is the **single working surface** for the whole stack — the one 
 
 - **[`000-docs/007-AT-SMAP`](000-docs/007-AT-SMAP-repo-topology-and-working-surface.md)** — the
   canonical repo-topology map (Mermaid diagram + the exact local↔remote table + the doctrine).
+- **[`system-graph.yml`](system-graph.yml)** — the machine-readable **dependency MODEL** (nodes +
+  evidenced edges: depends-on / reads / writes / invokes / gates). `repos.yml` is the inventory;
+  this is the graph. **Load it before wiring anything** — it names the owning locus for shared
+  config (e.g. serving-dense lives in `qmd-adapter/src/config.ts`, nowhere else) and marks every
+  manual lock-step mirror as a dotted drift-risk edge. Rendered view + editing rules:
+  [`000-docs/020-AT-SMAP`](000-docs/020-AT-SMAP-system-dependency-graph.md); the
+  `system-graph-sync` CI job fails any PR where doc and model drift. Before ENGINE-repo feature
+  work, also check `bd list --label cross-session` in `~/000-projects` — one feature, one bead,
+  one owning store (the #327/#328 duplicate was cross-store routing, not a missing map).
 - **[`bin/gsb`](bin/gsb)** — cross-repo helper over [`repos.yml`](repos.yml): `gsb map` (topology +
   per-repo branch/dirty), `gsb status` (branch + dirty + ahead/behind across all), `gsb sync` (clone
   any missing sub-repo to its canonical path, `pull --rebase` the rest). Manifest + helper, **not**

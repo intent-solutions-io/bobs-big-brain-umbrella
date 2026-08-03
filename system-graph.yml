@@ -1,0 +1,336 @@
+# system-graph.yml — the machine-readable dependency graph of Bob's Big Brain.
+#
+# repos.yml is the INVENTORY (which repos exist, where). THIS file is the MODEL:
+# nodes AND edges — what depends on, reads, writes, invokes, and gates what.
+# Load this before wiring anything; `repos.yml` tells you where code lives,
+# this tells you what your change will touch.
+#
+# Rendered view: 000-docs/020-AT-SMAP-system-dependency-graph.md (AUTOGEN block,
+# written only by scripts/render-system-graph.py — CI job system-graph-sync
+# fails any PR where doc and model drift apart).
+#
+# Provenance: seeded 2026-08-03 from a 9-agent verified fan-out (6 area readers,
+# 1 synthesis, 2 adversarial verifiers; edge spot-check: 10/10 held). Every edge
+# carries evidence; an edge nobody can verify is an opinion, not a model.
+#
+# Tiers:
+#   derived  — mechanically checkable (package.json dep, systemd unit, crontab
+#              line). `render-system-graph.py --check-local` re-verifies the
+#              `local:` assertions against this box.
+#   semantic — hand-curated invariant no tool can derive; evidence names the
+#              guard (test/lint/doc) that keeps it true. Rendered dotted.
+
+version: 1
+
+layers: [engines, serving, data, gates, schedules, coordination]
+
+nodes:
+  # ── engines: the compile (ICO) and govern (INTKB) packages ────────────────
+  - id: ico-cli
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-compiler/packages/cli
+    note: "`ico` CLI — compile passes, audit verify. Global /usr/bin/ico symlink is DANGLING since the 2026-07-19 repo rename; in-repo dist works."
+  - id: ico-kernel
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-compiler/packages/kernel
+    note: deterministic kernel — SQLite state, spool emit, wiki index
+  - id: ico-compiler-pkg
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-compiler/packages/compiler
+    note: LLM passes (provider registry — MiniMax-M3 live since 2026-07-31), cost gate $1/day
+  - id: ico-types
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-compiler/packages/types
+  - id: curator
+    kind: app
+    layer: engines
+    locus: bobs-big-brain-registrar/apps/curator
+    note: spool intake → dedupe → supersession → policy → promote
+  - id: policy-engine
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-registrar/packages/policy-engine
+  - id: store
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-registrar/packages/store
+  - id: schema
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-registrar/packages/schema
+  - id: qmd-adapter
+    kind: package
+    layer: engines
+    locus: bobs-big-brain-registrar/packages/qmd-adapter
+    note: "retrieval — qmd BM25 + native FTS5 + dense sqlite-vec, RRF-fused. OWNING LOCUS for serving config: src/config.ts getDefaultDenseConfig() (settled by #328/#334 after the #327/#328 design collision)"
+  - id: git-exporter
+    kind: app
+    layer: engines
+    locus: bobs-big-brain-registrar/apps/git-exporter
+
+  # ── serving: what answers queries at runtime ──────────────────────────────
+  - id: api
+    kind: app
+    layer: serving
+    locus: bobs-big-brain-registrar/apps/api
+  - id: edge-daemon
+    kind: app
+    layer: serving
+    locus: bobs-big-brain-registrar/apps/edge-daemon
+    note: cycle → export → reindex → denseSync (this is what BUILDS the dense sidecar)
+  - id: mcp-server
+    kind: app
+    layer: serving
+    locus: bobs-big-brain-registrar/apps/mcp-server
+  - id: plugin-local-server
+    kind: app
+    layer: serving
+    locus: bobs-big-brain-plugin/src/local-server.ts
+    note: "local-mode brain_* MCP; bypasses the API entirely (the vps.1 drift class)"
+  - id: plugin-govern
+    kind: app
+    layer: serving
+    locus: bobs-big-brain-plugin/src/govern.ts
+  - id: brain-api-svc
+    kind: service
+    layer: serving
+    locus: teamkb-brain-api.service (tailnet :3847)
+    local: { unit: teamkb-brain-api.service }
+    note: deployed COPY of apps/api at ~/.local/opt/teamkb-api/current — not the working tree
+  - id: bbb-embedder
+    kind: service
+    layer: serving
+    locus: "bbb-embedder.service (loopback :8098, EmbeddingGemma-300M)"
+    local: { unit: bbb-embedder.service }
+  - id: bbb-reranker
+    kind: service
+    layer: serving
+    locus: "bbb-reranker.service (loopback :8097, Qwen3-Reranker-0.6B)"
+    local: { unit: bbb-reranker.service }
+    note: enabled 2026-07-31 for re-measure on the dense-fused pool; earlier verdict was MISS
+  - id: qmd-binary
+    kind: external
+    layer: serving
+    locus: pinned @tobilu/qmd workspace binary
+
+  # ── data: the one live directory ──────────────────────────────────────────
+  - id: teamkb-db
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/teamkb.db
+    local: { path: ~/.teamkb/teamkb.db }
+    note: govern store — curated_memories, candidates, audit_events, memory_links
+  - id: ico-state-db
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/brain/.ico/state.db
+    local: { path: ~/.teamkb/brain/.ico/state.db }
+    note: compile store — sources, compilations (no new rows since 2026-07-16; ingest gap, bead 39z.9)
+  - id: brain-raw
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/brain/raw
+    note: corpus — SOURCE OF TRUTH
+  - id: brain-spool
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/brain/spool
+    note: "ICO emit default. NOT the same as ~/.teamkb/spool — two same-named dirs, documented nowhere else (trap)"
+  - id: teamkb-spool
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/spool
+    local: { path: ~/.teamkb/spool }
+    note: live capture intake the curator drains
+  - id: kb-export
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/kb-export
+    note: derived markdown export — rebuildable
+  - id: qmd-index
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/qmd-index/<tenant>/
+    note: derived — BM25 index + native-fts5.sqlite + dense-vec.sqlite sidecars
+  - id: audit-anchors
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/audit (mirrored to private bobs-big-brain-anchors repo)
+  - id: tokens
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/tokens.json (SECRET)
+  - id: eval-anchor
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/eval-anchor (frozen snapshot + dense-prebuilt)
+    local: { path: ~/.teamkb/eval-anchor }
+    note: "reproducibility root for the nightly eval — currently in NO backup tier (verified gap, bead filed)"
+  - id: backups
+    kind: datastore
+    layer: data
+    locus: ~/.teamkb/backups → VPS intentsolutions + Cloudflare R2
+
+  # ── gates: what holds what to a floor ─────────────────────────────────────
+  - id: write-lock
+    kind: gate
+    layer: gates
+    locus: ~/.teamkb/.write.lock (flock)
+  - id: compile-lock
+    kind: gate
+    layer: gates
+    locus: ~/.teamkb/.compile.lock (flock)
+  - id: weight-pins
+    kind: gate
+    layer: gates
+    locus: ~/.local/lib/bbb/*-weights.sha256 (fail-closed ExecStartPre)
+  - id: registrar-ci
+    kind: gate
+    layer: gates
+    locus: bobs-big-brain-registrar/.github/workflows/ci.yml
+  - id: retrieval-ratchet
+    kind: gate
+    layer: gates
+    locus: ci.yml retrieval-eval job — SYNTHETIC corpus only
+    note: "cold ubuntu-latest runner: no embedder, no private corpus — CANNOT gate dense (physical constraint)"
+  - id: snapshot-lock
+    kind: gate
+    layer: gates
+    locus: eval-results/governed-brain-v1-snapshot.lock.json (SHA-256 pin)
+  - id: fused-floor
+    kind: gate
+    layer: gates
+    locus: eval-results/governed-brain-v1-floor.json
+  - id: dense-floor
+    kind: gate
+    layer: gates
+    locus: eval-results/governed-brain-v1-dense-floor.json
+    note: "gates the arm production actually serves — committed on main via #334 (2026-08-03)"
+  - id: import-discipline-guard
+    kind: gate
+    layer: gates
+    locus: qmd-adapter/src/__tests__/dense-policy-import-discipline.test.ts
+  - id: graph-sync-gate
+    kind: gate
+    layer: gates
+    locus: umbrella .github/workflows/system-graph-sync.yml
+    note: this file's own fitness function — doc and model cannot drift apart
+
+  # ── schedules: the nightly pipeline ───────────────────────────────────────
+  - id: compile-cron
+    kind: cron
+    layer: schedules
+    locus: "crontab 03:30 → bin/teamkb-compile-daily.sh (agent: minimax)"
+    local: { cron: teamkb-compile-daily.sh }
+  - id: backup-timer
+    kind: timer
+    layer: schedules
+    locus: teamkb-backup.timer (~04:31 daily, randomized)
+    local: { unit: teamkb-backup.timer }
+  - id: eval-timer
+    kind: timer
+    layer: schedules
+    locus: bbb-eval-governed.timer (05:00 daily, runs in the main-pinned worktree ~/.local/lib/bbb/registrar-main)
+    local: { unit: bbb-eval-governed.timer }
+  - id: faithfulness-timer
+    kind: timer
+    layer: schedules
+    locus: bbb-compile-faithfulness.timer (weekly Sun 05:45)
+    local: { unit: bbb-compile-faithfulness.timer }
+
+  # ── coordination: how sessions avoid colliding ────────────────────────────
+  - id: repos-yml
+    kind: artifact
+    layer: coordination
+    locus: umbrella repos.yml — node inventory (this file adds the edges)
+  - id: cross-session-log
+    kind: artifact
+    layer: coordination
+    locus: ~/000-projects/CROSS-SESSION-LOG.md
+    note: freeform in-flight journal — read it at session start; it cannot prevent same-hour collisions
+  - id: beads-umbrella
+    kind: datastore
+    layer: coordination
+    locus: umbrella .beads/ (prefix compile-then-govern)
+  - id: beads-000-projects
+    kind: datastore
+    layer: coordination
+    locus: ~/000-projects/.beads/ (prefix bd_000-projects, label cross-session)
+    note: "check `bd list --label cross-session` here BEFORE engine-repo feature work — the #327/#328 duplicate was cross-STORE routing: one feature, two beads, two stores"
+  - id: system-graph-yml
+    kind: artifact
+    layer: coordination
+    locus: umbrella system-graph.yml + rendered 000-docs/020-AT-SMAP (this model)
+    note: "self-referential on purpose: the model models its own drift guard"
+  - id: brain-search
+    kind: external
+    layer: coordination
+    locus: "plugin brain_search MCP surface — LOCAL mode is in-process over ~/.teamkb; TEAM mode proxies the INTKB HTTP API (brain-api-svc :3847). Durable estate knowledge; same-day work invisible until the nightly compile"
+
+edges:
+  # engines — internal
+  - { from: ico-cli, to: ico-kernel, kind: depends-on, tier: derived, evidence: "compiler packages/cli/package.json @ico/kernel workspace:*" }
+  - { from: ico-compiler-pkg, to: ico-kernel, kind: depends-on, tier: derived, evidence: "compiler packages/compiler/package.json @ico/kernel workspace:*" }
+  - { from: ico-kernel, to: ico-types, kind: depends-on, tier: derived, evidence: "compiler packages/kernel/package.json @ico/types workspace:*" }
+  - { from: ico-cli, to: ico-state-db, kind: writes, tier: derived, evidence: "compilations table written by compile passes; sqlite3 -readonly brain/.ico/state.db" }
+  - { from: ico-kernel, to: brain-spool, kind: writes, tier: derived, evidence: "kernel spool emit default under brain/; see two-spool note" }
+  - { from: ico-types, to: schema, kind: mirrors, tier: semantic, evidence: "VENDORED snapshot of the registrar schema inside ICO types — manual lock-step, drift risk; no automated check exists (gap)" }
+
+  - { from: curator, to: policy-engine, kind: depends-on, tier: derived, evidence: "registrar apps/curator/package.json workspace:*" }
+  - { from: curator, to: store, kind: depends-on, tier: derived, evidence: "registrar apps/curator/package.json workspace:*" }
+  - { from: curator, to: teamkb-spool, kind: reads, tier: derived, evidence: "apps/curator/src/intake/spool-intake.ts drains ~/.teamkb/spool" }
+  - { from: store, to: teamkb-db, kind: writes, tier: derived, evidence: "packages/store repositories over ~/.teamkb/teamkb.db" }
+  - { from: git-exporter, to: kb-export, kind: writes, tier: derived, evidence: "apps/git-exporter file-writer → exportOutputDir (kb-export)" }
+
+  # retrieval arms
+  - { from: qmd-adapter, to: qmd-binary, kind: invokes, tier: derived, evidence: "executor/real-executor.ts spawns the pinned workspace qmd" }
+  - { from: qmd-adapter, to: bbb-embedder, kind: invokes, tier: derived, evidence: "dense/embed-client.ts → config.ts DEFAULT_DENSE_URL http://127.0.0.1:8098" }
+  - { from: qmd-adapter, to: bbb-reranker, kind: invokes, tier: derived, evidence: "rerank/rerank-client.ts → :8097 (opt-in stage, fail-open)" }
+  - { from: qmd-adapter, to: kb-export, kind: reads, tier: derived, evidence: "collections register <exportDir>/<collection> sources" }
+  - { from: qmd-adapter, to: qmd-index, kind: writes, tier: derived, evidence: "reindex + denseSync write per-tenant index dirs incl. dense-vec.sqlite" }
+
+  # serving apps → engines
+  - { from: api, to: qmd-adapter, kind: depends-on, tier: derived, evidence: "apps/api/package.json workspace:*; main.ts dense: getDefaultDenseConfig() (#328)" }
+  - { from: api, to: store, kind: depends-on, tier: derived, evidence: "apps/api/package.json workspace:*" }
+  - { from: edge-daemon, to: curator, kind: depends-on, tier: derived, evidence: "apps/edge-daemon/package.json workspace:*" }
+  - { from: edge-daemon, to: git-exporter, kind: depends-on, tier: derived, evidence: "apps/edge-daemon/package.json workspace:*" }
+  - { from: edge-daemon, to: qmd-adapter, kind: invokes, tier: derived, evidence: "cycle.ts step 4 → reindex() [reindex.ts:69] → adapter.denseSync() — this is what BUILDS the dense sidecar" }
+  - { from: mcp-server, to: qmd-adapter, kind: depends-on, tier: derived, evidence: "apps/mcp-server/package.json workspace:*; tools/search.ts dense-by-default (#328)" }
+  - { from: mcp-server, to: curator, kind: depends-on, tier: derived, evidence: "apps/mcp-server/package.json workspace:*" }
+  - { from: plugin-local-server, to: teamkb-spool, kind: writes, tier: derived, evidence: "brain_capture writes candidates into ~/.teamkb/spool" }
+  - { from: plugin-local-server, to: plugin-govern, kind: invokes, tier: derived, evidence: "plugin src/local-server.ts → src/govern.ts brain_govern" }
+  - { from: plugin-govern, to: curator, kind: depends-on, tier: derived, evidence: "plugin package.json link:../bobs-big-brain-registrar/apps/curator" }
+  - { from: plugin-govern, to: git-exporter, kind: depends-on, tier: derived, evidence: "plugin package.json link: dep; govern → export" }
+  - { from: plugin-govern, to: qmd-adapter, kind: depends-on, tier: derived, evidence: "plugin package.json link: dep; govern → reindex" }
+  - { from: plugin-govern, to: audit-anchors, kind: writes, tier: derived, evidence: "brain_govern commits the chain head; auto-push to bobs-big-brain-anchors (Wave-1 F1)" }
+  - { from: brain-api-svc, to: api, kind: mirrors, tier: semantic, evidence: "unit WorkingDirectory=~/.local/opt/teamkb-api/current — a DEPLOYED COPY, not the working tree; redeploy required after api changes" }
+  - { from: brain-api-svc, to: tokens, kind: reads, tier: derived, evidence: "unit Environment TEAMKB_TOKENS_FILE=~/.teamkb/tokens.json, TEAMKB_API_PORT=3847" }
+
+  # schedules
+  - { from: compile-cron, to: plugin-local-server, kind: invokes, tier: derived, evidence: "crontab 03:30 → teamkb-compile-daily.sh; MCP config → plugin-runtime/governed-brain.cjs (grok/claude agent paths; minimax path has no MCP wiring — shell_exec only)" }
+  - { from: compile-cron, to: compile-lock, kind: gates, tier: derived, evidence: "teamkb-compile-daily.sh:226 flock ~/.teamkb/.compile.lock" }
+  - { from: backup-timer, to: write-lock, kind: gates, tier: derived, evidence: "bin/teamkb-backup.sh:137-142 flock ~/.teamkb/.write.lock for the VACUUM INTO quiesce" }
+  - { from: backup-timer, to: teamkb-db, kind: reads, tier: derived, evidence: "Tier A: teamkb.db + brain/.ico/state.db quiesced snapshots" }
+  - { from: backup-timer, to: brain-raw, kind: reads, tier: derived, evidence: "Tier A staged component" }
+  - { from: backup-timer, to: backups, kind: writes, tier: derived, evidence: "age-encrypted archive → rsync VPS (sha256-verified) + rclone R2" }
+  - { from: eval-timer, to: qmd-adapter, kind: invokes, tier: derived, evidence: "bbb-eval-governed.sh → pnpm eval:governed:local in the main-pinned worktree (not the dev tree — the six-day quiet-skip fix)" }
+  - { from: eval-timer, to: eval-anchor, kind: reads, tier: derived, evidence: "bbb-eval-governed.sh:112 GOVERNED_EVAL_DENSE_PREBUILT + frozen snapshot tarball" }
+
+  # gates
+  - { from: snapshot-lock, to: eval-timer, kind: gates, tier: derived, evidence: "governed-eval-anchor verifySnapshotAgainstLock — SHA mismatch = exit 2, never eval an unpinned corpus" }
+  - { from: fused-floor, to: eval-timer, kind: gates, tier: derived, evidence: "checkFloors folds into ANCHOR verdict (exit 1 on regression)" }
+  - { from: dense-floor, to: eval-timer, kind: gates, tier: derived, evidence: "#334: denseChecks fold into the same verdict; degraded runs refuse a verdict instead of scoring contention" }
+  - { from: weight-pins, to: bbb-embedder, kind: gates, tier: derived, evidence: "unit ExecStartPre sha256sum -c embedder-weights.sha256 (fail-closed)" }
+  - { from: weight-pins, to: bbb-reranker, kind: gates, tier: derived, evidence: "unit ExecStartPre sha256sum -c reranker-weights.sha256 (fail-closed)" }
+  - { from: registrar-ci, to: retrieval-ratchet, kind: invokes, tier: derived, evidence: "ci.yml:154 retrieval-eval job — synthetic corpus, individually-named required check" }
+  - { from: import-discipline-guard, to: qmd-adapter, kind: gates, tier: semantic, evidence: "INVARIANT: the eval harness must never consume the production serving policy, and the CI ratchet must stay lexical — enforced by dense-policy-import-discipline.test.ts, not by convention" }
+  - { from: graph-sync-gate, to: system-graph-yml, kind: gates, tier: semantic, evidence: "INVARIANT: this model and its rendered doc cannot drift apart — system-graph-sync.yml runs render-system-graph.py --check on every touching PR" }
+
+  # coordination
+  - { from: beads-umbrella, to: beads-000-projects, kind: mirrors, tier: semantic, evidence: "TRAP: one feature must route to exactly ONE store. #327/#328 root cause was cross-store duplicate routing (umbrella 39z.6 unclaimed vs 000-projects gybo.3 claimed+mirrored to GH#326) — bd claim cannot collide across stores" }
+  - { from: cross-session-log, to: beads-000-projects, kind: mirrors, tier: semantic, evidence: "journal lines point at their bead when one exists (~/CLAUDE.md cross-session protocol §3); freeform prose, unenforced" }
+  - { from: brain-search, to: brain-api-svc, kind: invokes, tier: derived, evidence: "TEAM mode only: plugin remote proxy dispatched by TEAMKB_API_URL → :3847 (005-AT-ARCH bridge = the authenticated HTTP API); LOCAL mode is in-process and never touches the API" }
