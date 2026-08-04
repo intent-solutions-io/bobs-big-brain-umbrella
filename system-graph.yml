@@ -169,7 +169,7 @@ nodes:
     layer: data
     locus: ~/.teamkb/eval-anchor (frozen snapshot + dense-prebuilt)
     local: { path: ~/.teamkb/eval-anchor }
-    note: "reproducibility root for the nightly eval — currently in NO backup tier (verified gap, bead filed)"
+    note: "reproducibility root for the nightly eval. NOT in the brain-specific backup (teamkb-backup.sh) but IS inside the dev-box borg chain (006-scripts/backup-system.sh includes /home/jeremy wholesale → VPS replica → home-server append-only snapshots); in-archive presence pending a passphrase-gated borg list (bead compile-then-govern-kck)"
   - id: backups
     kind: datastore
     layer: data

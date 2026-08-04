@@ -58,8 +58,10 @@ Previously documented only in comments spread across four scripts:
 
 ## Known gaps carried by the model (verified 2026-08-03)
 
-- `eval-anchor/` (frozen snapshot + dense prebuilt — the eval's reproducibility root) is in **no
-  backup tier** (bead filed).
+- `eval-anchor/` (frozen snapshot + dense prebuilt — the eval's reproducibility root) is **not in
+  the brain-specific backup** (`teamkb-backup.sh`) but *is* inside the dev-box borg chain
+  (borg → VPS replica → home-server append-only snapshots); in-archive presence pending a
+  passphrase-gated `borg list` (bead `compile-then-govern-kck`).
 - Two same-named spool dirs (`~/.teamkb/spool` live intake vs `~/.teamkb/brain/spool` ICO emit)
   — modeled here; documented nowhere else.
 - The ICO→schema vendored snapshot, deployed-copy API service, and repo↔`~/.config` unit copies
