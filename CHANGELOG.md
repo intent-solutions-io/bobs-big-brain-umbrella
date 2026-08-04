@@ -8,6 +8,16 @@ engine and plugin repos. Format based on
 
 ## [Unreleased]
 
+### Fixed
+
+- **TeamKB backup failure path now uses governed Buzz** (`spine-8fl.3.13`): the canonical
+  `bin/teamkb-backup.sh` preserves quiesced full-brain snapshots, staged Tier-A/B archiving,
+  dual-recipient encryption, restore/anchor verification, and off-host retention while routing
+  failures and degraded off-host outcomes through Intent OS `af_dispatch` on `sys-backups` with
+  MiniMax-M3 normalization requested. Owner-neutral liveness is restore-gated; lock skips record
+  an explicit marker without advancing `.ok`. The change is source-only until the reviewed deploy,
+  canary, and rollback receipt exists.
+
 ### Added
 
 - **Advisory MiniMax-M3 PR reviewer** for this docs/brand-surface repo, plus

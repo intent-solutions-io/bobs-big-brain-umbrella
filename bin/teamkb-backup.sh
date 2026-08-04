@@ -73,11 +73,16 @@ AGE_RECIP_LOCAL="${TEAMKB_AGE_RECIPIENT:-age1me3vkelljqe2u4zcagja9ru5fdpfpw72xmc
 AGE_RECIP_VPS="${TEAMKB_AGE_RECIPIENT_VPS:-age1csyjrdez6fhe97zsu3zden8j7x7xes6zm3yzce5fzz524wmqav4sc0vgz3}"
 AGE_KEY="${SOPS_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}"
 AGE_BIN="${AGE_BIN:-$HOME/bin/age}"
-R2_REMOTE="${TEAMKB_R2_REMOTE:-r2-teamkb:teamkb-backups}"   # 2nd off-host target (Cloudflare R2); empty = skip
+R2_REMOTE="${TEAMKB_R2_REMOTE-r2-teamkb:teamkb-backups}"   # 2nd off-host target (Cloudflare R2); empty = skip
 # Off-host over the tailnet to the VPS (which holds a decrypting key). ssh-alias:dir; empty disables.
-VPS_REMOTE="${TEAMKB_VPS_REMOTE:-intentsolutions:teamkb-backups}"
+VPS_REMOTE="${TEAMKB_VPS_REMOTE-intentsolutions:teamkb-backups}"
 RETAIN="${TEAMKB_BACKUP_RETAIN:-14}"
 LOGDIR="${TEAMKB_BACKUP_LOGDIR:-$HOME/.local/state/teamkb-backup}"
+AF_CLI="${AF_NOTIFY_ALERT_FLOOR:-$HOME/bin/lib/alert-floor.sh}"
+LIVENESS_DIR="${INTENT_OS_LIVENESS_DIR:-$HOME/.local/state/intent-os/liveness}"
+LIVENESS_BEAT="$LIVENESS_DIR/teamkb-backup.beat"
+LIVENESS_OK="$LIVENESS_DIR/teamkb-backup.ok"
+LIVENESS_SKIPPED="$LIVENESS_DIR/teamkb-backup.skipped"
 
 # Tier-A/B paths, RELATIVE to $TEAMKB_HOME. Only those that exist are archived.
 # `audit` = the top-level external anchor log (anchors.jsonl + its .git) — the
@@ -89,42 +94,73 @@ mkdir -p "$BACKUP_DIR" "$LOGDIR"
 LOG="$LOGDIR/backup.log"
 log() { printf '%s %s\n' "$(date -u +%FT%TZ)" "$*" | tee -a "$LOG"; }
 
-# Failure alerting + liveness (notify-lib spine). This script needs a temp-dir
-# cleanup EXIT trap (work/shm, created later; guarded here with :-), and bash
-# allows only ONE EXIT trap — so arm_fail_trap cannot be used as-is (its
-# _nl_on_exit would be clobbered by the cleanup trap below). This merged handler
-# does BOTH: capture rc FIRST (before rm resets $?), clean up, drop the liveness
-# heartbeat every run, and page #cron-failures on ANY non-zero exit — including
-# the FATAL exit-1 paths (missing DB/age/sqlite3/zstd) that fire before work/shm
-# even exist. The governed brain's ONLY DR backup must not fail silently. A
-# graceful flock-skip is exit 0 → stays silent, correctly.
-# Guarded: on a fresh clone / CI without the notify spine, an unguarded `source`
-# would abort the whole script under `set -e` BEFORE any backup runs (the digest
-# guards the same source). Absent notify-lib, alerting degrades to a no-op — never
-# a hard failure of the governed brain's ONLY DR backup.
-if [ -f "$HOME/bin/lib/notify-lib.sh" ]; then
-  # shellcheck disable=SC1091
-  source "$HOME/bin/lib/notify-lib.sh"
-fi
+# Failure presentation is governed by Intent OS af_dispatch. The cleanup EXIT
+# trap is installed before work/shm exist, so every fatal preflight path still
+# gets an honest owner-neutral heartbeat and a content-safe sys-backups receipt.
+# The backup result remains authoritative: a missing alert floor must never turn
+# a verified local restore into a fabricated success or destroy a good archive.
+FAILURE_ALERT_ATTEMPTED=0
+RUN_ACCEPTED=0
+RUN_SKIPPED=0
+FAILURE_REASON=""
+
+write_marker() {
+  local path="$1"
+  if [ -e "$path" ] && [ ! -f "$path" ]; then
+    return 1
+  fi
+  : > "$path" 2>/dev/null
+}
+
+dispatch_alert() {
+  local raw="$1" fallback="$2" severity="${3:-high}" output rc=0
+  if [ ! -f "$AF_CLI" ]; then
+    log "WARN: governed alert floor missing at $AF_CLI"
+    return 1
+  fi
+  output="$(AF_LLM_NORMALIZE=1 AF_HC_URL='' bash "$AF_CLI" dispatch \
+    "$raw" "$fallback" "$severity" sys-backups 2>&1)" || rc=$?
+  printf '%s\n' "$output" >>"$LOG" 2>/dev/null || true
+  if [[ "$output" == *"status=dedup_suppressed"* ]]; then
+    return 0
+  fi
+  if [ "$rc" -eq 0 ] && [[ "$output" == *"status=delivered"* ]]; then
+    return 0
+  fi
+  log "WARN: governed sys-backups receipt was not accepted (rc=$rc)"
+  return 1
+}
+
 _backup_on_exit() {
   local rc=$?
   rm -rf "${work:-}" "${shm:-}" 2>/dev/null || true
-  mkdir -p "$HOME/.local/state/notify-lib" 2>/dev/null || true
-  : > "$HOME/.local/state/notify-lib/teamkb-backup.beat" 2>/dev/null || true
-  if [ "$rc" -eq 0 ]; then
-    # SUCCESS marker: touch <job>.ok (two-marker doctrine — .beat every run, .ok only on rc==0).
-    # The merged EXIT trap replaced notify-lib's arm_fail_trap, which dropped this write; without it
-    # the liveness sweep + the Epic-1.8 harness see fresh .beat + stale .ok and mis-report a WORKING
-    # backup as running-but-failing. Restored here.
-    : > "$HOME/.local/state/notify-lib/teamkb-backup.ok" 2>/dev/null || true
-    return 0
+  mkdir -p "$LIVENESS_DIR" 2>/dev/null || {
+    FAILURE_REASON="liveness directory unavailable: $LIVENESS_DIR"
+    rc=1
+  }
+  if ! write_marker "$LIVENESS_BEAT"; then
+    FAILURE_REASON="liveness heartbeat write failed: $LIVENESS_BEAT"
+    rc=1
   fi
-  local detail="exited rc=${rc}"
-  [ -f "$LOG" ] && detail="${detail}; last log: $(tail -n 3 "$LOG" 2>/dev/null | tr '\n' ' ' | cut -c1-400)"
-  # Guarded so the EXIT trap still cleans up + drops the heartbeat even when the
-  # notify spine is absent (cron_fail undefined) — the alert just no-ops.
-  command -v cron_fail >/dev/null 2>&1 && cron_fail "teamkb-backup" "$detail"
-  return 0
+  if [ "$RUN_SKIPPED" -eq 1 ]; then
+    write_marker "$LIVENESS_SKIPPED" 2>/dev/null || true
+  elif [ "$rc" -eq 0 ] && [ "$RUN_ACCEPTED" -eq 1 ]; then
+    if write_marker "$LIVENESS_OK"; then
+      rm -f "$LIVENESS_SKIPPED" 2>/dev/null || true
+    else
+      FAILURE_REASON="liveness success marker write failed: $LIVENESS_OK"
+      rc=1
+    fi
+  fi
+  if [ "$rc" -ne 0 ] && [ "$FAILURE_ALERT_ATTEMPTED" -eq 0 ]; then
+    [ -n "$FAILURE_REASON" ] || FAILURE_REASON="backup exited rc=$rc"
+    local detail="TeamKB full-brain backup failed: $FAILURE_REASON"
+    [ -f "$LOG" ] && detail="${detail}; recent log: $(tail -n 3 "$LOG" 2>/dev/null | tr '\n' ' ' | cut -c1-400)"
+    FAILURE_ALERT_ATTEMPTED=1
+    dispatch_alert "$detail" "TeamKB backup failed; inspect the content-safe backup log." high || true
+  fi
+  trap - EXIT
+  exit "$rc"
 }
 trap _backup_on_exit EXIT
 
@@ -140,6 +176,8 @@ if command -v flock >/dev/null 2>&1; then
   mkdir -p "$TEAMKB_HOME"
   exec 9>"$LOCK"
   if ! flock -w "$LOCK_WAIT" 9; then
+    RUN_SKIPPED=1
+    FAILURE_REASON="writer lock remained held for ${LOCK_WAIT}s"
     log "another ~/.teamkb writer holds $LOCK after ${LOCK_WAIT}s — skipping this backup run"
     exit 0
   fi
@@ -147,10 +185,18 @@ else
   log "WARN: flock not on PATH — proceeding WITHOUT the ~/.teamkb writer lock (concurrent compile could skew this snapshot)"
 fi
 
-[ -f "$DB" ]      || { log "FATAL: govern DB not found: $DB"; exit 1; }
-[ -x "$AGE_BIN" ] || { log "FATAL: age binary not found/executable: $AGE_BIN"; exit 1; }
-command -v sqlite3 >/dev/null || { log "FATAL: sqlite3 not on PATH"; exit 1; }
-command -v zstd    >/dev/null || { log "FATAL: zstd not on PATH"; exit 1; }
+[ -f "$DB" ] || { FAILURE_REASON="govern DB not found"; log "FATAL: govern DB not found: $DB"; exit 1; }
+[ -x "$AGE_BIN" ] || { FAILURE_REASON="age binary not found or executable"; log "FATAL: age binary not found/executable: $AGE_BIN"; exit 1; }
+if ! command -v sqlite3 >/dev/null; then
+  FAILURE_REASON="sqlite3 not on PATH"
+  log "FATAL: sqlite3 not on PATH"
+  exit 1
+fi
+if ! command -v zstd >/dev/null; then
+  FAILURE_REASON="zstd not on PATH"
+  log "FATAL: zstd not on PATH"
+  exit 1
+fi
 
 ts="$(date -u +%Y%m%dT%H%M%SZ)"
 work="$(mktemp -d)"
@@ -167,14 +213,14 @@ log "=== full-brain backup start: $TEAMKB_HOME ==="
 # 1. quiesced snapshots of both SQLite DBs (govern + compile)
 sqlite3 "$DB" "VACUUM INTO '$stage/dbs/teamkb.db'"
 gov_ic="$(sqlite3 "$stage/dbs/teamkb.db" 'PRAGMA integrity_check;')"
-[ "$gov_ic" = "ok" ] || { log "FATAL: govern DB integrity_check: $gov_ic"; exit 1; }
+[ "$gov_ic" = "ok" ] || { FAILURE_REASON="govern DB integrity_check failed"; log "FATAL: govern DB integrity_check: $gov_ic"; exit 1; }
 gov_tables="$(sqlite3 "$stage/dbs/teamkb.db" "SELECT count(*) FROM sqlite_master WHERE type='table';")"
 
 ico_tables="-"
 if [ -f "$ICO_DB" ]; then
   sqlite3 "$ICO_DB" "VACUUM INTO '$stage/dbs/ico-state.db'"
   ico_ic="$(sqlite3 "$stage/dbs/ico-state.db" 'PRAGMA integrity_check;')"
-  [ "$ico_ic" = "ok" ] || { log "FATAL: compile DB integrity_check: $ico_ic"; exit 1; }
+  [ "$ico_ic" = "ok" ] || { FAILURE_REASON="compile DB integrity_check failed"; log "FATAL: compile DB integrity_check: $ico_ic"; exit 1; }
   ico_tables="$(sqlite3 "$stage/dbs/ico-state.db" "SELECT count(*) FROM sqlite_master WHERE type='table';")"
 else
   log "WARN: compile DB not found at $ICO_DB — backing up govern DB + corpus only"
@@ -187,10 +233,31 @@ for p in "${TIER_A_PATHS[@]}" "${TIER_B_PATHS[@]}"; do
   [ -e "$TEAMKB_HOME/$p" ] && present+=("$p")
 done
 
-# 2. MANIFEST — records what was captured + the verification fingerprints.
-raw_files="$( [ -d "$TEAMKB_HOME/brain/raw" ] && find "$TEAMKB_HOME/brain/raw" -type f | wc -l || echo 0)"
-audit_files="$( [ -d "$TEAMKB_HOME/brain/audit" ] && find "$TEAMKB_HOME/brain/audit" -type f | wc -l || echo 0)"
-anchor_files="$( [ -d "$TEAMKB_HOME/audit" ] && find "$TEAMKB_HOME/audit" -type f | wc -l || echo 0)"
+# 2. Quiesce Tier-A/B paths into the stage under the same writer lock as the
+# DB snapshots. Tar-from-live can race the growing audit/provenance tree; a
+# restore must be internally consistent, so archive only the staged copy.
+for p in "${present[@]}"; do
+  dest="$stage/$p"
+  mkdir -p "$(dirname "$dest")"
+  if [ -d "$TEAMKB_HOME/$p" ]; then
+    mkdir -p "$dest"
+    if command -v rsync >/dev/null 2>&1; then
+      rsync -a --delete "$TEAMKB_HOME/$p/" "$dest/"
+    else
+      rm -rf "$dest"
+      cp -a "$TEAMKB_HOME/$p" "$dest"
+    fi
+  else
+    cp -a "$TEAMKB_HOME/$p" "$dest"
+  fi
+done
+log "tier paths staged into $stage (${#present[@]} components)"
+
+# 3. MANIFEST — records what was captured + the verification fingerprints.
+# Counts come from the staged tree so restore checks match the archive.
+raw_files="$( [ -d "$stage/brain/raw" ] && find "$stage/brain/raw" -type f | wc -l || echo 0)"
+audit_files="$( [ -d "$stage/brain/audit" ] && find "$stage/brain/audit" -type f | wc -l || echo 0)"
+anchor_files="$( [ -d "$stage/audit" ] && find "$stage/audit" -type f | wc -l || echo 0)"
 {
   echo "schemaVersion: 1"
   echo "createdAt: $(date -u +%FT%TZ)"
@@ -204,21 +271,21 @@ anchor_files="$( [ -d "$TEAMKB_HOME/audit" ] && find "$TEAMKB_HOME/audit" -type 
   echo "tierA: ${TIER_A_PATHS[*]}"
   echo "tierB: ${TIER_B_PATHS[*]}"
   echo "components: dbs/teamkb.db dbs/ico-state.db ${present[*]}"
+  echo "note: tier paths snapshotted under writer lock before tar"
 } > "$stage/MANIFEST.txt"
 
-# 3. one archive: staged DBs + MANIFEST (from $stage) + Tier-A/B paths (from $TEAMKB_HOME)
+# 4. one archive: everything from $stage (DBs + MANIFEST + staged Tier-A/B)
 tar --zstd -cf "$arc" \
-  -C "$stage" MANIFEST.txt dbs \
-  -C "$TEAMKB_HOME" "${present[@]}"
+  -C "$stage" MANIFEST.txt dbs "${present[@]}"
 log "archived: dbs + [${present[*]}] -> $(du -h "$arc" | cut -f1)"
 
-# 4. encrypt to both recipients, then shred the plaintext archive + staged DBs
+# 5. encrypt to both recipients, then shred the plaintext archive + staged DBs
 "$AGE_BIN" -r "$AGE_RECIP_LOCAL" -r "$AGE_RECIP_VPS" -o "$enc" "$arc"
 shred -u "$arc" 2>/dev/null || rm -f "$arc"
 rm -rf "$stage/dbs"
 log "encrypted (2 recipients) -> $enc ($(du -h "$enc" | cut -f1))"
 
-# 5. restore round-trip on tmpfs: decrypt + extract + verify BOTH DBs + Tier-A presence
+# 6. restore round-trip on tmpfs: decrypt + extract + verify BOTH DBs + Tier-A presence
 rdir="$shm/restore"
 mkdir -p "$rdir"
 "$AGE_BIN" -d -i "$AGE_KEY" -o "$shm/restore.tar.zst" "$enc"
@@ -271,11 +338,13 @@ if [ -d "$TEAMKB_HOME/audit" ] && [ -s "$rdir/audit/anchors.jsonl" ]; then
 fi
 
 if [ -n "$fail" ]; then
+  FAILURE_REASON="restore round-trip failed:${fail}"
   log "FATAL: restore round-trip FAILED —$fail — discarding unrestorable backup"
   rm -f "$enc"
   exit 1
 fi
 log "restore round-trip OK: govern+compile integrity verified, corpus($raw_files)/audit($audit_files)/anchor($anchor_files)/tokens present on tmpfs, restored anchor re-verified against restored chain"
+RUN_ACCEPTED=1
 
 # 5b. refresh the umbrella system map's live-stats block now that the brain is
 #     provably backed up. Non-fatal: the map is documentation, not the backup.
@@ -305,6 +374,9 @@ if [ -n "$R2_REMOTE" ] && command -v rclone >/dev/null; then
     [ "$r2_pruned" -gt 0 ] && log "R2 retention: pruned $r2_pruned old archive(s); retained newest $RETAIN"
   else
     log "WARN: off-host push to $R2_REMOTE FAILED (local encrypted backup retained)"
+    dispatch_alert \
+      "TeamKB backup local restore passed but R2 off-host push failed: $R2_REMOTE" \
+      "TeamKB backup is locally verified; R2 off-host copy failed." high || true
   fi
 else
   log "off-host R2 push SKIPPED — set TEAMKB_R2_REMOTE (+ rclone remote) to enable."
@@ -328,9 +400,15 @@ if [ -n "$VPS_REMOTE" ]; then
       ssh "${SSHO[@]}" "$vhost" "ls -1t '$vdir'/teamkb-full-*.tar.zst.age 2>/dev/null | tail -n +$((RETAIN + 1)) | xargs -r rm -f" 2>/dev/null || true
     else
       log "WARN: off-host VPS push sha256 MISMATCH (local=$lsum remote=$rsum) — remote copy suspect"
+      dispatch_alert \
+        "TeamKB backup local restore passed but VPS archive sha256 mismatched" \
+        "TeamKB backup is locally verified; VPS off-host copy is suspect." high || true
     fi
   else
     log "WARN: off-host VPS push to $VPS_REMOTE FAILED (local encrypted backup retained)"
+    dispatch_alert \
+      "TeamKB backup local restore passed but VPS off-host push failed: $VPS_REMOTE" \
+      "TeamKB backup is locally verified; VPS off-host copy failed." high || true
   fi
 else
   log "off-host VPS push SKIPPED (TEAMKB_VPS_REMOTE empty)."

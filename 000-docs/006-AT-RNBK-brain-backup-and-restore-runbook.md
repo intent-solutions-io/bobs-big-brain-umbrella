@@ -7,11 +7,19 @@ Operational companion to [`005-AT-ARCH`](005-AT-ARCH-grounded-system-map-and-bac
 The whole live brain is one directory on the dev box: `~/.teamkb/` (~48–56 MB). The backup
 captures the **source-of-truth + receipts**, not the cheaply-derived views.
 
+The canonical source is [`bin/teamkb-backup.sh`](../bin/teamkb-backup.sh); `~/bin/teamkb-backup.sh`
+is a deployed copy and must be changed only by the reviewed deploy helper. The failure path uses
+Intent OS `af_dispatch` on `sys-backups` with MiniMax-M3 normalization requested, and requires a
+`delivered` or `dedup_suppressed` receipt when an alert is attempted. It owns
+`~/.local/state/intent-os/liveness/teamkb-backup.{beat,ok,skipped}`: `.beat` records every attempt,
+`.ok` advances only after the local restore gate passes, and a writer-lock skip records `.skipped`
+without falsely advancing `.ok`.
+
 ## What runs
 
 | | |
 |---|---|
-| Script | `~/bin/teamkb-backup.sh` (single-user box; not in a repo) |
+| Script | `bin/teamkb-backup.sh` (canonical; deployed to `~/bin/teamkb-backup.sh`) |
 | Schedule | systemd **user** timer `teamkb-backup.timer` — daily `04:30` (after `borg-backup.timer` at `00:00`), `Persistent=true` |
 | Output | `~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age` (one self-contained encrypted archive) |
 | Retain | newest 14 locally (`TEAMKB_BACKUP_RETAIN`) |
@@ -52,6 +60,9 @@ extracts onto tmpfs and asserts: both DBs `PRAGMA integrity_check = ok` **and** 
 `sqlite_master` table counts match the pre-encryption snapshot; `brain/raw/` and `brain/audit/`
 restore with the recorded file counts; `tokens.json` is present. Any failure → the archive is
 deleted (an unrestorable backup is worse than a missing one) and the run exits non-zero.
+The local archive remains available when an off-host push is degraded; that degradation is logged
+and sent through `sys-backups`, while `.ok` continues to mean only that the local restore gate
+passed.
 
 ## Restore procedure (disaster recovery)
 
@@ -98,7 +109,10 @@ Every run pushes the encrypted archive off the dev box to the VPS `intentsolutio
 tailnet (`TEAMKB_VPS_REMOTE=intentsolutions:teamkb-backups`, on by default): `rsync` the `.age`,
 verify the remote copy **byte-for-byte by `sha256`**, then prune the VPS to the newest
 `TEAMKB_BACKUP_RETAIN`. Non-fatal if the tailnet/VPS is unreachable — the local copy is retained
-and the next run re-pushes.
+and the next run re-pushes. The failure is not silent: the source emits a governed `sys-backups`
+receipt and accepts only `delivered` or `dedup_suppressed`; an unaccepted receipt is recorded as a
+delivery failure without deleting the verified local artifact. Set `TEAMKB_VPS_REMOTE=` explicitly
+to disable the target in a hermetic or intentionally local-only run.
 
 This is a real DR site, not just a file drop: the archive is encrypted to the VPS host key
 (`age1csyjr…`) and the VPS holds the matching private key (`/etc/intentsolutions/age.key`,
@@ -114,3 +128,5 @@ in `~/.config/rclone/rclone.conf` for runtime; bucket created and first push ver
 belt-and-suspenders **backup** (encrypted blobs) on top of the VPS off-host — **not** the team brain
 bridge (that is the INTKB tailnet API + the unified plugin's team mode). Restore from R2: `rclone
 copy r2-teamkb:teamkb-backups/<archive>.age .` then follow the decrypt+restore procedure above.
+Set `TEAMKB_R2_REMOTE=` explicitly to skip R2; an empty override is distinct from the default
+`r2-teamkb:teamkb-backups` target.
