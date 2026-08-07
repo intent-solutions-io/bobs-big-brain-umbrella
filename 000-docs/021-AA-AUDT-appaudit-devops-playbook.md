@@ -28,31 +28,29 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
 
 ### Operational status
 
-| Layer / Repo | Component | Status | Evidence |
-|---|---|---|---|
-| Umbrella | System-graph fitness function (doc↔model drift gate) | **Shipped, live on main** | `system-graph.yml`, 50/50 nodes-edges |
-| Umbrella | `bin/gsb` cross-repo helper + `repos.yml` manifest | **Shipped** | `bin/gsb`, `repos.yml` |
-| Umbrella | Daily brain backup (`bin/teamkb-backup.sh`) | **Shipped, deployed, running** | cron 04:30, dual-recipient encrypted, restore-tested |
-| Umbrella | Buzz-routed backup-failure alerting | **Source-shipped, explicitly NOT deployed** | PR #76: source-only, pending reviewed deploy |
-| Compile | Core CLI (16 commands), 6 compiler passes | **Shipped** | `packages/cli/src/commands/` |
-| Compile | Provider-agnostic compile (7 built-in providers + custom) | **Shipped** | `packages/types/src/providers.ts` |
-| Compile | Governed freshness (incremental recompile + cost gate) | **Shipped** | PR #154, v1.21.0 |
-| Compile | Spool write-side to the Govern layer | **Shipped** | `packages/kernel/src/spool.ts`, PR #142 |
-| Compile | 11-PR "l13" epic (nightly-distiller alerts, write-lock, stale-mount freshness, honesty lint, quality gate) | **Draft, unmerged, all opened same day (2026-08-02)** | 11 open PRs, #185 through #205 |
-| Compile | v1.23.0 release-please PR | **Pending, not merged** | tip not an ancestor of `origin/main` |
-| Govern | Deterministic policy engine (9 rules) | **Shipped** | `policy-engine/src/rules/` |
-| Govern | Fused lexical retrieval (qmd BM25 + native FTS5, RRF k=60) | **Shipped, production default** | CHANGELOG [0.8.0] |
-| Govern | Dense retrieval (sqlite-vec + EmbeddingGemma-300M) | **Shipped, production default** as of this session | PR #328, wired into API/edge-daemon/MCP/CLI |
-| Govern | Reranker (Qwen3-0.6B cross-encoder) | **Shipped, opt-in, disabled by default** | PR #305 — measured, gate MISS |
-| Govern | Dense eval floor gate | **Hardened this session** | PR #334 |
-| Govern | Staleness detector | **Dry-run only, not wired to any caller** | PR #319; zero non-test callers found |
-| Govern | Team-bridge HTTP API (remote brain) | **Shipped, deployed** | scrypt tokens, tailnet-bound |
-| Retrieve | qmd 2.5.3 (pinned external, MIT, by @tobi) | **Live upstream dependency, not forked or vendored** | pinned in `gsb.lock.json` |
-| Package | Local mode (6 tools) | **Shipped** | `src/local-server.ts` |
-| Package | Team mode (7 tools) | **Shipped** | `src/remote-server.ts` |
-| Package | Dense retrieval in local mode | **Shipped 2026-08-04 (PR #60, HEAD)** | `src/local-server.ts:184` |
-| Package | Session-end auto-capture hook | **Built, opt-in, off by default, not plugin-declared** | `hooks/`, "I CONSENT" flow |
-| Package | Automatic Cowork MCP registration | **Not shipped** ("Coming") | README.md:194 |
+- **Umbrella — System-graph fitness function (doc↔model drift gate)** — *Status:* **Shipped, live on main**. *Evidence:* `system-graph.yml` (50 nodes/50 edges, 44 derived/6 semantic), `.github/workflows/system-graph-sync.yml`
+- **Umbrella — `bin/gsb` cross-repo helper + `repos.yml` manifest** — *Status:* **Shipped**. *Evidence:* `bin/gsb`, `repos.yml`
+- **Umbrella — Daily brain backup (`bin/teamkb-backup.sh`)** — *Status:* **Shipped, deployed, running**. *Evidence:* cron 04:30, dual-recipient age encryption, restore-tested
+- **Umbrella — Buzz-routed backup-failure alerting** — *Status:* **Source-shipped, explicitly NOT deployed**. *Evidence:* origin/main PR #76: "source-only until the reviewed deploy, canary, and rollback receipt exists"
+- **Compile — Core CLI (16 commands), 6 compiler passes** — *Status:* **Shipped**. *Evidence:* `packages/cli/src/commands/*.ts`, `packages/compiler/src/passes/*.ts`
+- **Compile — Provider-agnostic compile (7 built-in providers + custom)** — *Status:* **Shipped**. *Evidence:* `packages/types/src/providers.ts`
+- **Compile — Governed freshness (incremental recompile + cost gate)** — *Status:* **Shipped**. *Evidence:* PR #154, `af3a7eb`, v1.21.0
+- **Compile — Spool write-side to the Govern layer** — *Status:* **Shipped**. *Evidence:* `packages/kernel/src/spool.ts`, PR #142
+- **Compile — 11-PR "l13" epic** (nightly-distiller alerts, write-lock, stale-mount freshness, honesty lint, quality gate) — *Status:* **Draft, unmerged, all opened same day (2026-08-02)**. *Evidence:* `gh pr list` — #185,187,190,192,193,195,197,199,201,203,205
+- **Compile — v1.23.0 release-please PR** — *Status:* **Pending, not merged**. *Evidence:* tip `12890a5`, not ancestor of `origin/main`
+- **Govern — Deterministic policy engine (9 rules)** — *Status:* **Shipped**. *Evidence:* `packages/policy-engine/src/rules/index.ts:14-24`
+- **Govern — Fused lexical retrieval (qmd BM25 + native FTS5, RRF k=60)** — *Status:* **Shipped, production default**. *Evidence:* CHANGELOG [0.8.0]
+- **Govern — Dense retrieval (sqlite-vec + EmbeddingGemma-300M)** — *Status:* **Shipped, production default as of this session**. *Evidence:* PR #328 (`46f6bf5`), wired into API, edge-daemon, MCP server, CLI
+- **Govern — Reranker (Qwen3-0.6B cross-encoder)** — *Status:* **Shipped, opt-in, disabled by default**. *Evidence:* PR #305 — "measured, gate MISS, no default wiring"
+- **Govern — Dense eval floor gate** — *Status:* **Hardened this session**. *Evidence:* PR #334 (`861ecc7`)
+- **Govern — Staleness detector** — *Status:* **Dry-run only, not wired to any caller**. *Evidence:* PR #319 (`628c225`); zero non-test callers found
+- **Govern — Team-bridge HTTP API (remote brain)** — *Status:* **Shipped, deployed**. *Evidence:* scrypt tokens, tailnet-bound
+- **Retrieve — qmd 2.5.3 (pinned external, MIT, by @tobi)** — *Status:* **Live upstream dependency, not forked or vendored**. *Evidence:* pinned in `gsb.lock.json`, `package.json` devDep
+- **Package — Local mode (6 tools)** — *Status:* **Shipped**. *Evidence:* `src/local-server.ts:157-558`
+- **Package — Team mode (7 tools)** — *Status:* **Shipped**. *Evidence:* `src/remote-server.ts:384-801`
+- **Package — Dense retrieval in local mode** — *Status:* **Shipped 2026-08-04 (PR #60, HEAD)**. *Evidence:* `src/local-server.ts:184`, `src/govern.ts:157`
+- **Package — Session-end auto-capture hook** — *Status:* **Built, opt-in, off by default, not plugin-declared**. *Evidence:* `hooks/`, gated by explicit "I CONSENT" flow
+- **Package — Automatic Cowork MCP registration** — *Status:* **Not shipped** ("Coming"). *Evidence:* README.md:194
 
 ### Technology stack
 
