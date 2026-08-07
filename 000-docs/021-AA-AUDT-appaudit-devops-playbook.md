@@ -4,29 +4,29 @@
 
 ---
 
-## 1. This System in 5 Minutes
+## 1. This system in 5 minutes
 
 Bob's Big Brain is a local-first knowledge system built on one constraint, restated in every repo's own docs: **the model proposes; deterministic code owns durable state and control.** It has four layers, four separate git repos, and one piece of pinned open-source infrastructure it doesn't own:
 
 - **Compile** (`bobs-big-brain-compiler`, npm `intentional-cognition-os`, internal shorthand **ICO**) — points at a folder of PDFs, Markdown, or web clips. A 6-pass Claude-driven compiler turns raw material into a cited Markdown wiki (concepts, sources, topics, contradictions, open questions), then hands off compiled candidates as a JSONL **spool**.
-- **Govern** (`bobs-big-brain-registrar`, internal shorthand **INTKB**) — consumes that spool. A 9-rule deterministic policy engine (not the model) decides promote/flag/reject, writes to SQLite, exports curated Markdown, and appends a SHA-256 hash-chained receipt for every admitted fact.
-- **Retrieve** (`qmd`, by @tobi, pinned external dependency — not part of this codebase) — on-device BM25 lexical search, now fused with a native sqlite-vec + EmbeddingGemma-300M dense arm shipped this cycle.
+- **Govern** (`bobs-big-brain-registrar`, internal shorthand **INTKB**) — consumes that spool. A 9-rule deterministic policy engine (not the model) decides promote/flag/reject, writes to SQLite, exports curated Markdown, and appends a SHA-256 hash-chained receipt for every admitted fact. Its `qmd-adapter` package also owns retrieval fusion — RRF over qmd's lexical hits plus a native sqlite-vec + EmbeddingGemma-300M dense arm it added this cycle (see §3).
+- **Retrieve** (`qmd`, by @tobi, pinned external dependency — not part of this codebase) — on-device BM25 lexical search only. Not forked; Govern's `qmd-adapter` invokes it as one arm of the fused search, the dense arm lives in Govern, not here.
 - **Package** (`bobs-big-brain-plugin`, npm `governed-second-brain`) — the one installable Claude Code / Cowork MCP plugin, in two runtime modes: **local** (default, in-process, single trust domain) and **team** (proxies over Tailscale to one shared, governed brain).
 - **Umbrella** (`bobs-big-brain-umbrella`, this repo) — no application code; it's the landing page, the cross-repo topology model (`system-graph.yml`, CI-gated against drift), and the operational glue (`bin/gsb`, the daily backup/compile/quality-digest cron jobs) that ties the other four together.
 
 The differentiator the whole product is pitched on is **govern + receipts, not recall**: dedupe, policy, secret-detection, and promotion are deterministic code, and every admitted fact carries a verifiable, hash-chained trail back to its source. That chain is **tamper-evident, not tamper-proof** — a local writer with filesystem access can edit an event and re-hash the chain forward, and verification would still pass. Cross-actor detection of that kind of tampering requires the external git-anchor witness step, which is implemented and checkable via `ico audit verify` / `brain_audit_verify`. Keeping that distinction precise is not a nitpick — it is the product's whole trust model, and this document holds itself to the same standard the codebase enforces on its own docs (a CI-run forbidden-words lint on the umbrella README bans "tamper-proof," "immutable," "non-repudiation" for local mode, and "blockchain," and requires "append-only" claims to be qualified).
 
-As of this audit, the system's newest and most consequential shipped change is **dense (semantic) retrieval going production-default** on both sides of the Govern↔Package boundary: registrar PR #328/#334 wired `sqlite-vec` + EmbeddingGemma-300M into the API/edge-daemon/MCP-server/CLI, and plugin PR #60 (HEAD, 2026-08-04) carried the same dense arm into the plugin's **local mode**, closing the gap where local users would otherwise have stayed lexical-only forever. Both repos still have real, honestly-documented gaps: the registrar's staleness detector runs dry-run only against the live 10,190-memory brain (never deletes), the compiler has 11 open draft PRs from a single day's fan-out that are not live, and three separate repos have README/CLAUDE.md version numbers that lag their own git history. None of this is hidden — it's exactly the kind of "what's proposed vs. what's live" distinction the product exists to make explicit, and this document tracks it the same way throughout.
+As of this audit, the system's newest and most consequential shipped change is **dense (semantic) retrieval going production-default** on both sides of the Govern↔Package boundary: registrar PR #328/#334 wired `sqlite-vec` + EmbeddingGemma-300M into the API/edge-daemon/MCP-server/CLI, and plugin PR #60 (HEAD, 2026-08-04) carried the same dense arm into the plugin's **local mode**, closing the gap where local users would otherwise have stayed lexical-only forever. Both repos still have real, honestly-documented gaps: the registrar's staleness detector runs dry-run only (never deletes) — its last run was against a 10,190-active-memory snapshot; the live brain has since grown (see the umbrella's own `005-AT-ARCH` live-stats block for the current count), the compiler has 11 open draft PRs from a single day's fan-out that are not live, and three separate repos have README/CLAUDE.md version numbers that lag their own git history. None of this is hidden — it's exactly the kind of "what's proposed vs. what's live" distinction the product exists to make explicit, and this document tracks it the same way throughout.
 
 ---
 
-## 2. Executive Summary
+## 2. Executive summary
 
-### What It Does
+### What it does
 
 Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into a governed, queryable, citable knowledge base, and makes that knowledge base available inside Claude Code / Cowork as six-to-seven MCP tools depending on mode. A user (or a team, over Tailscale) captures material, the Compile layer proposes structured knowledge, the Govern layer decides — by code, not by the model's say-so — what's worth keeping, and the Retrieve layer answers queries with cited hits. The Package layer is the single distribution surface a human actually installs.
 
-### Operational Status
+### Operational status
 
 | Layer / Repo | Component | Status | Evidence |
 |---|---|---|---|
@@ -54,7 +54,7 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
 | Package | Session-end auto-capture hook | **Built, opt-in, off by default, not plugin-declared** | `hooks/`, gated by explicit "I CONSENT" flow |
 | Package | Automatic Cowork MCP registration | **Not shipped** ("Coming") | README.md:194 |
 
-### Technology Stack
+### Technology stack
 
 | Layer | Purpose | Tech | Why This (from source) |
 |---|---|---|---|
@@ -82,7 +82,7 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
 
 ## 3. Architecture
 
-### The Critical Path — one pipeline, four repos
+### The critical path — one pipeline, four repos
 
 ```
    USER / TEAMMATE
@@ -153,11 +153,11 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
    └───────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Stack Table — Why This, by Layer
+### Stack table — why this, by layer
 
 The per-package technology choices are listed in §2's Technology Stack table above (folded together to avoid repeating the same rows twice). The architecturally significant "why" decisions — provider-neutral compile, RRF-fused retrieval, the dual-mode plugin dispatch — are captured in §4's Decision Log rather than restated here, since they are tradeoffs, not just tech picks.
 
-### Dependency Graph
+### Dependency graph
 
 **Repo level** (from `repos.yml` + `system-graph.yml`, 50 nodes / 50 edges, 44 mechanically-derived / 6 hand-curated semantic):
 
@@ -187,9 +187,9 @@ bobs-big-brain-umbrella  (map only, no code)
 
 ---
 
-## 4. Design Decisions & Tradeoffs
+## 4. Design decisions & tradeoffs
 
-### Decision Log
+### Decision log
 
 | Chosen | Over | Because | Cost | Revisit When |
 |---|---|---|---|---|
@@ -204,7 +204,7 @@ bobs-big-brain-umbrella  (map only, no code)
 | **Staleness detector ships dry-run-only**, deliberately not wired to any writer | Wiring the apply step immediately | The dry run against the live 10,190-memory brain found 1,025 candidates (10.06%) — but also 154 historical-record false positives needing human judgment on precision before any deletion path runs. "Shipping the apply step on these rules would retire ~1,000 memories on a rule set that has not earned it." | Every stale-content problem in the live brain persists until this ships | Gated behind a receipted-rules requirement not yet built |
 | **Origin tokens (HMAC-SHA256 over candidateId+tenantId+capturedAt)** mint at `brain_capture`, verified before promotion | No write-time provenance at all | Proves WHERE a capture came from | Stated explicitly, not hidden: does NOT prove content truth — "an authenticated insider... can still poison L2/L3 content with validly-attested captures." This is a permanent, acknowledged limitation | n/a — accepted residual risk |
 
-### What Was Deliberately Not Built
+### What was deliberately not built
 
 - **Remote/sync, multi-user, and a plugin system** (README Phases 3-5) — "deliberately deferred to keep v1 local-first and inspectable." No customer-facing chatbot use case, no team-shared Slack-drop use case.
 - **A daemon in the Package layer** — explicitly avoided: "no daemon, no HTTP, no network, no API key" in local mode. Govern runs synchronously on-demand, hand-wiring the same sequence the registrar's edge-daemon runs per cycle, just without the loop.
@@ -218,7 +218,7 @@ bobs-big-brain-umbrella  (map only, no code)
 - **A distributed multi-node brain merge (EPIC 1, Dolt-based)** — foundation-only primitives shipped (content-derived UUID v5, Ed25519-signed DAG anchors), not the actual merge UX. Demand-gated, not scheduled.
 - **`--check-local` in Umbrella's CI** — a GitHub runner has none of the systemd units/crontab/paths it would need to check, and would "fail vacuously," so that verification mode stays dev-box-only, permanently.
 
-### Assumptions the Architecture Rests On
+### Assumptions the architecture rests on
 
 1. **The model never writes durable state, audit, or promotion tables directly** — restated in every repo's README and CLAUDE.md; the single hardest constraint in the system.
 2. **A "receipt" (DB row + trace + audit JSONL + rename-into-place) always precedes visibility of any wiki file** — enforced two-sided (pre- and post-hoc reconcile) in Compile's `reconcile.ts` (`GATED_WIKI_DIRS`), in lockstep with Compile's `spool.ts` (`WIKI_DIRS`) and Govern's `promotion.ts` (`TYPE_DIRECTORY_MAP`) — drift among these three would silently break the receipt guarantee, and nothing mechanically enforces that the three lists stay in sync.
@@ -229,7 +229,7 @@ bobs-big-brain-umbrella  (map only, no code)
 
 ---
 
-## 5. Directory Structure
+## 5. Directory structure
 
 ### Layout (four repos + one live-data directory)
 
@@ -251,12 +251,12 @@ bobs-big-brain-umbrella  (map only, no code)
 └── ~/.teamkb/                      (NOT a repo) — the one live brain
     ├── teamkb.db  (Govern's store, schema v9)
     ├── brain/.ico/state.db  (Compile's state)
-    ├── brain/raw/  brain/wiki/  brain/audit/  brain/spool/  spool/  ← two DIFFERENT spool dirs, see §8
+    ├── brain/raw/  brain/wiki/  brain/audit/  brain/spool/  spool/  ← two DIFFERENT spool dirs, see Appendix A (Glossary)
     ├── team.json  (mode 600)  origin-secret (mode 600)  tokens.json (SOPS-covered secret)
     └── backups/  (age-encrypted, dual-recipient, pushed off-host by the umbrella's cron)
 ```
 
-### Load-Bearing Files, by Layer
+### Load-bearing files, by layer
 
 **Umbrella:**
 
@@ -299,7 +299,7 @@ bobs-big-brain-umbrella  (map only, no code)
 
 ---
 
-## 6. Getting Started
+## 6. Getting started
 
 ### Prerequisites
 
@@ -312,20 +312,20 @@ bobs-big-brain-umbrella  (map only, no code)
 | `qmd` 2.x on PATH | Retrieval | Local retrieval degrades gracefully (not broken) if absent — capture/govern/audit still complete |
 | Sibling checkout of `bobs-big-brain-registrar`, built | Package, only if building the plugin from source | Not needed to run the shipped npm bundle |
 
-### Zero to Running (the actual user path — install the plugin)
+### Zero to running (the actual user path — install the plugin)
 
 ```bash
 npx governed-second-brain init <folder> --index-only     # zero-egress, no LLM calls
-# OR, for a full compiled brain:
-DEEPSEEK_API_KEY=... npx governed-second-brain init <folder>
+# OR, for a full compiled brain: set DEEPSEEK_API_KEY in your shell first, then
+npx governed-second-brain init <folder>
 # This installs native deps, builds ~/.teamkb, and auto-registers the MCP server via `claude mcp add`.
 ```
 
-### Zero to Running (operating the Compile engine directly)
+### Zero to running (operating the Compile engine directly)
 
 ```bash
 npm install -g intentional-cognition-os
-export ANTHROPIC_API_KEY=sk-ant-...
+export ANTHROPIC_API_KEY=<your-anthropic-api-key>
 ico init my-research
 ico mount add papers ~/Documents/papers --workspace my-research
 ico ingest ~/Documents/papers --workspace my-research
@@ -336,11 +336,15 @@ ico ask "..." --workspace my-research
 ### Building from source (any of the three code repos)
 
 ```bash
-git clone https://github.com/jeremylongshore/<bobs-big-brain-compiler|bobs-big-brain-registrar|bobs-big-brain-plugin>.git
-cd <repo> && pnpm install && pnpm build
+# pick one:
+git clone https://github.com/jeremylongshore/bobs-big-brain-compiler.git
+git clone https://github.com/jeremylongshore/bobs-big-brain-registrar.git
+git clone https://github.com/jeremylongshore/bobs-big-brain-plugin.git
+
+cd <the repo you cloned> && pnpm install && pnpm build
 ```
 
-### Common Setup Problems
+### Common setup problems
 
 | Problem | Symptom | Fix |
 |---|---|---|
@@ -356,7 +360,7 @@ cd <repo> && pnpm install && pnpm build
 
 ## 7. Operations
 
-### Command Map, by Layer
+### Command map, by layer
 
 **Umbrella:**
 
@@ -395,15 +399,15 @@ pnpm reindex / pnpm search-canary / pnpm bbb-qmd
 
 ```bash
 npm run build            # node build.mjs — esbuild bundle + vendor natives
-npm run typecheck / typecheck:ci
+npm run typecheck        # or: npm run typecheck:ci
 npm run lint
-npm run test / test:coverage
+npm run test              # or: npm run test:coverage
 npm run verify-anchors    # standalone anchor-log verifier
 node smoke.mjs             # full-chain local smoke, drives the COMMITTED bundle
 node smoke-team.mjs         # stubbed-API team-mode smoke
 ```
 
-### CI/CD, by Repo
+### CI/CD, by repo
 
 | Repo | Key workflows | Notes |
 |---|---|---|
@@ -420,14 +424,14 @@ There is no single "the system deploys here." Three different deployment stories
 2. **Systemd-hosted services** (Govern) — `apps/api` (the team-bridge Fastify API, tailnet-bound), plus two loopback-only sidecars: `bbb-embedder.service` (:8098, SHA-256-pinned llama.cpp + EmbeddingGemma-300M-Q8_0.gguf, `MemoryMax=3G`) and `bbb-reranker.service` (:8097, opt-in). These are NOT part of Govern's own CI or release workflow — an operator who clones fresh and runs `apps/api` without them running will silently get lexical-only results (fail-open, but silent).
 3. **A daily cron pipeline** (Umbrella) — `teamkb-compile-daily.sh` (03:30), `teamkb-backup.sh` (04:30), `teamkb-quality-digest.sh` (nightly), `teamkb-systemmap.sh` (regenerates the live-stats doc block). These are the umbrella's real operational surface — bash scripts run outside any repo's own CI, deployed to `~/bin` from the umbrella's canonical `bin/` copies.
 
-### Monitoring & Alerting
+### Monitoring & alerting
 
 - **Umbrella's backup cron** now has a "route failures through governed Buzz alerting" change **shipped to source but explicitly not yet deployed** (origin/main PR #76: "source-only until the reviewed deploy, canary, and rollback receipt exists"). Treat any claim that backup failures currently page anyone as unverified until that deploy happens.
 - **Govern's nightly workflow** (`nightly.yml`, 04:00 UTC) runs a search-health canary and a corpus-accounting guard as its monitoring surface — CI-based, not a running daemon's alerting.
 - **Compile's `nightly-smoke.yml`** runs cross-repo deterministic smoke daily without needing an API key (skips the three Claude-calling stages) — a canary for structural breakage, not for LLM-provider health.
 - No repo in this system ships a dashboard; observability is CI job status + the audit JSONL trail + `bd doctor`/`bd status` on the beads trackers.
 
-### Incident Response
+### Incident response
 
 | Scenario | Where to look first |
 |---|---|
@@ -440,7 +444,7 @@ There is no single "the system deploys here." Three different deployment stories
 
 ---
 
-## 8. Things That Will Bite You
+## 8. Things that will bite you
 
 Ranked by likelihood × impact across the whole system.
 
@@ -466,9 +470,9 @@ Ranked by likelihood × impact across the whole system.
 
 ---
 
-## 9. Security & Access
+## 9. Security & access
 
-### Access Control
+### Access control
 
 | Mechanism | Scope | Enforcement Point | Layer |
 |---|---|---|---|
@@ -497,7 +501,7 @@ Ranked by likelihood × impact across the whole system.
 | Edge-daemon container image | Cosign keyless (OIDC) signing + SLSA L3 provenance | `release.yml`, `slsa-framework/slsa-github-generator` |
 | npm package publishes (Compile, Package) | Provenance-attested (`npm publish --provenance`) | `release.yml` in both repos |
 
-### Honest Security Assessment
+### Honest security assessment
 
 - **CodeQL is a required check** in Compile and actively catches real issues — e.g., a confirmed fix for a TOCTOU race (`js/file-system-race`) in `parseChangedList`.
 - **OSV Scanner replaces `pnpm audit`** (retired by npm 2026-04-15) in Compile, reading `pnpm-lock.yaml` directly and failing on HIGH/CRITICAL.
@@ -510,9 +514,9 @@ Ranked by likelihood × impact across the whole system.
 
 ---
 
-## 10. Cost & Performance
+## 10. Cost & performance
 
-### Monthly Costs
+### Monthly costs
 
 No repo in this system runs on cloud infrastructure with a metered monthly bill in the traditional sense — Govern's team-bridge API and its embedder/reranker sidecars run on the operator's own tailnet-bound hardware (self-hosted, not cloud-billed), and Compile/Package are npm-published CLIs/plugins with no hosted runtime. The only recurring, quantifiable cost is **LLM inference spend for compiling**:
 
@@ -528,7 +532,7 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 - **Compile benchmark suite**: a 500-source large-corpus benchmark with a 3× degradation gate covers ingest/lint/render/compile/ask. This audit did not re-run it — reporting its existence and stated scope, not fresh numbers.
 - No P50-P99 figures for the read path (search/retrieve end-to-end from a plugin tool call) were found in either research pass; only the dense-arm-specific delta above is directly evidenced, and even that is of contested provenance (see above).
 
-### Scaling Limits
+### Scaling limits
 
 - **Single-user, single-machine by design for v1** (Compile) — no multi-tenant isolation model in that repo; tenancy is an entirely Govern-side concern (the spool's `tenantId` field).
 - **Govern's tenant model is real and code-verified** (see §9), but the whole system is still one shared brain per deployment, not a horizontally-scaled multi-brain architecture — the distributed/merge model (EPIC 1, Dolt-based) is demand-gated, foundation-only.
@@ -537,9 +541,9 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 
 ---
 
-## 11. Current State
+## 11. Current state
 
-### What's Working (with citations)
+### What's working (with citations)
 
 - **The Compile→Govern spool handoff (EPIC 0)** is shipped and load-bearing — `packages/kernel/src/spool.ts` on the Compile side, consumed by Govern's curator.
 - **Governed freshness** (incremental recompile + cost gate) is shipped on Compile's `origin/main`, v1.21.0, PR #154 (`af3a7eb`).
@@ -550,7 +554,7 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 - **Umbrella's system-graph fitness function** is live, enforced, and the doc and model are in sync as of local HEAD (node/edge counts cross-checked: 50/50 both places).
 - **Native-dependency self-containment for the plugin's local mode** is shipped and has now survived two real-world tests (better-sqlite3/fs-ext, then sqlite-vec) of the exact same failure class.
 
-### What Needs Attention, by Severity
+### What needs attention, by severity
 
 **High:**
 - The flag-vs-reject semantic gap in Govern's policy pipeline (§4, §8.2) — either build a genuine flag-and-promote path or correct the doc comment; leaving it as-is means the codebase's own documentation misdescribes its behavior.
@@ -572,7 +576,7 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 - Automatic Cowork MCP registration remaining unbuilt in the plugin (stated as "Coming," not a broken promise).
 - The staleness detector's dry-run precision gap (154/1,025 false positives) — correctly gated, not urgent, but blocks the apply step indefinitely until addressed.
 
-### Implementation Status Table
+### Implementation status table
 
 | Feature | Layer | Status | Evidence |
 |---|---|---|---|
@@ -622,19 +626,19 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 
 ---
 
-## 13. Quick Reference
+## 13. Quick reference
 
 ### URLs
 
 | Resource | URL |
 |---|---|
-| Umbrella (landing) | `github.com/intent-solutions-io/bobs-big-brain-umbrella` |
-| Compile engine | `github.com/jeremylongshore/bobs-big-brain-compiler` (npm: `intentional-cognition-os`) |
-| Govern engine | `github.com/jeremylongshore/bobs-big-brain-registrar` (npm scope: `@qmd-team-intent-kb/*`, unchanged post-rename) |
-| Package (installable plugin) | `github.com/jeremylongshore/bobs-big-brain-plugin` (npm: `governed-second-brain`) |
-| Retrieve (pinned external) | `github.com/tobi/qmd` (not owned by this system) |
+| Umbrella (landing) | [github.com/intent-solutions-io/bobs-big-brain-umbrella](https://github.com/intent-solutions-io/bobs-big-brain-umbrella) |
+| Compile engine | [github.com/jeremylongshore/bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler) (npm: `intentional-cognition-os`) |
+| Govern engine | [github.com/jeremylongshore/bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar) (npm scope: `@qmd-team-intent-kb/*`, unchanged post-rename) |
+| Package (installable plugin) | [github.com/jeremylongshore/bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin) (npm: `governed-second-brain`) |
+| Retrieve (pinned external) | [github.com/tobi/qmd](https://github.com/tobi/qmd) (not owned by this system) |
 
-### First-Week Checklist (for anyone picking this system up cold)
+### First-week checklist (for anyone picking this system up cold)
 
 1. `git fetch && git log <local>..origin/main` in **every** one of the four repos before trusting any local `main` — this bit two of the four research passes behind this document.
 2. Read the umbrella's `system-graph.yml` + rendered topology doc first — it's the one place the cross-repo dependency claims are mechanically checked.
@@ -661,16 +665,16 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 - **Local mode / team mode** — the plugin's two runtime dispatch paths, selected by `TEAMKB_API_URL`; local is in-process/single-trust-domain, team proxies to one shared, tailnet-bound brain.
 - **AGP / CrossChainPointer** — a defined, structural (not yet operationally checkable) contract binding `agent-governance-plane`'s hash-chained journal events to the tip of this brain's receipt log; described here only as a contract, never as a working cross-chain query, per the umbrella's own documented caveat.
 
-## Appendix B. Reference Links
+## Appendix B. Reference links
 
-- Compile package registry entry: npm `intentional-cognition-os`
-- Govern package scope: npm `@qmd-team-intent-kb/*`
-- Package registry entry: npm `governed-second-brain`
-- Retrieve upstream: `@tobilu/qmd` on npm, MIT license, pinned at 2.5.3
-- Umbrella's canonical topology doc: `000-docs/020-AT-SMAP-system-dependency-graph.md`
-- The retrieval-backend decision record: Govern `000-docs/038-AT-DECR`
+- Compile package registry entry: [`intentional-cognition-os` on npm](https://www.npmjs.com/package/intentional-cognition-os)
+- Govern package scope: `@qmd-team-intent-kb/*` on npm (internal packages, not independently published for public browsing — no reliable link target)
+- Package registry entry: [`governed-second-brain` on npm](https://www.npmjs.com/package/governed-second-brain)
+- Retrieve upstream: [`@tobilu/qmd` on npm](https://www.npmjs.com/package/@tobilu/qmd), MIT license, pinned at 2.5.3
+- Umbrella's canonical topology doc: [`000-docs/020-AT-SMAP-system-dependency-graph.md`](020-AT-SMAP-system-dependency-graph.md)
+- The retrieval-backend decision record: Govern `000-docs/038-AT-DECR` (in the registrar repo, not this one — no cross-repo link target)
 
-## Appendix C. Troubleshooting Playbooks
+## Appendix C. Troubleshooting playbooks
 
 **"My plugin's search results feel worse than expected"**
 1. Confirm which mode is active — local or team (`TEAMKB_API_URL` set?).
@@ -693,7 +697,7 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 2. Cross-check against the external git-anchor witness — a local-only chain break without a corresponding anchor mismatch suggests corruption, not malice; a mismatch against a pushed anchor is the actual tamper signal.
 3. Never describe a passing local verify alone as proof nothing was altered — a local writer with filesystem access could have edited and re-hashed forward. The anchor comparison is what makes tampering detectable across actors.
 
-## Appendix D. Open Questions
+## Appendix D. Open questions
 
 1. Is `system-graph-sync.yml` actually enforced as a required branch-protection check on the umbrella repo, or only conventionally treated as one? Not verifiable from in-repo files alone.
 2. Is there a plan to extend the system-graph fitness-function pattern to also gate the other stale docs found in this audit (registrar README/CLAUDE.md, compiler TEST_AUDIT.md, plugin AGENTS.md)?
