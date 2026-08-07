@@ -30,28 +30,28 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
 
 | Layer / Repo | Component | Status | Evidence |
 |---|---|---|---|
-| Umbrella | System-graph fitness function (doc↔model drift gate) | **Shipped, live on main** | `system-graph.yml` (50 nodes/50 edges, 44 derived/6 semantic), `.github/workflows/system-graph-sync.yml` |
+| Umbrella | System-graph fitness function (doc↔model drift gate) | **Shipped, live on main** | `system-graph.yml`, 50/50 nodes-edges |
 | Umbrella | `bin/gsb` cross-repo helper + `repos.yml` manifest | **Shipped** | `bin/gsb`, `repos.yml` |
-| Umbrella | Daily brain backup (`bin/teamkb-backup.sh`) | **Shipped, deployed, running** | cron 04:30, dual-recipient age encryption, restore-tested |
-| Umbrella | Buzz-routed backup-failure alerting | **Source-shipped, explicitly NOT deployed** | origin/main PR #76: "source-only until the reviewed deploy, canary, and rollback receipt exists" |
-| Compile | Core CLI (16 commands), 6 compiler passes | **Shipped** | `packages/cli/src/commands/*.ts`, `packages/compiler/src/passes/*.ts` |
+| Umbrella | Daily brain backup (`bin/teamkb-backup.sh`) | **Shipped, deployed, running** | cron 04:30, dual-recipient encrypted, restore-tested |
+| Umbrella | Buzz-routed backup-failure alerting | **Source-shipped, explicitly NOT deployed** | PR #76: source-only, pending reviewed deploy |
+| Compile | Core CLI (16 commands), 6 compiler passes | **Shipped** | `packages/cli/src/commands/` |
 | Compile | Provider-agnostic compile (7 built-in providers + custom) | **Shipped** | `packages/types/src/providers.ts` |
-| Compile | Governed freshness (incremental recompile + cost gate) | **Shipped** | PR #154, `af3a7eb`, v1.21.0 |
+| Compile | Governed freshness (incremental recompile + cost gate) | **Shipped** | PR #154, v1.21.0 |
 | Compile | Spool write-side to the Govern layer | **Shipped** | `packages/kernel/src/spool.ts`, PR #142 |
-| Compile | 11-PR "l13" epic (nightly-distiller alerts, write-lock, stale-mount freshness, honesty lint, quality gate) | **Draft, unmerged, all opened same day (2026-08-02)** | `gh pr list` — #185,187,190,192,193,195,197,199,201,203,205 |
-| Compile | v1.23.0 release-please PR | **Pending, not merged** | tip `12890a5`, not ancestor of `origin/main` |
-| Govern | Deterministic policy engine (9 rules) | **Shipped** | `packages/policy-engine/src/rules/index.ts:14-24` |
+| Compile | 11-PR "l13" epic (nightly-distiller alerts, write-lock, stale-mount freshness, honesty lint, quality gate) | **Draft, unmerged, all opened same day (2026-08-02)** | 11 open PRs, #185 through #205 |
+| Compile | v1.23.0 release-please PR | **Pending, not merged** | tip not an ancestor of `origin/main` |
+| Govern | Deterministic policy engine (9 rules) | **Shipped** | `policy-engine/src/rules/` |
 | Govern | Fused lexical retrieval (qmd BM25 + native FTS5, RRF k=60) | **Shipped, production default** | CHANGELOG [0.8.0] |
-| Govern | Dense retrieval (sqlite-vec + EmbeddingGemma-300M) | **Shipped, production default** as of this session | PR #328 (`46f6bf5`), wired into API, edge-daemon, MCP server, CLI |
-| Govern | Reranker (Qwen3-0.6B cross-encoder) | **Shipped, opt-in, disabled by default** | PR #305 — "measured, gate MISS, no default wiring" |
-| Govern | Dense eval floor gate | **Hardened this session** | PR #334 (`861ecc7`) |
-| Govern | Staleness detector | **Dry-run only, not wired to any caller** | PR #319 (`628c225`); zero non-test callers found |
+| Govern | Dense retrieval (sqlite-vec + EmbeddingGemma-300M) | **Shipped, production default** as of this session | PR #328, wired into API/edge-daemon/MCP/CLI |
+| Govern | Reranker (Qwen3-0.6B cross-encoder) | **Shipped, opt-in, disabled by default** | PR #305 — measured, gate MISS |
+| Govern | Dense eval floor gate | **Hardened this session** | PR #334 |
+| Govern | Staleness detector | **Dry-run only, not wired to any caller** | PR #319; zero non-test callers found |
 | Govern | Team-bridge HTTP API (remote brain) | **Shipped, deployed** | scrypt tokens, tailnet-bound |
-| Retrieve | qmd 2.5.3 (pinned external, MIT, by @tobi) | **Live upstream dependency, not forked or vendored** | pinned in `gsb.lock.json`, `package.json` devDep |
-| Package | Local mode (6 tools) | **Shipped** | `src/local-server.ts:157-558` |
-| Package | Team mode (7 tools) | **Shipped** | `src/remote-server.ts:384-801` |
-| Package | Dense retrieval in local mode | **Shipped 2026-08-04 (PR #60, HEAD)** | `src/local-server.ts:184`, `src/govern.ts:157` |
-| Package | Session-end auto-capture hook | **Built, opt-in, off by default, not plugin-declared** | `hooks/`, gated by explicit "I CONSENT" flow |
+| Retrieve | qmd 2.5.3 (pinned external, MIT, by @tobi) | **Live upstream dependency, not forked or vendored** | pinned in `gsb.lock.json` |
+| Package | Local mode (6 tools) | **Shipped** | `src/local-server.ts` |
+| Package | Team mode (7 tools) | **Shipped** | `src/remote-server.ts` |
+| Package | Dense retrieval in local mode | **Shipped 2026-08-04 (PR #60, HEAD)** | `src/local-server.ts:184` |
+| Package | Session-end auto-capture hook | **Built, opt-in, off by default, not plugin-declared** | `hooks/`, "I CONSENT" flow |
 | Package | Automatic Cowork MCP registration | **Not shipped** ("Coming") | README.md:194 |
 
 ### Technology stack
@@ -75,7 +75,7 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
 | Package | Test | Vitest ^4.1.10, `node:test` (zero-dep) | — |
 | Umbrella | Model/rendering | Python 3.12 + PyYAML (unpinned) | No runtime framework; "this estate has been bitten repeatedly by maps that silently diverged from reality" |
 | Cross-cutting | Task tracking | Beads (`bd`), Dolt-backed | Per-repo bead prefixes preserved across the 2026-07-19 rename (compile-then-govern / intentional-cognition-os / qmd-team-intent-kb) |
-| Cross-cutting | Testing harness | `@intentsolutions/audit-harness` ^1.3.0 | Standard Intent Solutions Testing SOP, installed in every repo |
+| Cross-cutting | Testing harness | @intentsolutions/audit-harness ^1.3.0 | Standard Intent Solutions Testing SOP, installed in every repo |
 | Cross-cutting | License | Apache-2.0 (all four repos) | Compiler relicensed MIT→Apache-2.0 2026-06-03, PR #129 |
 
 ---
@@ -85,72 +85,110 @@ Bob's Big Brain turns a pile of raw material (documents, notes, web clips) into 
 ### The critical path — one pipeline, four repos
 
 ```
-   USER / TEAMMATE
-        │
-        ▼
-   ┌─────────────────────────── COMPILE (bobs-big-brain-compiler / ICO) ───────────────────────────┐
-   │  L1 raw/        ← ico ingest (PDF / MD / web-clip adapters)          APPEND-ONLY*, deterministic│
-   │       │           * hash-chained by protocol — see forbidden-words note below                  │
-   │       ▼                                                                                          │
-   │  disclosure.ts  ← ingest-time comp/PII reject guard (choke point 1 of 3, company-wide)          │
-   │       ▼                                                                                          │
-   │  L2 wiki/       ← 6 compiler passes (Claude): extract → summarize → synthesize → link →         │
-   │       │            contradict → gap                          RECOMPILABLE, probabilistic         │
-   │       │            receipt-gated (GATED_WIKI_DIRS) — a wiki file only becomes visible AFTER      │
-   │       │            a DB row + trace + audit JSONL + rename-into-place, never before              │
-   │       ▼                                                                                          │
-   │  L3 tasks/<id>/ ← ico research (5-stage multi-agent, Epic-9)         PER-TASK, probabilistic     │
-   │  L4 outputs/    ← render report/slides             PROMOTABLE, deliberately NOT receipt-gated    │
-   │  L5 recall/     ← flashcards, quizzes, retention scores             ADAPTIVE, deterministic      │
-   │  L6 audit/      ← trace JSONL + hash-chained audit log (SHA-256, prev_hash per event)            │
-   │       ▼                                                                                          │
-   │  spool/         ← kernel/src/spool.ts — the Compile→Govern handoff, JSONL, schemaVersion-checked │
-   └────────────────────────────────────┼────────────────────────────────────────────────────────────┘
-                                          ▼
-   ┌─────────────────────────── GOVERN (bobs-big-brain-registrar / INTKB) ─────────────────────────┐
-   │  claude-runtime  ← secret scan, spool write (choke point 2 of 3)                                │
-   │       ▼                                                                                          │
-   │  policy-engine.PolicyPipeline.evaluate()   — the ONE decision point, two-phase:                  │
-   │       Phase 1: contradiction_check   (flag-only, always runs first)                              │
-   │       Phase 2: 8 remaining priority-ordered rules, reject short-circuits                          │
-   │       │                                                                                          │
-   │       ├─ outcome=rejected ──► rejector.ts: audit event action='deleted', NOT promoted            │
-   │       ├─ outcome=flagged  ──► rejector.ts: SAME path as rejected — no live "flag but promote"    │
-   │       │                       path exists today, despite a doc comment implying otherwise         │
-   │       └─ outcome=approved ──► promoteCandidate() ──► curated_memories row + 'promoted' event      │
-   │                                       ▼                                                            │
-   │                              git-exporter ──► kb-export/*.md (category-routed)                    │
-   │                                       ▼                                                            │
-   │                              qmd-adapter.index  ◄── dense-index (bbb-embedder :8098,               │
-   │                                       │              EmbeddingGemma-300M, sqlite-vec, opt-in       │
-   │                                       │              reranker bbb-reranker :8097 available)         │
-   └───────────────────────────────────────┼──────────────────────────────────────────────────────────┘
-                                             ▼
-   ┌────────────────────── RETRIEVE (qmd, pinned external, by @tobi) ──────────────────────────────┐
-   │  On-device hybrid search: qmd BM25 + native FTS5 + sqlite-vec dense KNN, RRF-fused (k=60),      │
-   │  freshness/category rerank, read-time sensitivity filter (confidential/restricted hidden          │
-   │  from EVERY caller, no role parameter), tenant-scoped. NOT forked — pinned devDependency.        │
-   └───────────────────────────────────────┼──────────────────────────────────────────────────────────┘
-                                             ▼
-   ┌─────────────────────────── PACKAGE (bobs-big-brain-plugin) ───────────────────────────────────┐
-   │  src/index.ts — mode dispatcher, reads TEAMKB_API_URL (env or ~/.teamkb/team.json fallback)     │
-   │       │                                                                                          │
-   │       ├─ LOCAL MODE (default) ──► src/local-server.ts, in-process, drives Govern kernel + qmd    │
-   │       │     6 tools: brain_search / brain_status / brain_audit_verify (read)                     │
-   │       │              brain_capture / brain_govern / brain_transition (write)                     │
-   │       │     dense arm wired directly (PR #60) — local mode never touches the HTTP API             │
-   │       │                                                                                            │
-   │       └─ TEAM MODE (TEAMKB_API_URL set) ──► src/remote-server.ts, dependency-free HTTP proxy      │
-   │             7 tools: adds admin-only brain_inbox / brain_approve / brain_reject                   │
-   │             no brain_govern — govern runs server-side on the shared brain                          │
-   └───────────────────────────────────────────────────────────────────────────────────────────────────┘
+USER / TEAMMATE
+  |
+  v
+COMPILE (bobs-big-brain-compiler / ICO)
+  L1 raw/        <- ico ingest (PDF/MD/web-clip adapters)
+                    APPEND-ONLY*, deterministic
+                    * hash-chained by protocol -- see the
+                      forbidden-words note below
+  |
+  v
+  disclosure.ts  <- ingest-time comp/PII reject guard
+                    (choke point 1 of 3, company-wide)
+  |
+  v
+  L2 wiki/       <- 6 compiler passes (Claude): extract ->
+                    summarize -> synthesize -> link ->
+                    contradict -> gap
+                    RECOMPILABLE, probabilistic
+                    receipt-gated (GATED_WIKI_DIRS) -- a
+                    wiki file only becomes visible AFTER a
+                    DB row + trace + audit JSONL +
+                    rename-into-place, never before
+  L3 tasks/<id>/ <- ico research (5-stage multi-agent,
+                    Epic-9); PER-TASK, probabilistic
+  L4 outputs/    <- render report/slides; PROMOTABLE,
+                    deliberately NOT receipt-gated
+  L5 recall/     <- flashcards, quizzes, retention scores;
+                    ADAPTIVE, deterministic
+  L6 audit/      <- trace JSONL + hash-chained audit log
+                    (SHA-256, prev_hash per event)
+  |
+  v
+  spool/         <- kernel/src/spool.ts, the
+                    Compile->Govern handoff, JSONL,
+                    schemaVersion-checked
+  |
+  v
+GOVERN (bobs-big-brain-registrar / INTKB)
+  claude-runtime <- secret scan, spool write
+                    (choke point 2 of 3)
+  |
+  v
+  policy-engine.PolicyPipeline.evaluate()
+    the ONE decision point, two-phase:
+    Phase 1: contradiction_check (flag-only, runs first)
+    Phase 2: 8 remaining priority-ordered rules,
+             reject short-circuits
+    |
+    +- outcome=rejected -> rejector.ts: audit event
+    |    action='deleted', NOT promoted
+    +- outcome=flagged  -> rejector.ts: SAME path as
+    |    rejected -- no live "flag but promote" path
+    |    exists today, despite a doc comment implying
+    |    otherwise
+    `- outcome=approved -> promoteCandidate() ->
+         curated_memories row + 'promoted' event
+         |
+         v
+         git-exporter -> kb-export/*.md (category-routed)
+         |
+         v
+         qmd-adapter.index <- dense-index (bbb-embedder
+           :8098, EmbeddingGemma-300M, sqlite-vec,
+           opt-in reranker bbb-reranker :8097 available)
+  |
+  v
+RETRIEVE (qmd, pinned external, by @tobi)
+  On-device hybrid search: qmd BM25 + native FTS5 +
+  sqlite-vec dense KNN, RRF-fused (k=60), freshness/
+  category rerank, read-time sensitivity filter
+  (confidential/restricted hidden from EVERY caller, no
+  role parameter), tenant-scoped. NOT forked -- pinned
+  devDependency.
+  |
+  v
+PACKAGE (bobs-big-brain-plugin)
+  src/index.ts -- mode dispatcher, reads TEAMKB_API_URL
+  (env or ~/.teamkb/team.json fallback)
+  |
+  +- LOCAL MODE (default) -> src/local-server.ts,
+  |    in-process, drives Govern kernel + qmd
+  |    6 tools: brain_search / brain_status /
+  |      brain_audit_verify (read)
+  |      brain_capture / brain_govern /
+  |      brain_transition (write)
+  |    dense arm wired directly (PR #60) -- local mode
+  |    never touches the HTTP API
+  |
+  `- TEAM MODE (TEAMKB_API_URL set) ->
+       src/remote-server.ts, dependency-free HTTP proxy
+       7 tools: adds admin-only brain_inbox /
+         brain_approve / brain_reject
+       no brain_govern -- govern runs server-side on
+       the shared brain
 
-   ┌────────────────── UMBRELLA (bobs-big-brain-umbrella) — orbits the whole system ──────────────┐
-   │  system-graph.yml (the MODEL: 50 nodes, 50 edges, 44 derived/6 semantic) ↔ 020-AT-SMAP doc      │
-   │  gated by CI (system-graph-sync.yml). repos.yml (the INVENTORY). bin/gsb (cross-repo helper).   │
-   │  bin/teamkb-backup.sh (daily, 04:30, dual-recipient age-encrypted, restore-tested — the actual   │
-   │  deployed backup for the whole live ~/.teamkb brain, not a docs artifact).                       │
-   └───────────────────────────────────────────────────────────────────────────────────────────────────┘
+UMBRELLA (bobs-big-brain-umbrella) -- orbits the whole
+system
+  system-graph.yml (the MODEL: 50 nodes, 50 edges, 44
+  derived/6 semantic) <-> 020-AT-SMAP doc, gated by CI
+  (system-graph-sync.yml). repos.yml (the INVENTORY).
+  bin/gsb (cross-repo helper). bin/teamkb-backup.sh
+  (daily, 04:30, dual-recipient age-encrypted,
+  restore-tested -- the actual deployed backup for the
+  whole live ~/.teamkb brain, not a docs artifact).
 ```
 
 ### Stack table — why this, by layer
@@ -163,18 +201,22 @@ The per-package technology choices are listed in §2's Technology Stack table ab
 
 ```
 bobs-big-brain-umbrella  (map only, no code)
-   │ points at / models
-   ├──► bobs-big-brain-compiler   (Compile)  ──spool──►  bobs-big-brain-registrar (Govern)
-   │                                                            │ index
-   │                                                            ▼
-   │                                                     qmd (pinned, @tobi, external)
-   │                                                            │
-   └──► bobs-big-brain-plugin  (Package)  ◄──consumes both engines as build-time devDeps─┘
-             (local mode: in-process; team mode: HTTP proxy to registrar's apps/api)
+  |
+  +-> bobs-big-brain-compiler (Compile)
+  |     --spool--> bobs-big-brain-registrar (Govern)
+  |                  --index--> qmd (pinned, @tobi,
+  |                               external)
+  |
+  `-> bobs-big-brain-plugin (Package)
+        consumes both engines as build-time devDeps
+        local mode: in-process
+        team mode: HTTP proxy to registrar's apps/api
 
-~/.teamkb/   ← the ONE live data directory (not a repo). Compile writes raw/wiki/spool here;
-               Govern reads/writes teamkb.db + brain/.ico/state.db here; Package's local mode
-               operates on this same directory in-process.
+~/.teamkb/  <- the ONE live data directory (not a repo).
+  Compile writes raw/wiki/spool here; Govern
+  reads/writes teamkb.db + brain/.ico/state.db here;
+  Package's local mode operates on this same directory
+  in-process.
 ```
 
 **Package level, within Govern** (registrar's own internal dependency-cruiser-enforced graph, CI job "Architecture rules"): `schema → common → {claude-runtime → policy-engine → api+curator; store → api+curator+git-exporter+reporting; qmd-adapter → api}`.
@@ -191,18 +233,65 @@ bobs-big-brain-umbrella  (map only, no code)
 
 ### Decision log
 
-| Chosen | Over | Because | Cost | Revisit When |
-|---|---|---|---|---|
-| **Provider registry** (declarative record: wire, baseURL, keyEnv, defaultModel) for Compile | Base-URL hacks / Anthropic-only hardcoding | "the brain's compiler is model-neutral, the same way the eval platform is vendor-neutral" (`providers.ts:1-21`) | A new provider is one registry entry, but every wire-format quirk (e.g. MiniMax's inline `<think>` blocks) still needs a bespoke adapter fix — happened once already, PR #183 | A provider ships a wire format neither `anthropic` nor `openai` covers |
-| **`stripThinkBlocks` as a linear scan**, not a regex, in the shared openai-wire adapter | A `/<think>[\s\S]*?<\/think>/g` regex | "a quantifier applied to untrusted model output" is deliberately avoided elsewhere too — `claude-client.ts:258-260` | Slightly more code, zero backtracking risk | Never — hardening choice, not a stopgap |
-| **BM25-on-qmd shipped first, dense retrieval gated behind a measured Recall@10 floor** — and the gate was met, so dense shipped exactly as scoped | Skipping qmd's 2.2 GB hybrid outright, or building semantic search speculatively | The 2026-06-18 decision doc set the gate at "BM25 below ~0.85 Recall@10 on a real labeled query set AND a genuine recall miss"; measured semantic Recall@10 was 0.3393 pre-dense, meeting the bar | Dense adds a measurable per-query latency overhead and two new loopback services (`bbb-embedder` :8098, opt-in `bbb-reranker` :8097) that live outside the repo's own CI/deploy — see §10 for a caveat on where the specific latency figures originate | If eval data ever shows dense isn't earning its complexity |
-| **Dense arm fails open on serving, fails loud (refuses a verdict) on eval** | One fail-open path for both serving and eval | The same frozen index scored semantic Recall@10 0.9643 idle vs 0.7679 under load-9.5-on-8-cores with zero logged errors — silent fail-open made contention indistinguishable from a real regression | Added an `onQueryDegraded` observer param threaded through `DenseConfig` | — |
-| **Dual-mode plugin dispatch via lazy `await import()`**, not two separate build targets | Always importing both server modules | Team mode must run from a marketplace clone with zero build step and must never pull in `better-sqlite3` | Extra dispatch indirection; a stray static import in `remote-server.ts` is a silent regression, caught only by `smoke-team.mjs` | Never — this is load-bearing to the whole distribution model |
-| **Native deps (better-sqlite3, fs-ext, sqlite-vec) externalized + vendored into `plugin-runtime/node_modules` at build time**, not bundled or lazily npm-installed | Relying on a parent `node_modules` | A marketplace-copied `plugin-runtime/` has no parent tree; local mode failed outright with "not built for this machine" until this fix (CHANGELOG v1.1.0) | First-run `npm ci` latency, plus a readiness-probe/provision-list pairing that must be manually kept in lock-step — sqlite-vec (PR #60) needed the exact same fix a second time because the probe originally checked only 2 of 3 modules | Each new native dependency must repeat the pattern deliberately |
-| **`~/.teamkb/team.json` config-file fallback**, mode 600, fail-closed on loose perms | Environment variables only | GUI/Dock-launched Claude never sources `~/.zshrc`, so a teammate who exported env vars there silently got an empty *local* brain that "succeeds" with zero results — the onboarding day-killer | A second config path that must track env-var semantics exactly (mitigated by a shared `isConfigured` predicate) | — |
-| **Sensitivity gate ships as policy `action:'flag'`, not `action:'reject'`**, in Govern's recommended policy | Hard `reject`, like secret_detection/content_length/tenant_match | Deliberately conservative-by-default: "an operator can tighten a flag to a reject deliberately" | **The net effect is currently identical to reject anyway** — `curator.ts:191-199` routes both `flagged` and `rejected` outcomes through the same reject path, so today there is no live "flag but still promote" path for any rule. This is a real gap between the doc-comment's stated intent and the shipped behavior — not a design win, a finding (see §8) | Wire a genuine flag-and-promote path, or correct the doc comment to match reality |
-| **Staleness detector ships dry-run-only**, deliberately not wired to any writer | Wiring the apply step immediately | The dry run against the live 10,190-memory brain found 1,025 candidates (10.06%) — but also 154 historical-record false positives needing human judgment on precision before any deletion path runs. "Shipping the apply step on these rules would retire ~1,000 memories on a rule set that has not earned it." | Every stale-content problem in the live brain persists until this ships | Gated behind a receipted-rules requirement not yet built |
-| **Origin tokens (HMAC-SHA256 over candidateId+tenantId+capturedAt)** mint at `brain_capture`, verified before promotion | No write-time provenance at all | Proves WHERE a capture came from | Stated explicitly, not hidden: does NOT prove content truth — "an authenticated insider... can still poison L2/L3 content with validly-attested captures." This is a permanent, acknowledged limitation | n/a — accepted residual risk |
+#### Provider registry (declarative record: wire, baseURL, keyEnv, defaultModel) for Compile
+- **Over:** Base-URL hacks / Anthropic-only hardcoding
+- **Because:** "the brain's compiler is model-neutral, the same way the eval platform is vendor-neutral" (`providers.ts:1-21`)
+- **Cost:** A new provider is one registry entry, but every wire-format quirk (e.g. MiniMax's inline `<think>` blocks) still needs a bespoke adapter fix — happened once already, PR #183
+- **Revisit when:** A provider ships a wire format neither `anthropic` nor `openai` covers
+
+#### `stripThinkBlocks` as a linear scan, not a regex, in the shared openai-wire adapter
+- **Over:** A `/<think>[\s\S]*?<\/think>/g` regex
+- **Because:** "a quantifier applied to untrusted model output" is deliberately avoided elsewhere too — `claude-client.ts:258-260`
+- **Cost:** Slightly more code, zero backtracking risk
+- **Revisit when:** Never — hardening choice, not a stopgap
+
+#### BM25-on-qmd shipped first, dense retrieval gated behind a measured Recall@10 floor — and the gate was met, so dense shipped exactly as scoped
+- **Over:** Skipping qmd's 2.2 GB hybrid outright, or building semantic search speculatively
+- **Because:** The 2026-06-18 decision doc set the gate at "BM25 below ~0.85 Recall@10 on a real labeled query set AND a genuine recall miss"; measured semantic Recall@10 was 0.3393 pre-dense, meeting the bar
+- **Cost:** Dense adds a measurable per-query latency overhead and two new loopback services (`bbb-embedder` :8098, opt-in `bbb-reranker` :8097) that live outside the repo's own CI/deploy — see §10 for a caveat on where the specific latency figures originate
+- **Revisit when:** If eval data ever shows dense isn't earning its complexity
+
+#### Dense arm fails open on serving, fails loud (refuses a verdict) on eval
+- **Over:** One fail-open path for both serving and eval
+- **Because:** The same frozen index scored semantic Recall@10 0.9643 idle vs 0.7679 under load-9.5-on-8-cores with zero logged errors — silent fail-open made contention indistinguishable from a real regression
+- **Cost:** Added an `onQueryDegraded` observer param threaded through `DenseConfig`
+- **Revisit when:** —
+
+#### Dual-mode plugin dispatch via lazy `await import()`, not two separate build targets
+- **Over:** Always importing both server modules
+- **Because:** Team mode must run from a marketplace clone with zero build step and must never pull in `better-sqlite3`
+- **Cost:** Extra dispatch indirection; a stray static import in `remote-server.ts` is a silent regression, caught only by `smoke-team.mjs`
+- **Revisit when:** Never — this is load-bearing to the whole distribution model
+
+#### Native deps (better-sqlite3, fs-ext, sqlite-vec) externalized + vendored into `plugin-runtime/node_modules` at build time, not bundled or lazily npm-installed
+- **Over:** Relying on a parent `node_modules`
+- **Because:** A marketplace-copied `plugin-runtime/` has no parent tree; local mode failed outright with "not built for this machine" until this fix (CHANGELOG v1.1.0)
+- **Cost:** First-run `npm ci` latency, plus a readiness-probe/provision-list pairing that must be manually kept in lock-step — sqlite-vec (PR #60) needed the exact same fix a second time because the probe originally checked only 2 of 3 modules
+- **Revisit when:** Each new native dependency must repeat the pattern deliberately
+
+#### `~/.teamkb/team.json` config-file fallback, mode 600, fail-closed on loose perms
+- **Over:** Environment variables only
+- **Because:** GUI/Dock-launched Claude never sources `~/.zshrc`, so a teammate who exported env vars there silently got an empty *local* brain that "succeeds" with zero results — the onboarding day-killer
+- **Cost:** A second config path that must track env-var semantics exactly (mitigated by a shared `isConfigured` predicate)
+- **Revisit when:** —
+
+#### Sensitivity gate ships as policy `action:'flag'`, not `action:'reject'`, in Govern's recommended policy
+- **Over:** Hard `reject`, like secret_detection/content_length/tenant_match
+- **Because:** Deliberately conservative-by-default: "an operator can tighten a flag to a reject deliberately"
+- **Cost:** **The net effect is currently identical to reject anyway** — `curator.ts:191-199` routes both `flagged` and `rejected` outcomes through the same reject path, so today there is no live "flag but still promote" path for any rule. This is a real gap between the doc-comment's stated intent and the shipped behavior — not a design win, a finding (see §8)
+- **Revisit when:** Wire a genuine flag-and-promote path, or correct the doc comment to match reality
+
+#### Staleness detector ships dry-run-only, deliberately not wired to any writer
+- **Over:** Wiring the apply step immediately
+- **Because:** The dry run against the live 10,190-memory brain found 1,025 candidates (10.06%) — but also 154 historical-record false positives needing human judgment on precision before any deletion path runs. "Shipping the apply step on these rules would retire ~1,000 memories on a rule set that has not earned it."
+- **Cost:** Every stale-content problem in the live brain persists until this ships
+- **Revisit when:** Gated behind a receipted-rules requirement not yet built
+
+#### Origin tokens (HMAC-SHA256 over candidateId+tenantId+capturedAt) mint at `brain_capture`, verified before promotion
+- **Over:** No write-time provenance at all
+- **Because:** Proves WHERE a capture came from
+- **Cost:** Stated explicitly, not hidden: does NOT prove content truth — "an authenticated insider... can still poison L2/L3 content with validly-attested captures." This is a permanent, acknowledged limitation
+- **Revisit when:** n/a — accepted residual risk
 
 ### What was deliberately not built
 
@@ -235,67 +324,129 @@ bobs-big-brain-umbrella  (map only, no code)
 
 ```
 ~/000-projects/
-├── bobs-big-brain-umbrella/        (public, intent-solutions-io) — landing + working surface
-│   ├── README.md, CHANGELOG.md, repos.yml, system-graph.yml
-│   ├── 000-docs/  scripts/  bin/  changelogs/  .github/workflows/  .beads/  assets/
-├── bobs-big-brain-compiler/        (public, jeremylongshore) — Compile
-│   ├── packages/{types,kernel,compiler,cli,benchmarks}
-│   ├── plugin/  evals/  dogfood/  000-docs/  .github/workflows/  .beads/
-├── bobs-big-brain-registrar/       (public, jeremylongshore) — Govern
-│   ├── packages/{schema,common,claude-runtime,policy-engine,store,qmd-adapter,git-exporter,reporting}
-│   ├── apps/{api,curator,git-exporter,edge-daemon,mcp-server}
-│   ├── 000-docs/  .github/workflows/
-├── bobs-big-brain-plugin/          (public, jeremylongshore) — Package
-│   ├── src/{index,local-server,remote-server,mode,config,govern,team-config}.ts
-│   ├── plugin-runtime/  hooks/  skills/{brain,brain-save}/  smoke/  scripts/  .claude-plugin/
-└── ~/.teamkb/                      (NOT a repo) — the one live brain
-    ├── teamkb.db  (Govern's store, schema v9)
-    ├── brain/.ico/state.db  (Compile's state)
-    ├── brain/raw/  brain/wiki/  brain/audit/  brain/spool/  spool/  ← two DIFFERENT spool dirs, see Appendix A (Glossary)
-    ├── team.json  (mode 600)  origin-secret (mode 600)  tokens.json (SOPS-covered secret)
-    └── backups/  (age-encrypted, dual-recipient, pushed off-host by the umbrella's cron)
++-- bobs-big-brain-umbrella/  (public, intent-solutions-io)
+|     landing + working surface
+|     README.md, CHANGELOG.md, repos.yml, system-graph.yml
+|     000-docs/  scripts/  bin/  changelogs/
+|     .github/workflows/  .beads/  assets/
++-- bobs-big-brain-compiler/  (public, jeremylongshore)
+|     Compile
+|     packages/{types,kernel,compiler,cli,benchmarks}
+|     plugin/  evals/  dogfood/  000-docs/
+|     .github/workflows/  .beads/
++-- bobs-big-brain-registrar/  (public, jeremylongshore)
+|     Govern
+|     packages/{schema,common,claude-runtime,
+|       policy-engine,store,qmd-adapter,
+|       git-exporter,reporting}
+|     apps/{api,curator,git-exporter,edge-daemon,
+|       mcp-server}
+|     000-docs/  .github/workflows/
++-- bobs-big-brain-plugin/  (public, jeremylongshore)
+|     Package
+|     src/{index,local-server,remote-server,mode,
+|       config,govern,team-config}.ts
+|     plugin-runtime/  hooks/
+|     skills/{brain,brain-save}/  smoke/  scripts/
+|     .claude-plugin/
+`-- ~/.teamkb/  (NOT a repo) -- the one live brain
+      teamkb.db  (Govern's store, schema v9)
+      brain/.ico/state.db  (Compile's state)
+      brain/raw/  brain/wiki/  brain/audit/
+      brain/spool/  spool/  <- two DIFFERENT spool
+        dirs, see Appendix A (Glossary)
+      team.json  (mode 600)
+      origin-secret (mode 600)
+      tokens.json (SOPS-covered secret)
+      backups/  (age-encrypted, dual-recipient,
+        pushed off-host by the umbrella's cron)
 ```
 
 ### Load-bearing files, by layer
 
 **Umbrella:**
 
-| Path | Role | Why it breaks everything |
-|---|---|---|
-| `system-graph.yml` | The topology MODEL (50 nodes/50 edges) | Fails the `system-graph-sync` CI gate closed on any bad edit; the sole source of truth for cross-repo dependency claims |
-| `scripts/render-system-graph.py` | Sole writer of the rendered topology doc | If it silently mis-renders, the doc could look plausible without reflecting the YAML — mitigated only by the CI byte-comparison, not by inspection |
-| `scripts/lint-forbidden-words.sh` | The entire brand-honesty enforcement mechanism | Hash-pinned via `.harness-hash`; fails `HARNESS_TAMPERED` (exit 2) if edited without re-pinning |
-| `bin/teamkb-backup.sh` | The actual, deployed daily backup of the entire live ~3.7 GB brain | A bug here is a real data-loss risk across all four repos, not a docs risk |
+- **`system-graph.yml`**
+  - *Role:* The topology MODEL (50 nodes/50 edges)
+  - *Why it breaks everything:* Fails the `system-graph-sync` CI gate closed on any bad edit; the sole source of truth for cross-repo dependency claims
+
+- **`scripts/render-system-graph.py`**
+  - *Role:* Sole writer of the rendered topology doc
+  - *Why it breaks everything:* If it silently mis-renders, the doc could look plausible without reflecting the YAML — mitigated only by the CI byte-comparison, not by inspection
+
+- **`scripts/lint-forbidden-words.sh`**
+  - *Role:* The entire brand-honesty enforcement mechanism
+  - *Why it breaks everything:* Hash-pinned via `.harness-hash`; fails `HARNESS_TAMPERED` (exit 2) if edited without re-pinning
+
+- **`bin/teamkb-backup.sh`**
+  - *Role:* The actual, deployed daily backup of the entire live ~3.7 GB brain
+  - *Why it breaks everything:* A bug here is a real data-loss risk across all four repos, not a docs risk
 
 **Compile:**
 
-| Path | Role | Why it breaks everything |
-|---|---|---|
-| `packages/types/src/providers.ts` | Provider registry (7 built-ins + custom + aliases) | Every LLM call resolves through `resolveProvider`/`resolveApiKey`/`resolveModel` here |
-| `packages/compiler/src/api/claude-client.ts` | The single OpenAI-wire adapter shared by every non-Anthropic vendor | A regression here silently corrupts compile output for MiniMax/DeepSeek/Groq/NVIDIA/local simultaneously |
-| `packages/compiler/src/cost-gate.ts` | Governed-freshness cost gate | The only thing standing between incremental on-push compile and unbounded inference spend at ~40 pushes/day |
-| `packages/kernel/src/spool.ts` | The Compile→Govern write side (EPIC 0) | If this breaks, nothing compiled here ever reaches the Govern layer |
-| `packages/kernel/src/disclosure.ts` | Ingest-time comp/PII reject guard | Source-side choke point 1 of a 3-point company-wide rule against ever storing PII/comp data |
+- **`packages/types/src/providers.ts`**
+  - *Role:* Provider registry (7 built-ins + custom + aliases)
+  - *Why it breaks everything:* Every LLM call resolves through `resolveProvider`/`resolveApiKey`/`resolveModel` here
+
+- **`packages/compiler/src/api/claude-client.ts`**
+  - *Role:* The single OpenAI-wire adapter shared by every non-Anthropic vendor
+  - *Why it breaks everything:* A regression here silently corrupts compile output for MiniMax/DeepSeek/Groq/NVIDIA/local simultaneously
+
+- **`packages/compiler/src/cost-gate.ts`**
+  - *Role:* Governed-freshness cost gate
+  - *Why it breaks everything:* The only thing standing between incremental on-push compile and unbounded inference spend at ~40 pushes/day
+
+- **`packages/kernel/src/spool.ts`**
+  - *Role:* The Compile→Govern write side (EPIC 0)
+  - *Why it breaks everything:* If this breaks, nothing compiled here ever reaches the Govern layer
+
+- **`packages/kernel/src/disclosure.ts`**
+  - *Role:* Ingest-time comp/PII reject guard
+  - *Why it breaks everything:* Source-side choke point 1 of a 3-point company-wide rule against ever storing PII/comp data
 
 **Govern:**
 
-| Path | Role | Why it breaks everything |
-|---|---|---|
-| `packages/policy-engine/src/pipeline.ts` | The ONE promotion/flag/reject decision point | Every governance guarantee in the product's pitch is void if this breaks |
-| `packages/store/src/schema.ts` | DDL + 9 migrations, enum CHECK constraints | Last-line defense against enum-smuggled disclosure-shaped strings in governed columns |
-| `apps/api/src/middleware/{tenancy-guard,write-gate}.ts` | Server-side tenant binding + admin-only write boundary | The only server-side enforcement of both isolation guarantees |
-| `apps/api/src/auth/token-registry.ts` | scrypt-hashed bearer tokens, tenant allowlists, revocation | All auth resolves through `InMemoryTokenRegistry.resolve()` |
-| `packages/qmd-adapter/src/config.ts` | `getDefaultDenseConfig()` | Single production on/off switch for dense retrieval across API, edge-daemon, MCP server, and CLI |
+- **`packages/policy-engine/src/pipeline.ts`**
+  - *Role:* The ONE promotion/flag/reject decision point
+  - *Why it breaks everything:* Every governance guarantee in the product's pitch is void if this breaks
+
+- **`packages/store/src/schema.ts`**
+  - *Role:* DDL + 9 migrations, enum CHECK constraints
+  - *Why it breaks everything:* Last-line defense against enum-smuggled disclosure-shaped strings in governed columns
+
+- **`apps/api/src/middleware/{tenancy-guard,write-gate}.ts`**
+  - *Role:* Server-side tenant binding + admin-only write boundary
+  - *Why it breaks everything:* The only server-side enforcement of both isolation guarantees
+
+- **`apps/api/src/auth/token-registry.ts`**
+  - *Role:* scrypt-hashed bearer tokens, tenant allowlists, revocation
+  - *Why it breaks everything:* All auth resolves through `InMemoryTokenRegistry.resolve()`
+
+- **`packages/qmd-adapter/src/config.ts`**
+  - *Role:* `getDefaultDenseConfig()`
+  - *Why it breaks everything:* Single production on/off switch for dense retrieval across API, edge-daemon, MCP server, and CLI
 
 **Package:**
 
-| Path | Role | Why it breaks everything |
-|---|---|---|
-| `src/index.ts` + `src/mode.ts:47-57` | Mode dispatcher + its extracted, unit-tested predicate | Wrong mode selection silently queries the wrong brain |
-| `plugin-runtime/governed-brain.cjs` | The committed, 44,710-line shipped bundle | Must be rebuilt + committed with every `src/` change — a manual, unenforced discipline; a stale bundle silently ships old behavior |
-| `plugin-runtime/bootstrap.cjs` | Marketplace-safe launcher, native-dep readiness probe | Local mode fails hard without it on a copied install |
-| `gsb.lock.json` | Known-good version tuple across plugin×compile×govern×retrieve×natives | `smoke/check-lock.mjs` hard-fails CI on any manifest drift |
-| `build.mjs` | esbuild config + native-dep externals list | A missing external here breaks native-addon resolution — exactly the sqlite-vec root cause PR #60 fixed |
+- **`src/index.ts` + `src/mode.ts:47-57`**
+  - *Role:* Mode dispatcher + its extracted, unit-tested predicate
+  - *Why it breaks everything:* Wrong mode selection silently queries the wrong brain
+
+- **`plugin-runtime/governed-brain.cjs`**
+  - *Role:* The committed, 44,710-line shipped bundle
+  - *Why it breaks everything:* Must be rebuilt + committed with every `src/` change — a manual, unenforced discipline; a stale bundle silently ships old behavior
+
+- **`plugin-runtime/bootstrap.cjs`**
+  - *Role:* Marketplace-safe launcher, native-dep readiness probe
+  - *Why it breaks everything:* Local mode fails hard without it on a copied install
+
+- **`gsb.lock.json`**
+  - *Role:* Known-good version tuple across plugin×compile×govern×retrieve×natives
+  - *Why it breaks everything:* `smoke/check-lock.mjs` hard-fails CI on any manifest drift
+
+- **`build.mjs`**
+  - *Role:* esbuild config + native-dep externals list
+  - *Why it breaks everything:* A missing external here breaks native-addon resolution — exactly the sqlite-vec root cause PR #60 fixed
 
 ---
 
@@ -318,7 +469,8 @@ bobs-big-brain-umbrella  (map only, no code)
 npx governed-second-brain init <folder> --index-only     # zero-egress, no LLM calls
 # OR, for a full compiled brain: set DEEPSEEK_API_KEY in your shell first, then
 npx governed-second-brain init <folder>
-# This installs native deps, builds ~/.teamkb, and auto-registers the MCP server via `claude mcp add`.
+# This installs native deps, builds ~/.teamkb, and
+# auto-registers the MCP server via `claude mcp add`.
 ```
 
 ### Zero to running (operating the Compile engine directly)
@@ -365,13 +517,19 @@ cd <the repo you cloned> && pnpm install && pnpm build
 **Umbrella:**
 
 ```bash
-./bin/gsb map                                          # topology + per-repo branch/dirty state
-./bin/gsb status                                        # cross-repo branch/dirty/ahead-behind
-./bin/gsb sync                                           # clone missing sub-repos, pull --rebase the rest
-python3 scripts/render-system-graph.py --write            # regenerate the topology doc from the YAML
-python3 scripts/render-system-graph.py --check            # CI-equivalent local check
-python3 scripts/render-system-graph.py --check-local       # dev-box-only box-state verification
-bash scripts/lint-forbidden-words.sh README.md              # required before any brand-surface edit
+./bin/gsb map      # topology + per-repo branch/dirty state
+./bin/gsb status   # cross-repo branch/dirty/ahead-behind
+./bin/gsb sync     # clone missing sub-repos, pull --rebase the rest
+
+# regenerate the topology doc from the YAML:
+python3 scripts/render-system-graph.py --write
+# CI-equivalent local check:
+python3 scripts/render-system-graph.py --check
+# dev-box-only box-state verification:
+python3 scripts/render-system-graph.py --check-local
+
+# required before any brand-surface edit:
+bash scripts/lint-forbidden-words.sh README.md
 ```
 
 **Compile:**
@@ -409,12 +567,21 @@ node smoke-team.mjs         # stubbed-API team-mode smoke
 
 ### CI/CD, by repo
 
-| Repo | Key workflows | Notes |
-|---|---|---|
-| Umbrella | `system-graph-sync.yml`, `docs-honesty.yml`, `shellcheck.yml`, `aggregate-changelogs.yml` (weekly), `minimax-review.yml` (advisory only) | Docs/tooling only, no build/deploy — "deployment" here is the daily cron on the dev box, not CI |
-| Compile | `ci.yml` (13 jobs: lint/typecheck/audit/test/coverage/format/gitleaks/harness-verify/plugin-scripts/arch-check/cli-smoke/audit-chain-verify/plugin-scripts-lint), `codeql.yml`, `mutation.yml`, `nightly-smoke.yml` (key-free, 07:23 UTC, skips Claude-calling stages), `release-please.yml` | Deployment = `npm publish` via release-please tag trigger — no hosted service |
-| Govern | `ci.yml` (`validate`, `moat-evals`, `retrieval-eval`, `integration`), `security.yml` (npm audit, gitleaks, Semgrep), `nightly.yml` (04:00 UTC, full evals + search-health canary), `seam-independence.yml` (3 gates: delete-Compile-and-still-govern, swap-model-zero-migration, model-free-receipts), `release.yml` (cosign keyless OIDC + SLSA L3 provenance for the edge-daemon container) | The only repo with a real deployed service surface (`apps/api`, edge-daemon, embedder/reranker sidecars) |
-| Package | `ci.yml` (quality + anchor-conformance), `smoke.yml` (drives the committed bundle, not source), `release.yml` (npm publish w/ provenance, guards tag==package.json version), `minimax-review.yml` | Deployment = `npm publish`; the "deploy" a user experiences is `npx governed-second-brain init` |
+**Umbrella**
+- *Key workflows:* `system-graph-sync.yml`, `docs-honesty.yml`, `shellcheck.yml`, `aggregate-changelogs.yml` (weekly), `minimax-review.yml` (advisory only)
+- *Notes:* Docs/tooling only, no build/deploy — "deployment" here is the daily cron on the dev box, not CI
+
+**Compile**
+- *Key workflows:* `ci.yml` (13 jobs: lint, typecheck, audit, test, coverage, format, gitleaks, harness-verify, arch-check, cli-smoke, audit-chain-verify, plus 2 plugin-script jobs), `codeql.yml`, `mutation.yml`, `nightly-smoke.yml` (key-free, 07:23 UTC), `release-please.yml`
+- *Notes:* Deployment = `npm publish` via release-please tag trigger — no hosted service
+
+**Govern**
+- *Key workflows:* `ci.yml` (`validate`, `moat-evals`, `retrieval-eval`, `integration`), `security.yml` (npm audit, gitleaks, Semgrep), `nightly.yml` (04:00 UTC, full evals + search-health canary), `seam-independence.yml` (3 gates: delete-Compile-and-still-govern, swap-model-zero-migration, model-free-receipts), `release.yml` (cosign keyless OIDC + SLSA L3 provenance for the edge-daemon container)
+- *Notes:* The only repo with a real deployed service surface (`apps/api`, edge-daemon, embedder/reranker sidecars)
+
+**Package**
+- *Key workflows:* `ci.yml` (quality + anchor-conformance), `smoke.yml` (drives the committed bundle, not source), `release.yml` (npm publish w/ provenance, guards tag==package.json version), `minimax-review.yml`
+- *Notes:* Deployment = `npm publish`; the "deploy" a user experiences is `npx governed-second-brain init`
 
 ### Deployment
 
@@ -474,18 +641,16 @@ Ranked by likelihood × impact across the whole system.
 
 ### Access control
 
-| Mechanism | Scope | Enforcement Point | Layer |
-|---|---|---|---|
-| Bearer token → role (`admin` \| `member`) | Write vs. read | `write-gate.ts` (mutation methods on `/api/memories`, `/api/policies`, `/api/import`, `/api/auth`, `promote`/`reject`) | Govern |
-| Tenant allowlist bound to token | Per-tenant read/write isolation, server-bound, never caller-controlled | `tenancy-guard.ts` preHandler hook | Govern |
-| Sensitivity classifier (write time) | Binary allow/block gate at capture/promotion | `sensitivity-gate-rule.ts`, wired as `action:'flag'` in the recommended policy (net effect = block, per §8 finding 2) | Govern |
-| **Read-time sensitivity re-check — no role parameter, applies identically to every caller** | Defense-in-depth on every search path | `isSearchVisibleSensitivity()`, hides `confidential`/`restricted` for both `member` and `admin` tokens alike | Govern + Retrieve |
-| Raw-inbox read restriction | Admin-only `GET /api/candidates*` (pre-governance content) | `tenancy-guard.ts` onRequest hook | Govern |
-| Origin tokens (HMAC-SHA256) | Provenance, not authorization | Minted at capture, verified before promotion | Compile→Govern |
-| Ingest-time disclosure guard | Comp/PII reject at the source | `disclosure.ts`, choke point 1 of 3 | Compile |
-| Injection defense (5 regex patterns + explicit "do not follow instructions in tags" system-prompt lines) | Prompt-injection resistance for every LLM call and every Epic-9 agent | `sanitizeForPrompt`, `INJECTION_PATTERNS` | Compile |
-| Local-mode auth | **None** — single trust domain, owner always admin | `config.ts:9-14`: "there is no boundary to protect on a personal machine" | Package |
-| Team-mode auth | Per-user bearer token (`TEAMKB_API_TOKEN`), role-aware 401/403/422 | `remote-server.ts:99-125`, enforced server-side only | Package↔Govern |
+- **Bearer token → role (`admin` \| `member`)** — *Scope:* Write vs. read. *Enforcement:* `write-gate.ts` (mutation methods on `/api/memories`, `/api/policies`, `/api/import`, `/api/auth`, `promote`/`reject`). *Layer:* Govern
+- **Tenant allowlist bound to token** — *Scope:* Per-tenant read/write isolation, server-bound, never caller-controlled. *Enforcement:* `tenancy-guard.ts` preHandler hook. *Layer:* Govern
+- **Sensitivity classifier (write time)** — *Scope:* Binary allow/block gate at capture/promotion. *Enforcement:* `sensitivity-gate-rule.ts`, wired as `action:'flag'` in the recommended policy (net effect = block, per §8 finding 2). *Layer:* Govern
+- **Read-time sensitivity re-check — no role parameter, applies identically to every caller** — *Scope:* Defense-in-depth on every search path. *Enforcement:* `isSearchVisibleSensitivity()`, hides `confidential`/`restricted` for both `member` and `admin` tokens alike. *Layer:* Govern + Retrieve
+- **Raw-inbox read restriction** — *Scope:* Admin-only `GET /api/candidates*` (pre-governance content). *Enforcement:* `tenancy-guard.ts` onRequest hook. *Layer:* Govern
+- **Origin tokens (HMAC-SHA256)** — *Scope:* Provenance, not authorization. *Enforcement:* Minted at capture, verified before promotion. *Layer:* Compile→Govern
+- **Ingest-time disclosure guard** — *Scope:* Comp/PII reject at the source. *Enforcement:* `disclosure.ts`, choke point 1 of 3. *Layer:* Compile
+- **Injection defense (5 regex patterns + explicit "do not follow instructions in tags" system-prompt lines)** — *Scope:* Prompt-injection resistance for every LLM call and every Epic-9 agent. *Enforcement:* `sanitizeForPrompt`, `INJECTION_PATTERNS`. *Layer:* Compile
+- **Local-mode auth** — *Scope:* **None** — single trust domain, owner always admin. *Enforcement:* `config.ts:9-14`: "there is no boundary to protect on a personal machine". *Layer:* Package
+- **Team-mode auth** — *Scope:* Per-user bearer token (`TEAMKB_API_TOKEN`), role-aware 401/403/422. *Enforcement:* `remote-server.ts:99-125`, enforced server-side only. *Layer:* Package↔Govern
 
 **Direct answer to "does the system do any role- or audience-based filtering beyond tenant isolation and the write-time sensitivity classifier?"** No — confirmed by code, not by absence of evidence. Neither `apps/api/src/services/search-service.ts` (both `searchViaQmd` and `searchViaSqlite`) nor `apps/mcp-server/src/tools/search.ts` accept a role parameter anywhere; `teamkb_search` is registered unconditionally for both member and admin installs (proven directly by test `server-role.test.ts:58-60`, which asserts the tool name is present for both). The only role check anywhere near search is the admin-only restriction on reading the raw, pre-governance inbox — that's inbox access control, not filtering of governed search results. A `member` token and an `admin` token retrieve byte-identical search results for the same tenant. Role gates *write* actions (propose is member-allowed; promote/transition/policy-edit/import/reject are admin-only) and *raw-inbox reads* only.
 
@@ -498,7 +663,7 @@ Ranked by likelihood × impact across the whole system.
 | `~/.teamkb/origin-secret` | auto-created 0600, env-only in team mode (deliberately no file fallback, to avoid cross-contamination with a local-mode secret on the same box) | `remote-server.ts:48-53` |
 | `~/.teamkb/tokens.json` | Treated as a SECRET → SOPS-covered at the estate level (per umbrella architecture doc) | — |
 | Registrar bearer tokens | scrypt-hashed at rest (N=2^14, salted), constant-time comparison with a deliberate length-mismatch dummy compare to avoid a timing side-channel | `token-registry.ts:78-85` |
-| Edge-daemon container image | Cosign keyless (OIDC) signing + SLSA L3 provenance | `release.yml`, `slsa-framework/slsa-github-generator` |
+| Edge-daemon container image | Cosign keyless (OIDC) signing + SLSA L3 provenance | `release.yml`, via the slsa-github-generator action |
 | npm package publishes (Compile, Package) | Provenance-attested (`npm publish --provenance`) | `release.yml` in both repos |
 
 ### Honest security assessment
@@ -506,7 +671,7 @@ Ranked by likelihood × impact across the whole system.
 - **CodeQL is a required check** in Compile and actively catches real issues — e.g., a confirmed fix for a TOCTOU race (`js/file-system-race`) in `parseChangedList`.
 - **OSV Scanner replaces `pnpm audit`** (retired by npm 2026-04-15) in Compile, reading `pnpm-lock.yaml` directly and failing on HIGH/CRITICAL.
 - **Weekly gitleaks + Semgrep, nightly npm audit** in Govern.
-- **The audit chain is tamper-evident, not tamper-proof.** A local writer with filesystem access can edit an event and re-hash the chain forward; `ico audit verify` / `brain_audit_verify` would still pass. Cross-actor detection of that kind of tampering requires the external git-anchor witness step, which is implemented and checkable — `brain_govern` commits the chain head, `ico audit verify` cross-checks it. Three of the four repos' brand-surface docs correctly use "tamper-evident." The registrar has several unqualified "immutable" uses describing the audit trail in internal docs/code comments and its public OpenAPI spec (CLAUDE.md:124, `apps/api/src/openapi.ts:36`, `packages/schema/src/audit-event.ts:5`, `packages/store/src/repositories/audit-repository.ts:107`, `apps/api/src/routes/audit.ts:22`) — a real, uncaught violation, since the mechanical forbidden-words lint (`docs-honesty.yml` / `lint-forbidden-words.sh`) exists only in the umbrella repo, scoped to its own README, and does not cover the registrar, compiler, or plugin repos at all.
+- **The audit chain is tamper-evident, not tamper-proof.** A local writer with filesystem access can edit an event and re-hash the chain forward; `ico audit verify` / `brain_audit_verify` would still pass. Cross-actor detection of that kind of tampering requires the external git-anchor witness step, which is implemented and checkable — `brain_govern` commits the chain head, `ico audit verify` cross-checks it. Three of the four repos' brand-surface docs correctly use "tamper-evident." The registrar has several unqualified "immutable" uses describing the audit trail in internal docs/code comments and its public OpenAPI spec (CLAUDE.md:124, `openapi.ts:36`, `audit-event.ts:5`, `audit-repository.ts:107`, `routes/audit.ts:22`) — a real, uncaught violation, since the mechanical forbidden-words lint (`docs-honesty.yml` / `lint-forbidden-words.sh`) exists only in the umbrella repo, scoped to its own README, and does not cover the registrar, compiler, or plugin repos at all.
 - **Origin tokens prove provenance, not truth** — stated explicitly in the plugin's own docs, not glossed over: "an authenticated insider... can still poison L2/L3 content with validly-attested captures."
 - **No SAST layered on top of the model-output-JSON-parsing surface** beyond CodeQL — flagged as a gap in Compile's `TEST_AUDIT.md` (dated 2026-05-19, may since be addressed, not re-verified in this pass).
 - **No mutation-kill signal on the Compile package** at all — the highest-business-logic-density code (6 compiler passes, provider adapters) has zero mutation testing, deliberately scoped out because the Claude client is mocked in tests.
