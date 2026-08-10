@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/intent-solutions-io/team-intent-claude-plugins/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-08-03T08:54:21Z -->
+<!-- fetched-at: 2026-08-10T07:02:06Z -->
 
 # Changelog
 

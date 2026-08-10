@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/intent-solutions-io/bobs-big-brain-umbrella/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-08-03T08:54:21Z -->
+<!-- fetched-at: 2026-08-10T07:02:06Z -->
 
 # Changelog
 
@@ -11,6 +11,16 @@ engine and plugin repos. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
+
+### Fixed
+
+- **TeamKB backup failure path now uses governed Buzz** (`spine-8fl.3.13`): the canonical
+  `bin/teamkb-backup.sh` preserves quiesced full-brain snapshots, staged Tier-A/B archiving,
+  dual-recipient encryption, restore/anchor verification, and off-host retention while routing
+  failures and degraded off-host outcomes through Intent OS `af_dispatch` on `sys-backups` with
+  MiniMax-M3 normalization requested. Owner-neutral liveness is restore-gated; lock skips record
+  an explicit marker without advancing `.ok`. The change is source-only until the reviewed deploy,
+  canary, and rollback receipt exists.
 
 ### Added
 
