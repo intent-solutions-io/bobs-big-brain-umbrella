@@ -162,7 +162,7 @@ Rationale: reading the essay "The company brain has a permissions problem" again
 - **O5 freshness composes:** D1, D2, D3.
 - **O6 poisoning honest:** H1, H2, H3, H4, H5.
 - **O7 federation provable:** E3, I1, I2, I3, I4, I5, I6.
-- **O8 claim-level audience governance:** K1, K2, K3, K4, K5, K6, K7, K8.
+- **O8 claim-level audience governance:** K1, K2, K3, K4, K5, K6, K7, K8. (KR8.1 to KR8.5 are carried by K1 through K6; K7 and K8 serve O8's scope without mapping to a numbered KR, because they are the named gaps this objective refuses to paper over, not build work with an acceptance test.)
 - **Meta (article/brand):** C1, C2, C4, C5, J1, J2.
 - **Grounding invariant (cross-cutting, `[imp-grounding]`):** C5 is the standing audit; its frozen-rule and anchor instances are B2 (seam firewall), C1 (real-query anchor), F1 + G1 + G2 (receipt/completeness anchors), and `017` (targets chosen from outside).
 
