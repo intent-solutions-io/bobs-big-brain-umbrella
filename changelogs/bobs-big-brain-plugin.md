@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-08-16T00:40:49Z -->
+<!-- fetched-at: 2026-08-16T00:56:25Z -->
 
 # Changelog
 
@@ -16,7 +16,8 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 
 - **Native dependency descriptions now match the v1.2.0 runtime.** Current install guidance names
   all three external native packages (`better-sqlite3`, `fs-ext`, and `sqlite-vec`); the plugin
-  manifest description now matches that count. Historical release notes remain unchanged. (#61)
+  manifest, marketplace metadata, and bootstrap guidance now match that count. Historical release
+  notes remain unchanged. (#61)
 
 ### Changed
 
