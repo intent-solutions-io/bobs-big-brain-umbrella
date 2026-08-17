@@ -8,7 +8,7 @@ Written dash-free on purpose (the voice bans em and en dashes).
 
 ## 0. Executive summary
 
-**The corrected baseline (Huyen, from reading the real `qmd-team-intent-kb` repo).** GSB was under-selling itself. It is NOT "BM25-only": `qmd-adapter` already RRF-fuses a qmd BM25 binary with a native FTS5 index, and there is already an eval surface (recall@k, dedup-catch-rate, provenance-integrity, govern precision/recall, a CI retrieval ratchet, signed `gate-result/v1` bundles). The real gaps are narrower and sharper than the honesty ledger claimed:
+**The corrected baseline (Huyen, from reading the real `bobs-big-brain-registrar` repo).** GSB was under-selling itself. It is NOT "BM25-only": `qmd-adapter` already RRF-fuses a qmd BM25 binary with a native FTS5 index, and there is already an eval surface (recall@k, dedup-catch-rate, provenance-integrity, govern precision/recall, a CI retrieval ratchet, signed `gate-result/v1` bundles). The real gaps are narrower and sharper than the honesty ledger claimed:
 
 - We have LEXICAL hybrid; we are missing the DENSE/semantic arm (one signal, not an architecture).
 - Nightly-not-on-push is a train/serve skew: the index the retriever reads lags the governed store by up to 24 hours.
