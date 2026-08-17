@@ -209,10 +209,21 @@ Bare "append-only" / "ordered log" claims are linted too — qualify them (by pr
 
 ## Editing Conventions
 
-- **Mermaid + dual-theme SVG banners**: the README embeds two Mermaid diagrams (a sequence flow
-  and an architecture flowchart) with inline `%%{init...}%%` theme blocks, and a
-  `<picture>`-switched dark/light banner. After editing either, verify rendering on the GitHub
-  web view — there is no local preview build.
+- **Mermaid + dual-theme SVG banners**: the README embeds three Mermaid diagrams with inline
+  `%%{init...}%%` theme blocks, and a
+  `<picture>`-switched dark/light banner. After editing a diagram, render every fenced Mermaid
+  block locally with the installed `mmdc` plus the newest Playwright Chromium, then inspect GitHub's web
+  rendering too (GitHub may pin a different Mermaid version):
+
+  ```bash
+  scripts/render-mermaid-blocks.py \
+    README.md 000-docs/007-AT-SMAP-repo-topology-and-working-surface.md
+  ```
+
+  If Chromium is absent—or an older browser cannot render a current Mermaid diagram—install the
+  current browser with `npx playwright install chromium`. The helper discovers the newest build and
+  the committed Puppeteer config supplies the required no-sandbox flags. Local success proves
+  parse/render viability, not visual quality or exact GitHub parity.
 - **Assets are committed binaries/SVG** in `assets/`. The banner exists as both `.svg` (source of
   truth, referenced by the README) and `.png` (2x raster fallback, 2400×680); `social-card.*` is the
   1280×640 GitHub social preview. The SVGs carry live `<text>` — the product title is editable text,

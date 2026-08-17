@@ -10,6 +10,9 @@ engine and plugin repos. Format based on
 
 ### Fixed
 
+- **Mermaid verification guidance:** local `mmdc` rendering through Playwright Chromium is now
+  documented and backed by a committed no-sandbox Puppeteer config; GitHub remains the visual
+  parity check, not the only available validation path.
 - **Eval reproducibility backup gap:** `eval-anchor/` and `corpus-machine/` are now Tier B in the
   restore-tested, encrypted brain archive, with manifest counts and fail-closed restore checks.
 - **TeamKB backup failure path now uses governed Buzz** (`spine-8fl.3.13`): the canonical

@@ -49,7 +49,8 @@ flowchart TB
   style AGP fill:#2d2d3a,stroke:#8888aa,stroke-dasharray:5 5,color:#ffffff
 ```
 
-*(GitHub renders Mermaid in the web view; there is no local preview build — verify there after edits.)*
+*Render locally with the `mmdc` command in `CLAUDE.md`, then verify GitHub's web rendering after
+edits because GitHub may pin a different Mermaid version.*
 
 ---
 
