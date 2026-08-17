@@ -272,8 +272,9 @@ unprotected. The exact dated matrix, including check names and the distinction b
 that runs and one GitHub requires, lives in
 [016-OD-STND](016-OD-STND-testing-and-proof-standard.md).
 
-**AI reviewer = the configured repository reviewer.** MiniMax-M3 supplies the umbrella's Review and
-Adversarial review lanes; Gemini Code Assist and/or Greptile may review the code repositories. Read
+**AI reviewer = the configured repository reviewer.** The umbrella's
+[MiniMax workflow](../.github/workflows/minimax-review.yml) supplies its Review and Adversarial
+review lanes with MiniMax-M3; Gemini Code Assist and/or Greptile may review the code repositories. Read
 the reviewer that actually ran and address its supported findings. Review is advisory; the
 *deterministic* gate is the required CI checks.
 
