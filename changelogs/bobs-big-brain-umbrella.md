@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/intent-solutions-io/bobs-big-brain-umbrella/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-08-17T03:37:21Z -->
+<!-- fetched-at: 2026-08-17T06:25:24Z -->
 
 # Changelog
 
@@ -14,6 +14,11 @@ engine and plugin repos. Format based on
 
 ### Fixed
 
+- **Mermaid verification guidance:** local `mmdc` rendering through Playwright Chromium is now
+  documented and backed by a committed no-sandbox Puppeteer config; GitHub remains the visual
+  parity check, not the only available validation path.
+- **Eval reproducibility backup gap:** `eval-anchor/` and `corpus-machine/` are now Tier B in the
+  restore-tested, encrypted brain archive, with manifest counts and fail-closed restore checks.
 - **TeamKB backup failure path now uses governed Buzz** (`spine-8fl.3.13`): the canonical
   `bin/teamkb-backup.sh` preserves quiesced full-brain snapshots, staged Tier-A/B archiving,
   dual-recipient encryption, restore/anchor verification, and off-host retention while routing
@@ -24,6 +29,15 @@ engine and plugin repos. Format based on
 
 ### Added
 
+- **Stack-wide testing and proof standard** (`016-OD-STND`): records which evidence applies to each
+  repository, distinguishes workflow presence from branch-protection enforcement, defines harness
+  and fixture versioning plus ratchet-vs-decision eval policy, separates shipped Tier-A tailnet
+  liveness from the pending state-changing Tier-B canary, and documents the exact limits of audit proof.
+- **Tier-A synthetic-teammate canary**: the VPS now runs the published team-mode plugin against the
+  live tailnet-only brain every day with a dedicated member token. The probe fails closed outside
+  `100.64.0.0/10`, checks `brain_status`, requires a successful search in an isolated synthetic
+  tenant to prove member-token authentication without exposing team data, writes content-safe
+  receipts, and routes failures through the Intent OS alert floor to Buzz `sys-incidents`.
 - **Advisory MiniMax-M3 PR reviewer** for this docs/brand-surface repo, plus
   `REVIEW.md` (the reviewer law tailored for a docs repo). Two independent lanes:
   an honesty/accuracy lane and a claims-audit lane that catches forbidden-word
