@@ -20,6 +20,8 @@
 #   Tier B — expensive-derived, cheaper to restore than recompute:
 #     brain/wiki/               compiled markdown
 #     feedback/
+#     eval-anchor/              frozen eval snapshot + dense prebuilt index
+#     corpus-machine/           expensive machine-readable eval corpus
 #   Skipped — cheaply re-derived from Tier A:
 #     kb-export/, qmd-index/, brain/recall/, brain/outputs/, brain/tasks/
 #
@@ -88,7 +90,7 @@ LIVENESS_SKIPPED="$LIVENESS_DIR/teamkb-backup.skipped"
 # `audit` = the top-level external anchor log (anchors.jsonl + its .git) — the
 # receipts trust root (R4/e06.11); DISTINCT from brain/audit (the ICO receipts).
 TIER_A_PATHS=(brain/raw brain/audit spool tokens.json audit)
-TIER_B_PATHS=(brain/wiki feedback)
+TIER_B_PATHS=(brain/wiki feedback eval-anchor corpus-machine)
 
 mkdir -p "$BACKUP_DIR" "$LOGDIR"
 LOG="$LOGDIR/backup.log"
@@ -259,6 +261,8 @@ raw_files="$( [ -d "$stage/brain/raw" ] && find "$stage/brain/raw" -type f | wc 
 audit_files="$( [ -d "$stage/brain/audit" ] && find "$stage/brain/audit" -type f | wc -l || echo 0)"
 spool_files="$( [ -d "$stage/spool" ] && find "$stage/spool" -type f | wc -l || echo 0)"
 anchor_files="$( [ -d "$stage/audit" ] && find "$stage/audit" -type f | wc -l || echo 0)"
+eval_anchor_files="$( [ -d "$stage/eval-anchor" ] && find "$stage/eval-anchor" -type f | wc -l || echo 0)"
+corpus_machine_files="$( [ -d "$stage/corpus-machine" ] && find "$stage/corpus-machine" -type f | wc -l || echo 0)"
 {
   echo "schemaVersion: 1"
   echo "createdAt: $(date -u +%FT%TZ)"
@@ -270,6 +274,8 @@ anchor_files="$( [ -d "$stage/audit" ] && find "$stage/audit" -type f | wc -l ||
   echo "audit_files: $audit_files"
   echo "spool_files: $spool_files"
   echo "anchor_files: $anchor_files"
+  echo "eval_anchor_files: $eval_anchor_files"
+  echo "corpus_machine_files: $corpus_machine_files"
   echo "tierA: ${TIER_A_PATHS[*]}"
   echo "tierB: ${TIER_B_PATHS[*]}"
   echo "components: dbs/teamkb.db dbs/ico-state.db ${present[*]}"
@@ -314,6 +320,12 @@ fi
 # silently drops it would lose all external tamper-evidence.
 { [ ! -d "$TEAMKB_HOME/audit" ] || { [ -s "$rdir/audit/anchors.jsonl" ] && [ "$(find "$rdir/audit" -type f | wc -l)" = "$anchor_files" ]; }; } || fail="$fail anchor_missing"
 { [ ! -e "$TEAMKB_HOME/tokens.json" ] || [ -f "$rdir/tokens.json" ]; } || fail="$fail tokens_missing"
+# Tier-B eval reproducibility roots: when present on the source host, a
+# brain-scoped restore must carry every file. The frozen eval snapshot cannot be
+# reconstructed after the corpus advances; corpus-machine is expensive derived
+# state whose restoration avoids a large rebuild.
+{ [ ! -d "$TEAMKB_HOME/eval-anchor" ] || { [ -d "$rdir/eval-anchor" ] && [ "$(find "$rdir/eval-anchor" -type f | wc -l)" = "$eval_anchor_files" ]; }; } || fail="$fail eval_anchor_missing"
+{ [ ! -d "$TEAMKB_HOME/corpus-machine" ] || { [ -d "$rdir/corpus-machine" ] && [ "$(find "$rdir/corpus-machine" -type f | wc -l)" = "$corpus_machine_files" ]; }; } || fail="$fail corpus_machine_missing"
 
 # RE-VERIFY the restored anchor against the restored chain (bead compile-then-govern-6ps.8).
 # Presence + file-count (above) prove the trust root was CARRIED; they do NOT prove it
@@ -349,7 +361,7 @@ if [ -n "$fail" ]; then
   rm -f "$enc"
   exit 1
 fi
-log "restore round-trip OK: govern+compile integrity verified, corpus($raw_files)/audit($audit_files)/spool($spool_files)/anchor($anchor_files)/tokens present on tmpfs, restored anchor re-verified against restored chain"
+log "restore round-trip OK: govern+compile integrity verified, corpus($raw_files)/audit($audit_files)/spool($spool_files)/anchor($anchor_files)/eval-anchor($eval_anchor_files)/corpus-machine($corpus_machine_files)/tokens present on tmpfs, restored anchor re-verified against restored chain"
 RUN_ACCEPTED=1
 
 # 5b. refresh the umbrella system map's live-stats block now that the brain is

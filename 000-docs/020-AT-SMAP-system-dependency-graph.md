@@ -58,10 +58,9 @@ Previously documented only in comments spread across four scripts:
 
 ## Known gaps carried by the model (verified 2026-08-03)
 
-- `eval-anchor/` (frozen snapshot + dense prebuilt — the eval's reproducibility root) is **not in
-  the brain-specific backup** (`teamkb-backup.sh`) but *is* inside the dev-box borg chain
-  (borg → VPS replica → home-server snapshot history); in-archive presence pending a
-  passphrase-gated `borg list` (bead `compile-then-govern-kck`).
+- `eval-anchor/` (frozen snapshot + dense prebuilt — the eval's reproducibility root) and
+  `corpus-machine/` are Tier B in the restore-tested brain archive as well as the dev-box borg
+  chain. The backup gate checks their restored file counts when present.
 - The ICO→schema vendored snapshot, deployed-copy API service, and repo↔`~/.config` unit copies
   are **manual lock-step mirrors** — each is a semantic (dotted) edge here so the drift risk is
   at least visible.

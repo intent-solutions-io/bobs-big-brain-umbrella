@@ -10,6 +10,8 @@ engine and plugin repos. Format based on
 
 ### Fixed
 
+- **Eval reproducibility backup gap:** `eval-anchor/` and `corpus-machine/` are now Tier B in the
+  restore-tested, encrypted brain archive, with manifest counts and fail-closed restore checks.
 - **TeamKB backup failure path now uses governed Buzz** (`spine-8fl.3.13`): the canonical
   `bin/teamkb-backup.sh` preserves quiesced full-brain snapshots, staged Tier-A/B archiving,
   dual-recipient encryption, restore/anchor verification, and off-host retention while routing
