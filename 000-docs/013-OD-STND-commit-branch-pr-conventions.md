@@ -295,6 +295,10 @@ Advisory review is not a substitute for the deterministic checks.
 The testing and evidence implications are governed by `016-OD-STND`; this document governs the
 human-readable change record.
 
+The `compile-then-govern-6ps.*` references name current tasks in the proof epic. They are not a
+renumbering of the earlier `compile-then-govern-jfv.6.17` rollout-gate task; that work established
+the code-repository checks, while `6ps.17` tracks cross-repository harness-version alignment.
+
 ---
 
 ## 8. The Outsider Test (the pre-merge gate)
