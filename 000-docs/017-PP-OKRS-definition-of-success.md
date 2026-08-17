@@ -63,6 +63,14 @@ Success is reached when a skeptical engineer can read the competitive article, c
 - **KR7.3** A compromised source brain is demonstrably a tagged, attributable, revocable slice, not a silent rewrite of the master's norms.
 - **KR7.4** The topology is hub-and-spoke growing to person to team to org, never peer.
 
+### O8. Claim-level governance is audience-aware, not only admission-aware
+
+- **KR8.1** A claim-level audience/scope field lives inside the deterministic `PolicyPipeline` (extending `CuratedMemory`, not bolted on beside it), ships with a default that preserves today's behavior exactly (every existing memory reads as it does today with zero migration), and is never a second, unaudited gate standing beside GOVERN.
+- **KR8.2** A narrowing rule (clearing secret, PII, or sensitivity flags on a claim already promoted) reports its own precision and recall against a hand-labeled fixture, never blended into GOVERN's existing disclosure metric.
+- **KR8.3** Any widening-with-redaction promotion path (a claim's audience grows, with content stripped to match) always receipts back to its narrower source via an explicit provenance link, so a wider-audience claim is never indistinguishable from one that started wide.
+- **KR8.4** An embargo (a claim admitted now but not yet visible to a given audience) is enforced at the read path, not only checked at promotion time, and a frozen-clock test proves a claim becomes visible exactly at its embargo boundary and not one tick before.
+- **KR8.5** A bounded human-escalation HOLD state exists for ambiguous audience-widening or narrowing decisions, reusing `014-AT-DECR`'s recommend/pipeline-owns split (the agent proposes a verdict, the deterministic pipeline performs or refuses the transition, every decision is receipted).
+
 ---
 
 ## Meta-success: the article and the brand
@@ -82,6 +90,8 @@ Success is reached when a skeptical engineer can read the competitive article, c
 - Letting a reranker or embedding score gate promotion (complects the seam permanently).
 - Any "self-improving memory" framing (that is promotion-by-model dressed as a feature).
 - A green audit over a corpus a side-door write bypassed (the completeness invariant silently broken).
+- Letting audience or embargo shaping become a second, unaudited gate that sits beside GOVERN instead of inside its deterministic `PolicyPipeline`.
+- Framing claim-level audience governance as a replacement for enterprise IAM, DLP, or RBAC (it governs which claims a given audience can see inside GSB's own corpus; it is not an identity or access-management product).
 
 ---
 
