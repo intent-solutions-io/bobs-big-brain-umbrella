@@ -21,6 +21,19 @@ copy — there is exactly **one** brain, and you reach it over the tailnet. You 
 You talk to it through three tools inside Claude Code: `brain_search` (read), `brain_capture`
 (propose), and `brain_transition` (admins only).
 
+### How it fits with Intent OS and governed agents
+
+- **Intent OS is where the company is organized.** Its approved corpus is one input to Bob's
+  compiler; the brain does not replace the operating record.
+- **Bob's Big Brain is the knowledge plane.** It derives knowledge, governs what becomes durable,
+  and returns traceable `qmd://` citations.
+- **AGP is the action-governance plane.** Its signed journal can carry the Bob's Brain governance
+  tip observed by an agent run.
+
+The tip answers **"which governance-chain position was observed?"** It does not yet answer
+**"which exact search results did the agent read?"** Exact read-set receipts are tracked separately;
+do not treat a tip hash as proof of knowledge or causation.
+
 ---
 
 ## Prerequisites (one-time)
@@ -84,6 +97,17 @@ Then, inside Claude Code, ask:
 If you see `unconfigured — set TEAMKB_API_URL`, your env vars didn't load (re-open the terminal
 after editing your profile, or you started Claude Code before setting them).
 
+Optional receipt check — this returns content-safe chain metadata, not memory content:
+
+```bash
+curl -fsS \
+  -H "Authorization: Bearer $TEAMKB_API_TOKEN" \
+  "$TEAMKB_API_URL/api/audit/receipt-tip"
+```
+
+`current.hash` is the global governance-chain tip an AGP run can stamp. It is not the hash of your
+search results.
+
 ---
 
 ## Using the brain day-to-day
@@ -119,5 +143,7 @@ after editing your profile, or you started Claude Code before setting them).
   [`006-AT-RNBK`](006-AT-RNBK-brain-backup-and-restore-runbook.md) for backup/restore.
 - **Local (solo) mode** — leave `TEAMKB_API_URL` unset and the same plugin runs entirely over your
   own `~/.teamkb`, no network. That's the outsider showcase, not the team brain.
+- **Agent seam:** [`007-AT-SMAP` §5](007-AT-SMAP-repo-topology-and-working-surface.md) defines the
+  Intent OS → Bob's Big Brain → AGP boundary and the exact proof each layer can make.
 
 _Reference: repo topology [`007-AT-SMAP`](007-AT-SMAP-repo-topology-and-working-surface.md)._

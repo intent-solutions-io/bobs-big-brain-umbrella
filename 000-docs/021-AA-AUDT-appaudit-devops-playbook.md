@@ -826,7 +826,7 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 - **Origin token** — an HMAC-SHA256 attestation (candidateId+tenantId+capturedAt) minted at `brain_capture`, proving where a capture came from — provenance, not truth.
 - **Tamper-evident** — the correct, required framing for this system's audit chain: detectable after the fact, not preventable in advance. Never described in this document as tamper-proof, immutable, or (for local mode) offering non-repudiation — though see §9/§11 for a real, found exception in the registrar's own internal docs and public OpenAPI spec.
 - **Local mode / team mode** — the plugin's two runtime dispatch paths, selected by `TEAMKB_API_URL`; local is in-process/single-trust-domain, team proxies to one shared, tailnet-bound brain.
-- **AGP / CrossChainPointer** — a defined, structural (not yet operationally checkable) contract binding `agent-governance-plane`'s hash-chained journal events to the tip of this brain's receipt log; described here only as a contract, never as a working cross-chain query, per the umbrella's own documented caveat.
+- **AGP / CrossChainPointer** — a signed contract binding `agent-governance-plane` journal events to an observed brain governance-chain position. The Registrar's authenticated `GET /api/audit/receipt-tip` now makes that hash resolvable, but it remains a global chain-position pointer—not an exact `qmd://` read-set receipt or proof of why the agent acted. See 007-AT-SMAP §5.
 
 ## Appendix B. Reference links
 

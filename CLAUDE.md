@@ -163,14 +163,17 @@ and the correct backup/DR scope are **code-verified** in
 
 ### The agent↔brain seam (AGP) — composed at a contract, not absorbed
 
-`agent-governance-plane` (AGP) and CCSC remain a **separate** ecosystem (not in `repos.yml`), but
-AGP's journal events carry a signed `CrossChainPointer` (`correlation_id` + `gsb_receipt_tip_hash`,
-AGP ADR 058) binding an agent action in AGP's hash-chained journal to the tip of Bob's Big Brain's
-hash-chained receipt log — the `gsb_` prefix is the pre-rename name frozen into the wire contract.
-**The binding is structural, not yet operational:** the pointer tamper-evidently *records* which
-brain-receipt tip an agent claims it acted on, but nothing can *check* that claim until the brain-side
-receipt-tip read endpoint exists (bead `qmd-team-intent-kb-1fx`). Describe it as a defined contract,
-never as a working cross-chain provenance query.
+Intent OS is the private company control plane and source corpus; Bob's Big Brain is the compiled,
+governed knowledge plane; `agent-governance-plane` (AGP) governs actions in a separate ecosystem.
+AGP's signed `CrossChainPointer` (`correlation_id` + `gsb_receipt_tip_hash`, ADR 058) can bind an
+action to the Bob's Brain governance-chain position returned by authenticated
+`GET /api/audit/receipt-tip` (bead `qmd-team-intent-kb-1fx`). The `gsb_` prefix is the pre-rename
+name frozen into the wire contract.
+
+This is operational **chain-position proof**, not exact knowledge proof: the pointer can be resolved
+against `audit_events`, but it does not identify which `qmd://` results the agent read or show that
+they caused the action. Exact per-query read-set receipts remain bead `qmd-team-intent-kb-sdg`.
+Never paraphrase the current seam as "what the agent knew."
 Full seam doc: [`000-docs/007-AT-SMAP` §5](000-docs/007-AT-SMAP-repo-topology-and-working-surface.md).
 
 ## The Architecture Thesis (why the README says what it says)
