@@ -37,10 +37,10 @@ the moat are not over-bundled (Hickey's note, §8):
    the honest exception:* in Karpathy's pattern (§2.3) the arbiter is **a human reviewing the git
    diff** — correct, but unscalable past one person; in the *productized* competitors the model is the
    sole arbiter. This is the **keystone** property (see below).
-3. **Receipts** — an **append-only, after-the-fact-verifiable** record of *that each durable fact was
+3. **Receipts** — a **tamper-evident, after-the-fact-verifiable** record *that each durable fact was
    admitted by code, under which policy verdict, by whom, in what order, and not altered since.* **No
    competitor does this** — "provenance" elsewhere means git-blame on the generated output, a plain
-   append-only log, or inline citations at best. (Honest scope: receipts attest **integrity +
+   chronological log, or inline citations at best. (Honest scope: receipts attest **integrity +
    provenance + ordering**, *not* truth — see §4.2 and the §7 ledger.)
 
 **These detach (Hickey).** Receipts without govern is Karpathy's `log.md`. Govern without receipts is
@@ -49,7 +49,7 @@ deterministic *acceptance* of durable state — and the moat is not "GSB has rec
 receipts attest a write-path that no model touches."**
 
 **The trust boundary is the spool (Hickey).** The deterministic/probabilistic seam is a concrete file:
-ICO's `brain/spool/` JSONL handoff (deterministic UUID-v5 + manifest SHA-256). *Above* the spool,
+ICO's `spool/` JSONL handoff (deterministic UUID-v5 + manifest SHA-256). *Above* the spool,
 Claude proposes (the 6 compile passes — probabilistic). *Below* the spool, **no model writes durable
 state** (`005-AT-ARCH §2`: "everything downstream of the spool is replaceable without changing ICO").
 Compile *straddles* the boundary; govern and receipts live entirely below it. When someone asks "but
@@ -75,7 +75,7 @@ durable state, governance, and the audit chain*).
 | Cluster | Players | What they optimize | Govern? | Receipts? |
 |---|---|---|---|---|
 | **Repo auto-wikis** | DeepWiki, AutoWiki | browsable wiki of a codebase, refreshed on push, diagrams + Q&A | ❌ | ❌ |
-| **Personal LLM wiki** | Karpathy's LLM-Wiki | single-user raw→wiki, local, append-only log | ❌ | ❌ (plain log) |
+| **Personal LLM wiki** | Karpathy's LLM-Wiki | single-user raw→wiki, local, chronological log | ❌ | ❌ (plain log) |
 | **Agent memory layers** | Mem0, Letta (MemGPT) | extract/store/recall facts across agent sessions | ❌ | ❌ |
 | **Code-context / retrieval** | Cursor, Greptile, Cody | index + Q&A/review (retrieval, not durable wiki) | ❌ | ❌ |
 | **— the outlier —** | **Governed Second Brain** | compile *any* corpus → **deterministic govern** → **hash-chained receipts**, local-first, team over tailnet | ✅ | ✅ |
@@ -573,7 +573,7 @@ folded into §1–§7 above**; this section preserves the verbatim pull-quotes a
 > verifier reports 155 historical breaks — because in a brand whose entire pitch is honesty, the
 > omission is the only thing that can actually falsify it."
 
-**Martin Kleppmann (append-only / audit / evidence substrate):**
+**Martin Kleppmann (audit / evidence substrate):**
 > "The receipts claim is stated honestly where it is load-bearing — the trust-model line and the §7
 > ledger are correct — but the '§4.2 different *kind* of artifact' headline runs a half-step ahead of
 > the substrate. A bare local hash-chain does not detect a deliberate single-writer rewrite: the chain

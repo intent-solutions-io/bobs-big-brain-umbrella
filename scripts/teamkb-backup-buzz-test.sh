@@ -55,14 +55,13 @@ make_case() {
   FAKEBIN="$CASE/bin"
   AF_LOG="$CASE/af.log"
   mkdir -p "$HOME_DIR" "$TEAMKB_HOME/brain/.ico" "$TEAMKB_HOME/brain/raw" \
-    "$TEAMKB_HOME/brain/audit" "$TEAMKB_HOME/brain/spool" "$TEAMKB_HOME/spool" \
+    "$TEAMKB_HOME/brain/audit" "$TEAMKB_HOME/spool" \
     "$TEAMKB_HOME/audit" "$TEAMKB_HOME/brain/wiki" "$TEAMKB_HOME/feedback" \
     "$FAKEBIN"
   : > "$DB"
   : > "$ICO_DB"
   printf 'source\n' > "$TEAMKB_HOME/brain/raw/source.md"
   printf 'receipt\n' > "$TEAMKB_HOME/brain/audit/log.md"
-  printf 'spool\n' > "$TEAMKB_HOME/brain/spool/item.jsonl"
   printf 'spool\n' > "$TEAMKB_HOME/spool/item.jsonl"
   printf '{"anchor":1}\n' > "$TEAMKB_HOME/audit/anchors.jsonl"
   printf 'wiki\n' > "$TEAMKB_HOME/brain/wiki/index.md"
@@ -139,6 +138,10 @@ if [[ "${FAKE_TAR_MODE:-ok}" != corrupt ]]; then
   printf 'receipt\n' > "$destination/brain/audit/log.md"
   printf '{"anchor":1}\n' > "$destination/audit/anchors.jsonl"
   printf '{"token":"hashed"}\n' > "$destination/tokens.json"
+fi
+if [[ "${FAKE_TAR_MODE:-ok}" == ok ]]; then
+  mkdir -p "$destination/spool"
+  printf 'spool\n' > "$destination/spool/item.jsonl"
 fi
 EOF
 
@@ -255,7 +258,18 @@ assert_file "$LIVENESS_DIR/teamkb-backup.beat" 'success writes beat'
 assert_file "$LIVENESS_DIR/teamkb-backup.ok" 'success writes .ok only after restore'
 assert_not_file "$LIVENESS_DIR/teamkb-backup.skipped" 'success clears skipped marker'
 assert_contains 'restore round-trip OK' "$LOG_DIR/backup.log" 'restore proof is logged'
+assert_contains 'spool(1)' "$LOG_DIR/backup.log" 'canonical spool is counted in restore proof'
 assert_contains 'systemmap refreshed' "$CASE/systemmap.log" 'post-restore system map hook remains'
+
+make_case missing-spool
+FAKE_TAR_MODE=missing-spool
+if run_backup >/dev/null; then
+  fail 'missing restored spool fails closed'
+else
+  pass 'missing restored spool fails closed'
+fi
+assert_not_file "$LIVENESS_DIR/teamkb-backup.ok" 'missing restored spool withholds .ok'
+assert_contains 'spool_missing' "$LOG_DIR/backup.log" 'missing restored spool is explicit'
 
 make_case lock-skip
 FAKE_FLOCK_MODE=fail

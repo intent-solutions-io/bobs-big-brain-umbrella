@@ -75,7 +75,7 @@ The category optimizes one axis: recall. We compete on a different one: **govern
 |------|-------|--------------|
 | **[bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler)** | **Compile** | Reads and organizes raw sources (npm: `intentional-cognition-os`). Ingests raw corpus (PDF / markdown / web clips) and compiles it into semantic knowledge through six passes, runs episodic research tasks, and emits a governance spool. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 5 workspace packages, Apache-2.0. |
 | **[bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar)** | **Govern** | Decides what's admitted to team memory (by code) and keeps the tamper-evident record. Consumes the Compiler's spool, runs every candidate through dedupe → policy → promotion, keeps a hash-chained, by-protocol append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 9 packages, Apache-2.0. |
-| **[qmd](https://github.com/tobi/qmd)** (`@tobilu/qmd`) | **Retrieve** | On-device search for markdown, by [@tobi](https://github.com/tobi). The retrieval substrate. The brain's serving path is **deterministic and model-free**: qmd's keyword (BM25) results are fused with a native in-process FTS5 (BM25) backend via reciprocal-rank fusion (RRF, k=60), then freshness/category reranked — no query-time LLM call. Every hit is a `qmd://<collection>/<path>` URI — the citation. |
+| **[qmd](https://github.com/tobi/qmd)** (`@tobilu/qmd`) | **Retrieve** | On-device search for markdown, by [@tobi](https://github.com/tobi). qmd supplies the lexical BM25 arm; Govern fuses it with native FTS5 and a lean sqlite-vec/EmbeddingGemma dense arm through RRF (k=60), then freshness/category reranks. No query-time generative LLM call. Every hit is a `qmd://<collection>/<path>` URI — the citation. |
 | **[bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles** the engines into one in-process stdio MCP server — cited search **and** governed capture (capture → govern → promote, with a hash-chained receipt), no daemon, no network. |
 
 **Powered by [tobi/qmd](https://github.com/tobi/qmd).** We pin `@tobilu/qmd`, track bumps with Dependabot, and gate upgrades with canary + integration tests. We **do not fork** the search engine — Bob's Big Brain is the product surround (compile + govern + receipts + plugin).
@@ -158,7 +158,7 @@ flowchart TB
         MCP["MCP server / REST"]
     end
     subgraph QMD["qmd (Retrieve)"]
-        IDX["BM25 retrieval<br/>qmd + native FTS5, RRF-fused"]
+        IDX["Fused retrieval<br/>qmd BM25 + native FTS5 + dense sqlite-vec"]
     end
     D --> C --> K
     K -->|spool emit| CUR
@@ -180,7 +180,7 @@ flowchart TB
 
 ### qmd — the retrieval substrate
 
-[`qmd`](https://github.com/tobi/qmd) (by [@tobi](https://github.com/tobi)) is on-device search for markdown, no API key required. We pin it, track it with Dependabot, and gate every version bump through integration tests. The delivered serving path is deliberately **deterministic and LLM-free**: we fuse qmd's keyword (BM25) results with a native in-process FTS5 (BM25) backend using reciprocal-rank fusion (RRF, k=60) — the two tokenizers catch different hits (qmd's keyword-AND misses hyphen/dot-joined terms that FTS5's `unicode61` tokenizer splits), so their union is the recall surface — then apply freshness/category reranking, with no query-time model call. Every result is a `qmd://<collection>/<path>` URI — which is exactly the citation an answer needs.
+[`qmd`](https://github.com/tobi/qmd) (by [@tobi](https://github.com/tobi)) is on-device search for markdown, no API key required. We pin it, track it with Dependabot, and gate every version bump through integration tests. In the delivered serving path, qmd supplies one lexical BM25 arm; Govern adds native in-process FTS5 plus a lean sqlite-vec/EmbeddingGemma-300M dense arm and fuses all three with reciprocal-rank fusion (RRF, k=60), then applies freshness/category reranking. Dense fails open to the lexical arms if its embedder is unavailable, and no query-time generative LLM is involved. Every result is a `qmd://<collection>/<path>` URI — which is exactly the citation an answer needs.
 
 ## Receipts — the part nobody else ships
 
