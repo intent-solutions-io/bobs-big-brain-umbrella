@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily Bob's Big Brain Tier-A tailnet canary
+
+[Timer]
+OnCalendar=*-*-* 07:10:00
+RandomizedDelaySec=5min
+Persistent=true
+Unit=teamkb-tailnet-canary.service
+
+[Install]
+WantedBy=timers.target

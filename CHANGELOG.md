@@ -20,6 +20,11 @@ engine and plugin repos. Format based on
 
 ### Added
 
+- **Tier-A synthetic-teammate canary**: the VPS now runs the published team-mode plugin against the
+  live tailnet-only brain every day with a dedicated member token. The probe fails closed outside
+  `100.64.0.0/10`, checks `brain_status`, requires a successful search in an isolated synthetic
+  tenant to prove member-token authentication without exposing team data, writes content-safe
+  receipts, and routes failures through the Intent OS alert floor to Buzz `sys-incidents`.
 - **Advisory MiniMax-M3 PR reviewer** for this docs/brand-surface repo, plus
   `REVIEW.md` (the reviewer law tailored for a docs repo). Two independent lanes:
   an honesty/accuracy lane and a claims-audit lane that catches forbidden-word
