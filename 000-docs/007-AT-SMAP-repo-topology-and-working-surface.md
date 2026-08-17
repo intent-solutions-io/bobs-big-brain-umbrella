@@ -85,6 +85,10 @@ eval" epic) into the canonical store.
 in `repos.yml`. The agent-governance-plane does, however, integrate with the brain **at a contract
 seam** — see §5.
 
+`intent-os` is also outside this public umbrella. It is the private company home and control plane
+of record: doctrine, plans, system state, decisions, and the disclosure-safe corpus that feeds the
+brain. Its corpus is a mounted compiler input; Intent OS is not another brain engine or plugin.
+
 ### `intent-brain` — there is no standalone repo
 
 `intent-brain` is **not** a repo in either org. It existed only as a *published entry* inside the
@@ -129,37 +133,43 @@ answer is one of: this doc (§2 for repos), `005-AT-ARCH` (for data/state), or t
 
 ---
 
-## 5. The agent↔brain seam — composed, not absorbed
+## 5. Intent OS → brain → AGP — composed, not absorbed
 
-The **Agent Governance Plane** (`jeremylongshore/agent-governance-plane`, AGP) and CCSC are a
-**separate** Intent Solutions ecosystem (§2): they stay out of `repos.yml`, out of `gsb sync`, and
-out of this umbrella's release story. The integration between an agent and the brain happens **at a
-contract**, not by absorbing repos:
+These are three cooperating systems with different authority. None should absorb the other two:
 
-- **The contract:** every AGP journal event carries a signed **`CrossChainPointer`** —
-  `correlation_id` + `gsb_receipt_tip_hash` (AGP `src/contracts/journal-event.ts`; ADR
-  `agent-governance-plane/000-docs/058-AT-ADR-cross-chain-causal-pointer-2026-07-12.md`). The
-  pointer binds an agent action in AGP's signed, hash-chained journal ("what the agent **did**") to
-  the tip of Bob's Big Brain's hash-chained receipt log ("what the agent **knew**"). The pointer
-  lives inside AGP's signed event bytes, so it is tamper-evident, not merely embedded.
-  **Grounding, so neither side is taken on faith:** the brain-side "hash-chained receipt log" is
-  `audit_events` — a tamper-evident SHA-256 chain (`entry_hash` + `prev_entry_hash`) per
-  [`005-AT-ARCH` §2](005-AT-ARCH-grounded-system-map-and-backup-scope.md), this repo's own
-  code-verified authority — and the AGP-side field names are `CROSS_CHAIN_FIELD_NAMES` in the cited
-  contract. Both cited AGP paths are on AGP `main` — they landed together in AGP
-  [`02b5495`](https://github.com/jeremylongshore/agent-governance-plane/commit/02b5495742e6cc1d627929fef0bd46904a6c1db5)
-  (2026-07-12, AGP PR #127, merged), so this seam does **not** depend on any open AGP PR. Re-check
-  with `git -C agent-governance-plane log -1 origin/main -- src/contracts/journal-event.ts` if the
-  paths ever look stale.
-- **What the seam does and does not do yet.** The binding is **structural today**: a stamped
-  `gsb_receipt_tip_hash` records, tamper-evidently, which brain-receipt tip the agent claims it acted
-  on. *"What did it know when it acted X?"* is **not yet operationally answerable** — resolving that
-  hash against the live chain needs the brain-side read endpoint below, which is not built. Until it
-  is, the pointer **records** the claim; it does not yet let a verifier **check** it. Treat the seam
-  as a defined contract, not a working end-to-end provenance query.
-- **Naming:** the `gsb_` field prefix is the pre-rename product name (GSB — Governed Second Brain,
-  productized as Bob's Big Brain on 2026-07-10) frozen into the wire contract. The identifier does
-  not get renamed; docs on both sides carry the clarifier.
-- **Future work (brain side):** a stable **receipt-tip read endpoint** so an agent can stamp and a
-  verifier can check `gsb_receipt_tip_hash` against the live chain tip — bead
-  `qmd-team-intent-kb-1fx`.
+| System | Owns | Does not prove or own |
+|---|---|---|
+| **Intent OS** | The private company operating record and disclosure-safe source corpus. | Compiled memories, promotion policy, or individual agent actions. |
+| **Bob's Big Brain** | Compiler-derived knowledge plus deterministic Registrar governance, retrieval, provenance, and receipt chains. | The company operating record or whether an agent action was authorized. |
+| **Agent Governance Plane (AGP)** | Governed actions and its signed, hash-chained action journal. | Brain content or the exact records returned by a brain search. |
+
+```mermaid
+flowchart LR
+  IOS["Intent OS<br/>intent + source corpus"] -->|mounted input| ICO["Bob's compiler"]
+  OTHER["Other approved sources"] --> ICO
+  ICO -->|canonical spool| REG["Bob's Registrar<br/>govern + retrieve"]
+  REG -->|qmd citations| AGENT["Agent run"]
+  AGENT -->|governed action| AGP["AGP signed journal"]
+  REG -. "governance-tip hash" .-> AGP
+```
+
+The AGP contract is a signed **`CrossChainPointer`**: `correlation_id` plus
+`gsb_receipt_tip_hash` (`agent-governance-plane/src/contracts/journal-event.ts`; ADR 058). The
+field names are locked as `CROSS_CHAIN_FIELD_NAMES` and live inside the signed event bytes. They
+landed on AGP `main` in
+[`02b5495`](https://github.com/jeremylongshore/agent-governance-plane/commit/02b5495742e6cc1d627929fef0bd46904a6c1db5)
+(AGP PR #127). The `gsb_` prefix is the pre-rename product name frozen into the wire contract; it
+does not get renamed.
+
+The brain side now exposes authenticated `GET /api/audit/receipt-tip` (Registrar bead
+`qmd-team-intent-kb-1fx`). It verifies the global `audit_events` chain before returning its current
+SHA-256 head and sequence, can resolve an earlier `?hash=<sha256>` after the chain advances, and
+returns no tip when it detects a tamper signature. This makes the **governance-chain-position**
+pointer operational: a verifier can check whether the stamped hash occupied that chain position.
+
+That pointer is **not a read receipt**. It does not identify which `qmd://` results the agent saw,
+and it does not prove that those results caused the action. Search access is currently observable
+in service logs, but the ordered result set is not yet written to a durable hash-chained receipt.
+The remaining work is Registrar bead `qmd-team-intent-kb-sdg`: mint a content-safe per-query
+read-set receipt correlated to the AGP run. Until that ships, say **"action plus observed governance
+tip,"** never **"what the agent knew."**
