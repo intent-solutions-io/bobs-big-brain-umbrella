@@ -87,6 +87,8 @@ evaluated on the applicable frozen set, including the existing production contro
 governed-brain retrieval set is a decision surface because a cold GitHub runner cannot reproduce the
 private corpus or local model. Dense, rerank, or fusion changes must beat the named control on the
 predeclared strata without hiding an exact-term regression inside an aggregate.
+The engineer who owns the Registrar change also owns this decision-time run and attaches its result
+to that change's PR and Bead; a decision surface without a named change owner is not a release gate.
 
 **Fail-closed safety metrics are neither averages nor tradeable.** An undocumented secret or PII
 false negative fails the govern eval. Provenance-integrity cases must accept disclosed benign forks
@@ -105,15 +107,21 @@ The review-agent three-class classifier and live golden-set gate remain unshippe
 An independently scheduled VPS probe uses the published plugin in team mode against the tailnet-only
 API. It requires:
 
-- an address inside `100.64.0.0/10`, healthy team mode, and the expected published plugin version;
+- deployment evidence that identifies both the probe host and API host as Tailscale peers, and that
+  the configured API address belongs to the expected peer; an address inside `100.64.0.0/10` is a
+  supporting check, not identity evidence by itself;
+- a pinned published-plugin release path, healthy team mode, and the reported API service version;
 - a successful member-token `brain_search` in the isolated `synthetic-probe` tenant;
 - no access to the team corpus and no durable write;
 - a content-safe receipt and governed Buzz incident alert on failure.
 
-Tier A proves DNS/network reachability, tailnet confinement, published-package startup, and member
-authentication from a machine other than the brain host. The public health endpoint alone is not an
-authentication proof, which is why the isolated search is mandatory. Tier A does not prove capture,
-promotion, citation correctness, or audit writing.
+The Tier-A proof bundle combines the daily receipt with peer-identity and route or ACL evidence
+captured at deployment and whenever the tailnet configuration changes. Together they prove network
+reachability through the intended peers, published-package startup, and member authentication from
+a machine other than the brain host. The daily address check alone does not prove tailnet
+confinement. The public health endpoint alone is not an authentication proof, which is why the
+isolated search is mandatory. Tier A does not prove capture, promotion, citation correctness, or
+audit writing.
 
 ### Tier B: state-changing acceptance, not yet shipped
 

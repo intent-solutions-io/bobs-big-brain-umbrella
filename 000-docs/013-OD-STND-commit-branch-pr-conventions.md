@@ -272,7 +272,10 @@ unprotected. The exact dated matrix, including check names and the distinction b
 that runs and one GitHub requires, lives in
 [016-OD-STND](016-OD-STND-testing-and-proof-standard.md).
 
-**AI reviewer = Gemini Code Assist and/or Greptile — either is acceptable** (Gemini is actively used; Greptile is the org standard where its quota is available). Read whichever bot reviews the PR and address or resolve its comments. The review is advisory; the *deterministic* gate is the required CI checks. Keep the in-repo `.gemini` config — Gemini stays.
+**AI reviewer = the configured repository reviewer.** MiniMax-M3 supplies the umbrella's Review and
+Adversarial review lanes; Gemini Code Assist and/or Greptile may review the code repositories. Read
+the reviewer that actually ran and address its supported findings. Review is advisory; the
+*deterministic* gate is the required CI checks.
 
 **Honest gap:** the umbrella still relies on merge discipline rather than GitHub branch protection.
 Advisory review is not a substitute for the deterministic checks.
