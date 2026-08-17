@@ -4,7 +4,7 @@
 |---|---|
 | **Date** | 2026-07-09 |
 | **Applies to** | the Governed Second Brain stack — `intentional-cognition-os` (ICO), `qmd-team-intent-kb` (INTKB), `bobs-big-brain-plugin`, and this umbrella |
-| **Status** | canonical standard, **v1.1 — strengthened 2026-07-09 per external review**: decision rationale, evidence requirements, risk assessment, operational impact, deferred-work tracking, architectural-layer declaration, and the 7-question outsider test are now first-class. Referenced from each repo's `CONTRIBUTING.md` |
+| **Status** | canonical standard, **v1.2 — gate reality refreshed 2026-08-17**: decision rationale, evidence requirements, risk assessment, operational impact, deferred-work tracking, architectural-layer declaration, and the 7-question outsider test are first-class. Referenced from each repo's `CONTRIBUTING.md` |
 | **Companion** | global workflow rules in `~/.claude/CLAUDE.md` § "Workflow Orchestration" (this doc is the *how-to-write-it* layer + worked examples) |
 
 ## The one rule
@@ -266,24 +266,30 @@ Practical consequences for notes:
 
 ## 6. The gate: CI checks + the review bot (current reality)
 
-**Deterministic gate = the required CI checks.** Per repo today:
-- **ICO / INTKB**: full CI — `lint`, `typecheck`, `test` + coverage (INTKB), `mutation` + CodeQL (ICO), plus `security`/`docs-quality`/`gitleaks`/`semgrep`. Strong.
-- **plugin**: `build` + `typecheck` + `smoke` only — **no unit-test / lint job yet** (a gap; see §7).
-- **umbrella**: docs-honesty + changelog aggregation (docs repo).
+**Deterministic gate = the required CI checks.** The Compiler, Registrar, and plugin now have
+branch-protection-required checks; the umbrella runs its documentation checks but remains
+unprotected. The exact dated matrix, including check names and the distinction between a workflow
+that runs and one GitHub requires, lives in
+[016-OD-STND](016-OD-STND-testing-and-proof-standard.md).
 
 **AI reviewer = Gemini Code Assist and/or Greptile — either is acceptable** (Gemini is actively used; Greptile is the org standard where its quota is available). Read whichever bot reviews the PR and address or resolve its comments. The review is advisory; the *deterministic* gate is the required CI checks. Keep the in-repo `.gemini` config — Gemini stays.
 
-**⚠️ Honest gap:** **branch protection is currently OFF on all four repos** — so "wait for the gate before merging" is a *discipline this standard enforces*, not something GitHub blocks. Until protection is enabled, the human/agent merging is the gate. Tracked in §7.
+**Honest gap:** the umbrella still relies on merge discipline rather than GitHub branch protection.
+Advisory review is not a substitute for the deterministic checks.
 
 ---
 
 ## 7. Known gaps in the gate (tracked)
 
-1. **No branch protection** on any GSB repo → required checks aren't enforced at merge. Enable required-status-checks (+ up-to-date branch) on `main` for ICO/INTKB/plugin.
-2. **Plugin CI is thin** — add a `test` + `lint` job so the repo that receives the review's riskiest changes (R4/R8/R9/B1) is actually gated.
-3. **Confirm a reviewer is active** — an AI reviewer (Gemini Code Assist and/or Greptile) actually reviews PRs on all three code repos (confirm by the bot login on the first PR). Gemini stays — no config removal needed.
+1. **Umbrella branch protection is absent.** Its checks run, but GitHub does not prevent a merge that
+   bypasses them.
+2. **Required-check lists can drift from workflow coverage.** Re-audit the protection API whenever a
+   gating workflow is renamed or split.
+3. **Harness versions are not yet uniform across repositories.** Results must identify their owning
+   commit and fixture version until `compile-then-govern-6ps.17` closes.
 
-All three are tracked as *"Firm up the CI review-gate"* (`jfv.6.17`) under the remediation epic `compile-then-govern-jfv.6` (see AAR `012-AA-AACR`).
+The testing and evidence implications are governed by `016-OD-STND`; this document governs the
+human-readable change record.
 
 ---
 

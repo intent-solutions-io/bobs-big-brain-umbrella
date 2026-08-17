@@ -25,6 +25,10 @@ engine and plugin repos. Format based on
 
 ### Added
 
+- **Stack-wide testing and proof standard** (`016-OD-STND`): records which evidence applies to each
+  repository, distinguishes workflow presence from branch-protection enforcement, defines harness
+  and fixture versioning plus ratchet-vs-decision eval policy, separates shipped Tier-A tailnet
+  liveness from the pending state-changing Tier-B canary, and fixes the exact limits of audit proof.
 - **Tier-A synthetic-teammate canary**: the VPS now runs the published team-mode plugin against the
   live tailnet-only brain every day with a dedicated member token. The probe fails closed outside
   `100.64.0.0/10`, checks `brain_status`, requires a successful search in an isolated synthetic
