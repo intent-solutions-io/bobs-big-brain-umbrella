@@ -57,6 +57,7 @@ make_case() {
   mkdir -p "$HOME_DIR" "$TEAMKB_HOME/brain/.ico" "$TEAMKB_HOME/brain/raw" \
     "$TEAMKB_HOME/brain/audit" "$TEAMKB_HOME/spool" \
     "$TEAMKB_HOME/audit" "$TEAMKB_HOME/brain/wiki" "$TEAMKB_HOME/feedback" \
+    "$TEAMKB_HOME/eval-anchor" "$TEAMKB_HOME/corpus-machine" \
     "$FAKEBIN"
   : > "$DB"
   : > "$ICO_DB"
@@ -66,6 +67,8 @@ make_case() {
   printf '{"anchor":1}\n' > "$TEAMKB_HOME/audit/anchors.jsonl"
   printf 'wiki\n' > "$TEAMKB_HOME/brain/wiki/index.md"
   printf 'feedback\n' > "$TEAMKB_HOME/feedback/item.jsonl"
+  printf 'frozen eval\n' > "$TEAMKB_HOME/eval-anchor/snapshot.tar.zst"
+  printf 'machine corpus\n' > "$TEAMKB_HOME/corpus-machine/item.json"
   printf '{"token":"hashed"}\n' > "$TEAMKB_HOME/tokens.json"
   printf 'age-key\n' > "$CASE/age.key"
 
@@ -130,7 +133,8 @@ if [[ "$mode" == create ]]; then
   exit 0
 fi
 [[ "$mode" == extract && -f "$archive" && -n "$destination" ]] || exit 8
-mkdir -p "$destination/dbs" "$destination/brain/raw" "$destination/brain/audit" "$destination/audit"
+mkdir -p "$destination/dbs" "$destination/brain/raw" "$destination/brain/audit" "$destination/audit" \
+  "$destination/eval-anchor" "$destination/corpus-machine"
 : > "$destination/dbs/teamkb.db"
 : > "$destination/dbs/ico-state.db"
 if [[ "${FAKE_TAR_MODE:-ok}" != corrupt ]]; then
@@ -138,6 +142,12 @@ if [[ "${FAKE_TAR_MODE:-ok}" != corrupt ]]; then
   printf 'receipt\n' > "$destination/brain/audit/log.md"
   printf '{"anchor":1}\n' > "$destination/audit/anchors.jsonl"
   printf '{"token":"hashed"}\n' > "$destination/tokens.json"
+  if [[ "${FAKE_TAR_MODE:-ok}" != missing-eval ]]; then
+    printf 'frozen eval\n' > "$destination/eval-anchor/snapshot.tar.zst"
+  fi
+  if [[ "${FAKE_TAR_MODE:-ok}" != missing-corpus ]]; then
+    printf 'machine corpus\n' > "$destination/corpus-machine/item.json"
+  fi
 fi
 if [[ "${FAKE_TAR_MODE:-ok}" == ok ]]; then
   mkdir -p "$destination/spool"
@@ -259,6 +269,8 @@ assert_file "$LIVENESS_DIR/teamkb-backup.ok" 'success writes .ok only after rest
 assert_not_file "$LIVENESS_DIR/teamkb-backup.skipped" 'success clears skipped marker'
 assert_contains 'restore round-trip OK' "$LOG_DIR/backup.log" 'restore proof is logged'
 assert_contains 'spool(1)' "$LOG_DIR/backup.log" 'canonical spool is counted in restore proof'
+assert_contains 'eval-anchor(1)' "$LOG_DIR/backup.log" 'eval anchor is counted in restore proof'
+assert_contains 'corpus-machine(1)' "$LOG_DIR/backup.log" 'corpus machine is counted in restore proof'
 assert_contains 'systemmap refreshed' "$CASE/systemmap.log" 'post-restore system map hook remains'
 
 make_case missing-spool
@@ -270,6 +282,26 @@ else
 fi
 assert_not_file "$LIVENESS_DIR/teamkb-backup.ok" 'missing restored spool withholds .ok'
 assert_contains 'spool_missing' "$LOG_DIR/backup.log" 'missing restored spool is explicit'
+
+make_case missing-eval
+FAKE_TAR_MODE=missing-eval
+if run_backup >/dev/null; then
+  fail 'missing restored eval anchor fails closed'
+else
+  pass 'missing restored eval anchor fails closed'
+fi
+assert_not_file "$LIVENESS_DIR/teamkb-backup.ok" 'missing eval anchor withholds .ok'
+assert_contains 'eval_anchor_missing' "$LOG_DIR/backup.log" 'missing eval anchor is explicit'
+
+make_case missing-corpus
+FAKE_TAR_MODE=missing-corpus
+if run_backup >/dev/null; then
+  fail 'missing restored corpus machine fails closed'
+else
+  pass 'missing restored corpus machine fails closed'
+fi
+assert_not_file "$LIVENESS_DIR/teamkb-backup.ok" 'missing corpus machine withholds .ok'
+assert_contains 'corpus_machine_missing' "$LOG_DIR/backup.log" 'missing corpus machine is explicit'
 
 make_case lock-skip
 FAKE_FLOCK_MODE=fail

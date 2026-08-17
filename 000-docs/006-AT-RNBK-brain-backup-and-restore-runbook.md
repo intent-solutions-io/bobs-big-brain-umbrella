@@ -4,8 +4,8 @@ Operational companion to [`005-AT-ARCH`](005-AT-ARCH-grounded-system-map-and-bac
 (which defines *what* the brain stores and *why* the backup scope is what it is). This doc is
 *how* the backup runs and *how to restore it*. Bead `compile-then-govern-c5k.4`.
 
-The whole live brain is one directory on the dev box: `~/.teamkb/` (~48–56 MB). The backup
-captures the **source-of-truth + receipts**, not the cheaply-derived views.
+The whole live brain is one directory on the dev box: `~/.teamkb/`. The backup captures the
+**source-of-truth + receipts plus expensive reproducibility roots**, not cheaply-derived views.
 
 The canonical source is [`bin/teamkb-backup.sh`](../bin/teamkb-backup.sh); `~/bin/teamkb-backup.sh`
 is a deployed copy and must be changed only by the reviewed deploy helper. The failure path uses
@@ -38,8 +38,10 @@ Captured (per `005-AT-ARCH` scope):
   (hash-chained compile receipts) · `spool/` (shared ICO/plugin→INTKB handoff) · `audit/`
   (external anchor log + git witness) · `tokens.json` (secret — protected by the archive's age
   encryption)
-- **Tier B (expensive-derived):** `brain/wiki/` (compiled markdown) · `feedback/`
-- **`MANIFEST.txt`** — timestamp, table counts, corpus/receipt/spool/anchor file counts, component list
+- **Tier B (expensive-derived):** `brain/wiki/` (compiled markdown) · `feedback/` ·
+  `eval-anchor/` (frozen eval snapshot + dense prebuilt) · `corpus-machine/`
+- **`MANIFEST.txt`** — timestamp, table counts, corpus/receipt/spool/anchor/eval-root file counts,
+  component list
 
 Deliberately **skipped** (cheaply re-derived from Tier A): `kb-export/`, `qmd-index/`,
 `brain/recall/`, `brain/outputs/`, `brain/tasks/`.
@@ -61,8 +63,9 @@ extracts onto tmpfs and asserts: both DBs `PRAGMA integrity_check = ok` **and** 
 `sqlite_master` table counts match the pre-encryption snapshot; `brain/raw/` and `brain/audit/`
 restore with the recorded file counts; `spool/` and top-level `audit/` restore with their exact
 recorded file counts; `audit/anchors.jsonl` is non-empty and re-verifies against the restored govern
-DB; `tokens.json` is present. Any failure → the archive is deleted (an unrestorable backup is worse
-than a missing one) and the run exits non-zero.
+DB; `eval-anchor/` and `corpus-machine/` restore with their exact file counts when present;
+`tokens.json` is present. Any failure → the archive is deleted (an unrestorable backup is worse than
+a missing one) and the run exits non-zero.
 The local archive remains available when an off-host push is degraded; that degradation is logged
 and sent through `sys-backups`, while `.ok` continues to mean only that the local restore gate
 passed.

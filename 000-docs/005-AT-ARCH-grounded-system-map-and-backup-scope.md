@@ -139,7 +139,7 @@ raw corpus (brain/raw/)
 | Bucket | Items |
 |---|---|
 | **A — MUST back up** (non-reproducible source of truth) | `teamkb.db` (+`-wal`/`-shm`), `brain/.ico/state.db`, `brain/raw/`, `brain/audit/`, `spool/`, `audit/` (external anchor + git witness) |
-| **B — SHOULD back up** (expensive to regenerate) | `brain/wiki/` (re-running Claude compile ≈ $50–200 + hours), `feedback/` |
+| **B — SHOULD back up** (expensive to regenerate) | `brain/wiki/` (re-running Claude compile ≈ $50–200 + hours), `feedback/`, `eval-anchor/` (frozen eval snapshot + dense prebuilt), `corpus-machine/` |
 | **C — SKIP** (cheaply derived/rebuildable) | `kb-export/` (re-run git-exporter), `qmd-index/` (re-run qmd index), `curated_memories_fts*` (trigger-rebuilt), empty `brain/{outputs,recall,tasks}/`, `backups/` (don't back up the backup) |
 | **SECRET — handle separately** | `tokens.json` → archived inside the age-encrypted backup (whole archive encrypted); also SOPS-encrypt at rest, exclude from any plaintext set, rotate if exposed |
 
@@ -156,12 +156,13 @@ populated) are source-of-truth; `memory_links`, `export_state`, `schema_migratio
 
 - **Tier A** (`teamkb.db` + `brain/.ico/state.db`, both quiesced via `VACUUM INTO`; `brain/raw/` +
   `brain/audit/` + `spool/` + `audit/` + `tokens.json`) **+ Tier B** (`brain/wiki/`,
-  `feedback/`); Tier-C derived dirs skipped.
+  `feedback/`, `eval-anchor/`, `corpus-machine/`); Tier-C derived dirs skipped.
 - **Encrypted to two recipients** — the dev-box SOPS key (`age1me3v…`) and the VPS host key
   (`age1csyjr…`) — so it restores even if the dev box is lost.
 - **Gated on a per-run restore round-trip:** decrypt + extract on tmpfs, both DBs `integrity_check`
   + table-count match, exact corpus/compile-receipt/spool/anchor file counts, token presence, and
-  restored-anchor verification asserted. **An unrestorable backup is deleted**, never kept.
+  exact eval-root file counts plus restored-anchor verification asserted. **An unrestorable backup
+  is deleted**, never kept.
 - **Off-host is live:** every run `rsync`s the `.age` to the VPS `intentsolutions:teamkb-backups`
   over the tailnet with a `sha256` byte-match + remote retention. The VPS can decrypt its own copy
   with the host key (`/etc/intentsolutions/age.key`) — DR-loop verified end-to-end (the VPS is cold
