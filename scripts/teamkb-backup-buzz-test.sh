@@ -139,6 +139,10 @@ if [[ "${FAKE_TAR_MODE:-ok}" != corrupt ]]; then
   printf '{"anchor":1}\n' > "$destination/audit/anchors.jsonl"
   printf '{"token":"hashed"}\n' > "$destination/tokens.json"
 fi
+if [[ "${FAKE_TAR_MODE:-ok}" == ok ]]; then
+  mkdir -p "$destination/spool"
+  printf 'spool\n' > "$destination/spool/item.jsonl"
+fi
 EOF
 
   cat > "$FAKEBIN/rsync" <<'EOF'
@@ -254,7 +258,18 @@ assert_file "$LIVENESS_DIR/teamkb-backup.beat" 'success writes beat'
 assert_file "$LIVENESS_DIR/teamkb-backup.ok" 'success writes .ok only after restore'
 assert_not_file "$LIVENESS_DIR/teamkb-backup.skipped" 'success clears skipped marker'
 assert_contains 'restore round-trip OK' "$LOG_DIR/backup.log" 'restore proof is logged'
+assert_contains 'spool(1)' "$LOG_DIR/backup.log" 'canonical spool is counted in restore proof'
 assert_contains 'systemmap refreshed' "$CASE/systemmap.log" 'post-restore system map hook remains'
+
+make_case missing-spool
+FAKE_TAR_MODE=missing-spool
+if run_backup >/dev/null; then
+  fail 'missing restored spool fails closed'
+else
+  pass 'missing restored spool fails closed'
+fi
+assert_not_file "$LIVENESS_DIR/teamkb-backup.ok" 'missing restored spool withholds .ok'
+assert_contains 'spool_missing' "$LOG_DIR/backup.log" 'missing restored spool is explicit'
 
 make_case lock-skip
 FAKE_FLOCK_MODE=fail

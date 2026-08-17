@@ -55,7 +55,8 @@ _Snapshot 2026-08-17T02:33:23Z · auto-updated by [`bin/teamkb-systemmap.sh`](..
 | `~/.teamkb/brain/audit/` | ICO append-only hash-chained `traces/` + `provenance/` | ICO kernel audit writer |
 | `~/.teamkb/spool/` | Shared ICO/plugin→INTKB handoff (JSONL `MemoryCandidate` + `.manifest.json` SHA-256) | ICO `packages/cli/src/commands/spool.ts`; INTKB `apps/curator/src/intake/spool-intake.ts` |
 | `~/.teamkb/kb-export/` | Curated Markdown tree (derived) | INTKB `apps/git-exporter/src/exporter.ts` |
-| `~/.teamkb/qmd-index/` | BM25/FTS search index (derived) | qmd (upstream) + INTKB `packages/qmd-adapter` |
+| `~/.teamkb/audit/` | External anchor log + git witness — the receipts trust root | INTKB anchor writer + standalone verifier |
+| `~/.teamkb/qmd-index/` | Derived qmd BM25, native FTS5, and dense sqlite-vec indexes | qmd (upstream) + INTKB `packages/qmd-adapter` |
 | `~/.teamkb/tokens.json` | **SECRET** — plaintext bearer tokens (1 admin role, 1 member role) | INTKB auth |
 | `~/.teamkb/feedback/` | Policy-eval audit (rejections) | INTKB policy engine |
 | `~/.teamkb/backups/` | our own `.age` backups (output of `~/bin/teamkb-backup.sh`) | — |
@@ -89,12 +90,14 @@ raw corpus (brain/raw/)
   → INTKB govern: dedupe(content_hash) → PolicyPipeline (secret/length/trust/tenant/relevance/dedup)
       → promote → curated_memories + append audit_events (hash-chained)
   → git-exporter: curated_memories(active) → kb-export/<category>/*.md
-  → qmd index: kb-export/ → BM25 index (qmd-index/)
+  → retrieval indexes: kb-export/ → qmd BM25 + native FTS5 + dense sqlite-vec (qmd-index/)
+      → RRF fusion (k=60) + freshness/category reranking
   → brain_search → qmd:// citations (resolve to kb-export/*.md, frontmatter carries contentHash)
   → brain_audit_verify → walk audit_events chain + cross-check git-anchored audit/anchors.jsonl
 ```
 
-- **"The brain" a teammate queries** = `curated_memories` (via the BM25 index over `kb-export/`). The
+- **"The brain" a teammate queries** = `curated_memories` (via the RRF-fused indexes over
+  `kb-export/`). The
   compiled knowledge = `brain/wiki/`. The raw inputs = `brain/raw/`. The receipts = `audit_events`
   (INTKB) + `brain/audit/` (ICO).
 - **Thesis split:** the model *proposes* (ICO compile passes; opt-in egress) — the deterministic
@@ -105,7 +108,10 @@ raw corpus (brain/raw/)
   spool/manifest pairs had valid manifest hashes and all 810 candidate IDs already recorded as
   `duplicate` in `teamkb.db`, then were archived under
   `spool/ingested/legacy-ico-dead-drop/` with their original names and hashes (bead
-  `compile-then-govern-v4y`).
+  `compile-then-govern-v4y`). The 0600 receipt is
+  `_reconciliation-receipt.json`; the two JSONL SHA-256 values are
+  `ed7468efadef8018747de25e10f259acbaa0e2013cdb674c740f10c6a8c2aa92` and
+  `b13324c4b1043a67ed82bd6192412eaf2af7d719836bb1900a0e795fbd2eabc2`.
 - **The plugin** bundles the INTKB packages and runs the govern→retrieve loop as a local **stdio MCP
   server** (`src/local-server.ts`), tools `brain_search`/`brain_status`/`brain_audit_verify` (read) +
   `brain_capture`/`brain_govern`/`brain_transition` (write). Daemon-free, zero network in local mode.
@@ -131,7 +137,7 @@ raw corpus (brain/raw/)
 
 | Bucket | Items |
 |---|---|
-| **A — MUST back up** (non-reproducible source of truth) | `teamkb.db` (+`-wal`/`-shm`), `brain/.ico/state.db`, `brain/raw/`, `brain/audit/`, `spool/` |
+| **A — MUST back up** (non-reproducible source of truth) | `teamkb.db` (+`-wal`/`-shm`), `brain/.ico/state.db`, `brain/raw/`, `brain/audit/`, `spool/`, `audit/` (external anchor + git witness) |
 | **B — SHOULD back up** (expensive to regenerate) | `brain/wiki/` (re-running Claude compile ≈ $50–200 + hours), `feedback/` |
 | **C — SKIP** (cheaply derived/rebuildable) | `kb-export/` (re-run git-exporter), `qmd-index/` (re-run qmd index), `curated_memories_fts*` (trigger-rebuilt), empty `brain/{outputs,recall,tasks}/`, `backups/` (don't back up the backup) |
 | **SECRET — handle separately** | `tokens.json` → archived inside the age-encrypted backup (whole archive encrypted); also SOPS-encrypt at rest, exclude from any plaintext set, rotate if exposed |
@@ -148,13 +154,13 @@ populated) are source-of-truth; `memory_links`, `export_state`, `schema_migratio
 (`~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age`):
 
 - **Tier A** (`teamkb.db` + `brain/.ico/state.db`, both quiesced via `VACUUM INTO`; `brain/raw/` +
-  `brain/audit/` + `spool/` + `tokens.json`) **+ Tier B** (`brain/wiki/`,
+  `brain/audit/` + `spool/` + `audit/` + `tokens.json`) **+ Tier B** (`brain/wiki/`,
   `feedback/`); Tier-C derived dirs skipped.
 - **Encrypted to two recipients** — the dev-box SOPS key (`age1me3v…`) and the VPS host key
   (`age1csyjr…`) — so it restores even if the dev box is lost.
 - **Gated on a per-run restore round-trip:** decrypt + extract on tmpfs, both DBs `integrity_check`
-  + table-count match, corpus/receipt/token presence asserted. **An unrestorable backup is deleted**,
-  never kept.
+  + table-count match, exact corpus/compile-receipt/spool/anchor file counts, token presence, and
+  restored-anchor verification asserted. **An unrestorable backup is deleted**, never kept.
 - **Off-host is live:** every run `rsync`s the `.age` to the VPS `intentsolutions:teamkb-backups`
   over the tailnet with a `sha256` byte-match + remote retention. The VPS can decrypt its own copy
   with the host key (`/etc/intentsolutions/age.key`) — DR-loop verified end-to-end (the VPS is cold
@@ -221,4 +227,5 @@ Operational runbook + exact restore steps: [`006-AT-RNBK`](006-AT-RNBK-brain-bac
 - Honest limit: the lock is **cooperative** — a process that ignores it can still write out of
   band. The detector is the corpus-accounting guard, not the lock: the compiler's
   `ico audit reconcile` quarantine floor (shipped, PR #176) and the registrar-side
-  `curator-cli verify-corpus-accounting` job (shipped and run nightly; blueprint G2).
+  `curator-cli verify-corpus-accounting` job (shipped and run by
+  `bobs-big-brain-registrar/.github/workflows/nightly.yml:118-124`; blueprint G2).

@@ -93,7 +93,7 @@ flagship repos:
 |------|-------|------|
 | [`bobs-big-brain-compiler`](https://github.com/jeremylongshore/bobs-big-brain-compiler) | **Compile** | Local-first knowledge OS (npm: `intentional-cognition-os`). Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 6 compiler passes → emits a governance spool. |
 | [`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) | **Govern** | Deterministic control plane. Consumes the Compiler's spool, runs dedupe → policy → promotion, hash-chained by-protocol append-only audit log. |
-| [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | On-device, model-free serving path: qmd BM25 fused with native FTS5 through RRF, then freshness/category reranked. Pinned upstream dependency; every result is a `qmd://` citation. |
+| [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | The pinned lexical BM25 arm. Govern fuses it with native FTS5 and dense sqlite-vec/EmbeddingGemma through RRF, then freshness/category reranks; every result is a `qmd://` citation. |
 | [`bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles the engines; this umbrella points at it. |
 
 Per `CONTRIBUTING.md`: code/feature PRs go to the flagship repos (or the plugin repo). Only
@@ -146,10 +146,11 @@ and the correct backup/DR scope are **code-verified** in
 - **Backup/DR (`c5k.4`) — DONE: scope-complete, restore-tested, off-host live.**
   `~/bin/teamkb-backup.sh` captures the full brain in one age-encrypted archive
   (`~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age`): Tier A (`teamkb.db` + `brain/.ico/state.db`,
-  both quiesced via `VACUUM INTO`; `brain/raw/` + `brain/audit/` + `spool/` +
+  both quiesced via `VACUUM INTO`; `brain/raw/` + `brain/audit/` + `spool/` + `audit/` +
   `tokens.json`) + Tier B (`brain/wiki/`, `feedback/`); derived dirs skipped. Encrypted to **two**
   recipients (dev SOPS key + VPS host key); gated on a per-run restore round-trip (both DBs
-  `integrity_check` + table-count + corpus/receipt presence on tmpfs). **Off-host is live:** every
+  `integrity_check` + table-count + exact corpus/receipt/spool/anchor counts + restored-anchor
+  verification on tmpfs). **Off-host is live:** every
   run `rsync`s the `.age` to the VPS `intentsolutions:teamkb-backups` over the tailnet with a
   `sha256` byte-match + remote retention — and the VPS can decrypt its own copy with the host key
   (`/etc/intentsolutions/age.key`), DR-loop verified end-to-end (VPS is cold storage: `age`+`zstd`
@@ -224,15 +225,16 @@ Bare "append-only" / "ordered log" claims are linted too — qualify them (by pr
   when either changes.
 
 
-## Retrieval backend decision (2026-06-18)
+## Retrieval backend decision (2026-06-18; shipped status updated 2026-08-04)
 
-Retrieval is **BM25-on-qmd today** and stays that way until the eval says otherwise
-(`brain_search` → `qmd search`; zero ML, cited hits work). The thinker-canon council decided the
-long-run path: ship BM25 now → measure → then a *lean* native sqlite-vec semantic backend on
-EmbeddingGemma-300M only (~320 MB). **Skip** qmd's 2.2 GB hybrid (heavier *and* unwired in the
-adapter); **reject** the stale NEXUS RAG stack.
+The phased decision completed: qmd BM25 shipped first, measurement crossed the semantic-recall
+gate, and Govern now fuses qmd BM25 + native FTS5 + a lean sqlite-vec/EmbeddingGemma-300M dense arm
+through RRF (k=60), followed by freshness/category reranking. Dense is production-default across
+the API, edge daemon, MCP server, CLI, and plugin local mode (registrar PRs #328/#334; plugin PR
+#60); it fails open to lexical retrieval if the embedder is unavailable. The heavier qmd hybrid and
+stale NEXUS RAG stack remain rejected. Serving uses no query-time generative LLM.
 
-**Foundation shipped** (epic `qmd-team-intent-kb-0t9`, all in the INTKB `qmd-adapter` package):
+**Delivered foundation** (epic `qmd-team-intent-kb-0t9`, all in the INTKB `qmd-adapter` package):
 
 - `0t9.5` — the qmd binary + GGUF weights are **SHA-256-pinned, fail-closed**
   (`packages/qmd-adapter/src/weights`). Non-negotiable before any semantic path: a
@@ -241,11 +243,8 @@ adapter); **reject** the stale NEXUS RAG stack.
   backend-agnostic, carrying the ADR's `0.85` BM25-sufficiency gate.
 - `0t9.2` — a **native FTS5 (BM25) backend** (`packages/qmd-adapter/src/native`), model-free,
   in-process, dropping the external Bun binary for keyword search.
-
-**Deferred by design:** `0t9.3` (the lean sqlite-vec + EmbeddingGemma-300M semantic path) builds
-**only when** the eval shows BM25 below ~0.85 Recall@10 on a real labeled query set *and* a user
-logs a genuine recall miss. Building it before that signal is the premature optimization the
-council ruled out.
+- `0t9.3` — the lean **sqlite-vec + EmbeddingGemma-300M dense path**, now shipped after the eval
+  and observed-recall gates were met; `TEAMKB_DENSE_ENABLED=false` is the emergency kill switch.
 
 Canonical record: `bobs-big-brain-registrar/000-docs/038-AT-DECR`. Tracked in epic
 `qmd-team-intent-kb-0t9` (the bead prefix keeps the pre-rename name;

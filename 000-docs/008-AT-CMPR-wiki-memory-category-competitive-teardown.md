@@ -37,7 +37,7 @@ the moat are not over-bundled (Hickey's note, §8):
    the honest exception:* in Karpathy's pattern (§2.3) the arbiter is **a human reviewing the git
    diff** — correct, but unscalable past one person; in the *productized* competitors the model is the
    sole arbiter. This is the **keystone** property (see below).
-3. **Receipts** — a **tamper-evident, after-the-fact-verifiable** record of *that each durable fact was
+3. **Receipts** — a **tamper-evident, after-the-fact-verifiable** record *that each durable fact was
    admitted by code, under which policy verdict, by whom, in what order, and not altered since.* **No
    competitor does this** — "provenance" elsewhere means git-blame on the generated output, a plain
    chronological log, or inline citations at best. (Honest scope: receipts attest **integrity +

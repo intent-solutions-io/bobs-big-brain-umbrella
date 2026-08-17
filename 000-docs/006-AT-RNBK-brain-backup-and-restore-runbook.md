@@ -35,10 +35,11 @@ Captured (per `005-AT-ARCH` scope):
 
 - **Tier A (must-have):** `dbs/teamkb.db` (govern DB, `VACUUM INTO` snapshot) · `dbs/ico-state.db`
   (compile DB, `VACUUM INTO` snapshot) · `brain/raw/` (corpus = source of truth) · `brain/audit/`
-  (hash-chained receipts) · `spool/` (shared ICO/plugin→INTKB handoff) · `tokens.json` (secret —
-  protected by the archive's age encryption)
+  (hash-chained compile receipts) · `spool/` (shared ICO/plugin→INTKB handoff) · `audit/`
+  (external anchor log + git witness) · `tokens.json` (secret — protected by the archive's age
+  encryption)
 - **Tier B (expensive-derived):** `brain/wiki/` (compiled markdown) · `feedback/`
-- **`MANIFEST.txt`** — timestamp, table counts, corpus/receipt file counts, component list
+- **`MANIFEST.txt`** — timestamp, table counts, corpus/receipt/spool/anchor file counts, component list
 
 Deliberately **skipped** (cheaply re-derived from Tier A): `kb-export/`, `qmd-index/`,
 `brain/recall/`, `brain/outputs/`, `brain/tasks/`.
@@ -58,8 +59,10 @@ in-script restore test decrypts only onto `/dev/shm` (tmpfs).
 A backup is **kept only if it provably restores**. After encrypting, the script decrypts +
 extracts onto tmpfs and asserts: both DBs `PRAGMA integrity_check = ok` **and** their
 `sqlite_master` table counts match the pre-encryption snapshot; `brain/raw/` and `brain/audit/`
-restore with the recorded file counts; `tokens.json` is present. Any failure → the archive is
-deleted (an unrestorable backup is worse than a missing one) and the run exits non-zero.
+restore with the recorded file counts; `spool/` and top-level `audit/` restore with their exact
+recorded file counts; `audit/anchors.jsonl` is non-empty and re-verifies against the restored govern
+DB; `tokens.json` is present. Any failure → the archive is deleted (an unrestorable backup is worse
+than a missing one) and the run exits non-zero.
 The local archive remains available when an off-host push is degraded; that degradation is logged
 and sent through `sys-backups`, while `.ok` continues to mean only that the local restore gate
 passed.
@@ -90,13 +93,16 @@ cp /tmp/teamkb-restore/dbs/teamkb.db        ~/.teamkb/teamkb.db
 cp /tmp/teamkb-restore/dbs/ico-state.db     ~/.teamkb/brain/.ico/state.db
 cp -a /tmp/teamkb-restore/brain/raw         ~/.teamkb/brain/raw
 cp -a /tmp/teamkb-restore/brain/audit       ~/.teamkb/brain/audit
-cp -a /tmp/teamkb-restore/spool             ~/.teamkb/spool         2>/dev/null || true
+cp -a /tmp/teamkb-restore/spool             ~/.teamkb/spool
+cp -a /tmp/teamkb-restore/audit             ~/.teamkb/audit
 cp -a /tmp/teamkb-restore/brain/wiki        ~/.teamkb/brain/wiki    2>/dev/null || true
 cp /tmp/teamkb-restore/tokens.json          ~/.teamkb/tokens.json && chmod 600 ~/.teamkb/tokens.json
 systemctl --user start teamkb-brain-api
 
 # 4. prove the receipts chain survived (the whole point of the brand)
 #    in qmd-team-intent-kb: curator-cli verify-audit-chain --db ~/.teamkb/teamkb.db
+#    in bobs-big-brain-plugin: node scripts/verify-anchors.mjs \
+#      --anchors ~/.teamkb/audit/anchors.jsonl --db ~/.teamkb/teamkb.db
 ```
 
 The derived dirs (`kb-export/`, `qmd-index/`) are intentionally absent after a restore — rebuild

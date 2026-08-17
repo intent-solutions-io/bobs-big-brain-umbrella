@@ -203,10 +203,9 @@ session / ultracode run does not re-derive them:
    are a known hash-version migration artifact; D5 carry-with-exception, never re-hash; **byte-pin**
    the manifest.
 3. **`gsb-forbidden-words-honesty-invariant`** — forbidden as GSB claims: tamper-proof / immutable /
-   non-repudiation(local) / blockchain; retrieval BM25-only; anchor git-only today; deterministic ≠
-   correct.
+   non-repudiation(local) / blockchain; deterministic ≠ correct.
 4. **`gsb-live-brain-and-anchor-locations`** — the whole brain is `~/.teamkb` (dev-box VPS, not prod);
-   the anchor log at `~/.teamkb/audit/` is the trust root and is *outside* current DR scope.
+   the anchor log at `~/.teamkb/audit/` is the trust root and is restore-gated in Tier A DR scope.
 5. **`gsb-provenance-eval-red-by-construction`** — `provenance-integrity.ts:59` hard-codes
    `chainAnomalies===0`, red-forever, wired to no CI; e06.2 must fix + wire it.
 
