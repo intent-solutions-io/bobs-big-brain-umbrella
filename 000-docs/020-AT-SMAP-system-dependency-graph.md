@@ -60,10 +60,8 @@ Previously documented only in comments spread across four scripts:
 
 - `eval-anchor/` (frozen snapshot + dense prebuilt — the eval's reproducibility root) is **not in
   the brain-specific backup** (`teamkb-backup.sh`) but *is* inside the dev-box borg chain
-  (borg → VPS replica → home-server append-only snapshots); in-archive presence pending a
+  (borg → VPS replica → home-server snapshot history); in-archive presence pending a
   passphrase-gated `borg list` (bead `compile-then-govern-kck`).
-- Two same-named spool dirs (`~/.teamkb/spool` live intake vs `~/.teamkb/brain/spool` ICO emit)
-  — modeled here; documented nowhere else.
 - The ICO→schema vendored snapshot, deployed-copy API service, and repo↔`~/.config` unit copies
   are **manual lock-step mirrors** — each is a semantic (dotted) edge here so the drift risk is
   at least visible.
@@ -114,7 +112,6 @@ graph LR
     teamkb_db["teamkb-db"]
     ico_state_db["ico-state-db"]
     brain_raw["brain-raw"]
-    brain_spool["brain-spool"]
     teamkb_spool["teamkb-spool"]
     kb_export["kb-export"]
     qmd_index["qmd-index"]
@@ -153,7 +150,7 @@ graph LR
   ico_compiler_pkg --> ico_kernel
   ico_kernel --> ico_types
   ico_cli -->|writes| ico_state_db
-  ico_kernel -->|writes| brain_spool
+  ico_kernel -->|writes| teamkb_spool
   ico_types -.->|mirrors| schema
   curator --> policy_engine
   curator --> store
@@ -201,6 +198,6 @@ graph LR
   brain_search -->|invokes| brain_api_svc
 ```
 
-_50 nodes · 50 edges (44 derived / 6 semantic) · solid = mechanically derived · dotted = hand-curated invariant_
+_49 nodes · 50 edges (44 derived / 6 semantic) · solid = mechanically derived · dotted = hand-curated invariant_
 
 <!-- /AUTOGEN:system-graph -->

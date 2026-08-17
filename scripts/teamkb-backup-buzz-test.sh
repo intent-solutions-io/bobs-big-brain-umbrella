@@ -55,14 +55,13 @@ make_case() {
   FAKEBIN="$CASE/bin"
   AF_LOG="$CASE/af.log"
   mkdir -p "$HOME_DIR" "$TEAMKB_HOME/brain/.ico" "$TEAMKB_HOME/brain/raw" \
-    "$TEAMKB_HOME/brain/audit" "$TEAMKB_HOME/brain/spool" "$TEAMKB_HOME/spool" \
+    "$TEAMKB_HOME/brain/audit" "$TEAMKB_HOME/spool" \
     "$TEAMKB_HOME/audit" "$TEAMKB_HOME/brain/wiki" "$TEAMKB_HOME/feedback" \
     "$FAKEBIN"
   : > "$DB"
   : > "$ICO_DB"
   printf 'source\n' > "$TEAMKB_HOME/brain/raw/source.md"
   printf 'receipt\n' > "$TEAMKB_HOME/brain/audit/log.md"
-  printf 'spool\n' > "$TEAMKB_HOME/brain/spool/item.jsonl"
   printf 'spool\n' > "$TEAMKB_HOME/spool/item.jsonl"
   printf '{"anchor":1}\n' > "$TEAMKB_HOME/audit/anchors.jsonl"
   printf 'wiki\n' > "$TEAMKB_HOME/brain/wiki/index.md"

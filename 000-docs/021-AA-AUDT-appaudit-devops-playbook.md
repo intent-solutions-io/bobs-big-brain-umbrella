@@ -88,7 +88,7 @@ USER / TEAMMATE
   v
 COMPILE (bobs-big-brain-compiler / ICO)
   L1 raw/        <- ico ingest (PDF/MD/web-clip adapters)
-                    APPEND-ONLY*, deterministic
+                    HASH-CHAINED*, deterministic
                     * hash-chained by protocol -- see the
                       forbidden-words note below
   |
@@ -351,8 +351,7 @@ bobs-big-brain-umbrella  (map only, no code)
       teamkb.db  (Govern's store, schema v9)
       brain/.ico/state.db  (Compile's state)
       brain/raw/  brain/wiki/  brain/audit/
-      brain/spool/  spool/  <- two DIFFERENT spool
-        dirs, see Appendix A (Glossary)
+      spool/  (shared Compile/plugin -> Govern intake)
       team.json  (mode 600)
       origin-secret (mode 600)
       tokens.json (SOPS-covered secret)
@@ -818,7 +817,8 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 - **ICO** — internal shorthand for the Compile engine (`bobs-big-brain-compiler`, npm `intentional-cognition-os`, renamed from that name 2026-07-19; bead prefix and npm scope unchanged).
 - **INTKB** — internal shorthand for the Govern engine (`bobs-big-brain-registrar`, renamed from `qmd-team-intent-kb` 2026-07-19; npm scope and GHCR image name unchanged).
 - **GSB** — the umbrella's cross-repo helper script (`bin/gsb`), also an internal shorthand seen in code comments for the overall system.
-- **Spool** — the JSONL handoff format Compile writes and Govern's curator consumes; schema-version-validated at read time. Note: there are two differently-purposed directories both named `spool` in the live brain (`~/.teamkb/spool` — live capture intake — vs. `~/.teamkb/brain/spool` — Compile's default emit target) — a documented trap, not a bug.
+- **Spool** — the JSONL handoff format Compile and the plugin write and Govern's curator consumes;
+  schema-version-validated at read time. Its one canonical live path is `~/.teamkb/spool/`.
 - **Receipt** — the combination of a DB row + trace + hash-chained audit JSONL entry + rename-into-place that must precede a wiki file becoming visible.
 - **RRF** — Reciprocal Rank Fusion (k=60), the algorithm Govern uses to combine qmd BM25 + native FTS5 + sqlite-vec dense KNN results into one ranked list.
 - **BM25** — the lexical ranking algorithm qmd implements; the retrieval backend that shipped first, per the 2026-06-18 decision.
@@ -870,5 +870,5 @@ No repo in this system runs on cloud infrastructure with a metered monthly bill 
 6. Should Govern's `flag` policy action be wired to a genuine flag-and-promote path, or should the recommended-policy doc comment simply be corrected to describe the current reject-equivalent behavior honestly? This is a real product decision, not just a docs fix — it changes what "flag" means operationally.
 7. Is the `compilation_sources` junction table (Compile) ever getting a writer, or is the current conservative full-recompile-on-ambiguity behavior the accepted permanent state?
 8. Is `CHANGELOG_AGGREGATION_TOKEN` (umbrella) still needed now that its only stated consumer (the archived private team-marketplace repo) is retired?
-9. Should the registrar's unqualified "immutable" language (CLAUDE.md:124, `openapi.ts:36`, `audit-event.ts:5`, `audit-repository.ts:107`, `routes/audit.ts:22`) be fixed as a standalone doc pass, or does it warrant extending the umbrella's `docs-honesty.yml` lint to run against the registrar repo as well, closing the enforcement gap permanently?
+9. Should the registrar's unqualified permanence language (CLAUDE.md:124, `openapi.ts:36`, `audit-event.ts:5`, `audit-repository.ts:107`, `routes/audit.ts:22`) be fixed as a standalone doc pass, or does it warrant extending the umbrella's `docs-honesty.yml` lint to run against the registrar repo as well, closing the enforcement gap permanently?
 10. Should the dense-retrieval latency figures (+75 ms median / +122.9 ms p95) be dropped from future editions of this document entirely, or re-measured against `origin/main` as it stands today, given their only current source is an unmerged branch?

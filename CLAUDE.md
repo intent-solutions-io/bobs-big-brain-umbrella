@@ -93,7 +93,7 @@ flagship repos:
 |------|-------|------|
 | [`bobs-big-brain-compiler`](https://github.com/jeremylongshore/bobs-big-brain-compiler) | **Compile** | Local-first knowledge OS (npm: `intentional-cognition-os`). Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 6 compiler passes → emits a governance spool. |
 | [`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) | **Govern** | Deterministic control plane. Consumes the Compiler's spool, runs dedupe → policy → promotion, hash-chained by-protocol append-only audit log. |
-| [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | On-device hybrid search (BM25 + vector + LLM rerank). Pinned upstream dependency; every result is a `qmd://` citation. |
+| [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | On-device, model-free serving path: qmd BM25 fused with native FTS5 through RRF, then freshness/category reranked. Pinned upstream dependency; every result is a `qmd://` citation. |
 | [`bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles the engines; this umbrella points at it. |
 
 Per `CONTRIBUTING.md`: code/feature PRs go to the flagship repos (or the plugin repo). Only
@@ -146,7 +146,7 @@ and the correct backup/DR scope are **code-verified** in
 - **Backup/DR (`c5k.4`) — DONE: scope-complete, restore-tested, off-host live.**
   `~/bin/teamkb-backup.sh` captures the full brain in one age-encrypted archive
   (`~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age`): Tier A (`teamkb.db` + `brain/.ico/state.db`,
-  both quiesced via `VACUUM INTO`; `brain/raw/` + `brain/audit/` + `brain/spool/` + `spool/` +
+  both quiesced via `VACUUM INTO`; `brain/raw/` + `brain/audit/` + `spool/` +
   `tokens.json`) + Tier B (`brain/wiki/`, `feedback/`); derived dirs skipped. Encrypted to **two**
   recipients (dev SOPS key + VPS host key); gated on a per-run restore round-trip (both DBs
   `integrity_check` + table-count + corpus/receipt presence on tmpfs). **Off-host is live:** every

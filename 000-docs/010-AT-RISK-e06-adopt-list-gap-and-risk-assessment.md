@@ -197,7 +197,7 @@ Blueprint refs: `qmd-team-intent-kb/packages/store/src/audit-verify.ts` · `002-
 These 5 are now stored via `bd remember --key …` (auto-injected at every `bd prime`), so a future
 session / ultracode run does not re-derive them:
 
-1. **`gsb-spool-is-the-trust-boundary`** — the spool (`brain/spool/*.jsonl`, content-stable UUID-v5 +
+1. **`gsb-spool-is-the-trust-boundary`** — the spool (`spool/*.jsonl`, content-stable UUID-v5 +
    manifest SHA-256) is the deterministic/probabilistic seam; nothing below it calls a model.
 2. **`gsb-audit-chain-never-rehash-155-breaks`** — tamper-*evident* not tamper-proof; the 155 breaks
    are a known hash-version migration artifact; D5 carry-with-exception, never re-hash; **byte-pin**

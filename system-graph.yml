@@ -129,23 +129,18 @@ nodes:
     layer: data
     locus: ~/.teamkb/brain/.ico/state.db
     local: { path: ~/.teamkb/brain/.ico/state.db }
-    note: compile store — sources, compilations (no new rows since 2026-07-16; ingest gap, bead 39z.9)
+    note: compile store — sources, compilations, inference operations; scheduled mounted-source maintenance is active (bead 39z.12)
   - id: brain-raw
     kind: datastore
     layer: data
     locus: ~/.teamkb/brain/raw
     note: corpus — SOURCE OF TRUTH
-  - id: brain-spool
-    kind: datastore
-    layer: data
-    locus: ~/.teamkb/brain/spool
-    note: "ICO emit default. NOT the same as ~/.teamkb/spool — two same-named dirs, documented nowhere else (trap)"
   - id: teamkb-spool
     kind: datastore
     layer: data
     locus: ~/.teamkb/spool
     local: { path: ~/.teamkb/spool }
-    note: live capture intake the curator drains
+    note: canonical shared ICO and plugin candidate intake the curator drains
   - id: kb-export
     kind: datastore
     layer: data
@@ -277,7 +272,7 @@ edges:
   - { from: ico-compiler-pkg, to: ico-kernel, kind: depends-on, tier: derived, evidence: "compiler packages/compiler/package.json @ico/kernel workspace:*" }
   - { from: ico-kernel, to: ico-types, kind: depends-on, tier: derived, evidence: "compiler packages/kernel/package.json @ico/types workspace:*" }
   - { from: ico-cli, to: ico-state-db, kind: writes, tier: derived, evidence: "compilations table written by compile passes; sqlite3 -readonly brain/.ico/state.db" }
-  - { from: ico-kernel, to: brain-spool, kind: writes, tier: derived, evidence: "kernel spool emit default under brain/; see two-spool note" }
+  - { from: ico-kernel, to: teamkb-spool, kind: writes, tier: derived, evidence: "compiler packages/cli/src/commands/spool.ts defaultSpoolDir() resolves the TeamKB base plus /spool" }
   - { from: ico-types, to: schema, kind: mirrors, tier: semantic, evidence: "VENDORED snapshot of the registrar schema inside ICO types — manual lock-step, drift risk; no automated check exists (gap)" }
 
   - { from: curator, to: policy-engine, kind: depends-on, tier: derived, evidence: "registrar apps/curator/package.json workspace:*" }

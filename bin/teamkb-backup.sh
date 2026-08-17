@@ -15,7 +15,7 @@
 #     brain/raw/                corpus (SOT)     -> archived
 #     brain/audit/              receipts chain   -> archived
 #     audit/                    external anchor log (anchors.jsonl + .git) -> archived  [receipts trust root, R4/e06.11]
-#     brain/spool/, spool/      ICO->INTKB queue -> archived
+#     spool/                    ICO->INTKB queue -> archived
 #     tokens.json               SECRET           -> archived (whole archive is age-encrypted)
 #   Tier B — expensive-derived, cheaper to restore than recompute:
 #     brain/wiki/               compiled markdown
@@ -87,7 +87,7 @@ LIVENESS_SKIPPED="$LIVENESS_DIR/teamkb-backup.skipped"
 # Tier-A/B paths, RELATIVE to $TEAMKB_HOME. Only those that exist are archived.
 # `audit` = the top-level external anchor log (anchors.jsonl + its .git) — the
 # receipts trust root (R4/e06.11); DISTINCT from brain/audit (the ICO receipts).
-TIER_A_PATHS=(brain/raw brain/audit brain/spool spool tokens.json audit)
+TIER_A_PATHS=(brain/raw brain/audit spool tokens.json audit)
 TIER_B_PATHS=(brain/wiki feedback)
 
 mkdir -p "$BACKUP_DIR" "$LOGDIR"

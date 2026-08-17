@@ -35,7 +35,7 @@ Captured (per `005-AT-ARCH` scope):
 
 - **Tier A (must-have):** `dbs/teamkb.db` (govern DB, `VACUUM INTO` snapshot) · `dbs/ico-state.db`
   (compile DB, `VACUUM INTO` snapshot) · `brain/raw/` (corpus = source of truth) · `brain/audit/`
-  (hash-chained receipts) · `brain/spool/` + `spool/` (ICO→INTKB handoff) · `tokens.json` (secret —
+  (hash-chained receipts) · `spool/` (shared ICO/plugin→INTKB handoff) · `tokens.json` (secret —
   protected by the archive's age encryption)
 - **Tier B (expensive-derived):** `brain/wiki/` (compiled markdown) · `feedback/`
 - **`MANIFEST.txt`** — timestamp, table counts, corpus/receipt file counts, component list
@@ -90,7 +90,6 @@ cp /tmp/teamkb-restore/dbs/teamkb.db        ~/.teamkb/teamkb.db
 cp /tmp/teamkb-restore/dbs/ico-state.db     ~/.teamkb/brain/.ico/state.db
 cp -a /tmp/teamkb-restore/brain/raw         ~/.teamkb/brain/raw
 cp -a /tmp/teamkb-restore/brain/audit       ~/.teamkb/brain/audit
-cp -a /tmp/teamkb-restore/brain/spool       ~/.teamkb/brain/spool   2>/dev/null || true
 cp -a /tmp/teamkb-restore/spool             ~/.teamkb/spool         2>/dev/null || true
 cp -a /tmp/teamkb-restore/brain/wiki        ~/.teamkb/brain/wiki    2>/dev/null || true
 cp /tmp/teamkb-restore/tokens.json          ~/.teamkb/tokens.json && chmod 600 ~/.teamkb/tokens.json
