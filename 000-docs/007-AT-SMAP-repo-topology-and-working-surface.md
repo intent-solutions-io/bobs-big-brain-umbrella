@@ -140,7 +140,7 @@ These are three cooperating systems with different authority. None should absorb
 | System | Owns | Does not prove or own |
 |---|---|---|
 | **Intent OS** | The private company operating record and disclosure-safe source corpus. | Compiled memories, promotion policy, or individual agent actions. |
-| **Bob's Big Brain** | Compiler-derived knowledge plus deterministic Registrar governance, retrieval, provenance, and receipt chains. | The company operating record or whether an agent action was authorized. |
+| **Bob's Big Brain** | Compiler-derived knowledge plus deterministic Registrar governance, retrieval, provenance, and a tamper-evident SHA-256 hash-chained audit trail. | The company operating record or whether an agent action was authorized. |
 | **Agent Governance Plane (AGP)** | Governed actions and its signed, hash-chained action journal. | Brain content or the exact records returned by a brain search. |
 
 ```mermaid
@@ -149,8 +149,8 @@ flowchart LR
   OTHER["Other approved sources"] --> ICO
   ICO -->|canonical spool| REG["Bob's Registrar<br/>govern + retrieve"]
   REG -->|qmd citations| AGENT["Agent run"]
-  AGENT -->|governed action| AGP["AGP signed journal"]
-  REG -. "governance-tip hash" .-> AGP
+  REG -. "governance-tip hash" .-> AGENT
+  AGENT -->|"governed action + pointer"| AGP["AGP signed journal"]
 ```
 
 The AGP contract is a signed **`CrossChainPointer`**: `correlation_id` plus
@@ -162,10 +162,12 @@ landed on AGP `main` in
 does not get renamed.
 
 The brain side now exposes authenticated `GET /api/audit/receipt-tip` (Registrar bead
-`qmd-team-intent-kb-1fx`). It verifies the global `audit_events` chain before returning its current
-SHA-256 head and sequence, can resolve an earlier `?hash=<sha256>` after the chain advances, and
-returns no tip when it detects a tamper signature. This makes the **governance-chain-position**
-pointer operational: a verifier can check whether the stamped hash occupied that chain position.
+`qmd-team-intent-kb-1fx`; shipped in Registrar
+[`8147cd5`](https://github.com/intent-solutions-io/bobs-big-brain-registrar/commit/8147cd554a151ec33fded2617a449c05384697b5)).
+It verifies the global `audit_events` chain before returning its current SHA-256 head and sequence,
+can resolve an earlier `?hash=<sha256>` after the chain advances, and returns no tip when it detects
+a hash-chain integrity failure. This makes the **governance-chain-position** pointer operational: a
+verifier can check whether the stamped hash occupied that chain position.
 
 That pointer is **not a read receipt**. It does not identify which `qmd://` results the agent saw,
 and it does not prove that those results caused the action. Search access is currently observable
