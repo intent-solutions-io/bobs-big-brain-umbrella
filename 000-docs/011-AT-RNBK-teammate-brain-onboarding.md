@@ -108,6 +108,20 @@ curl -fsS \
 `current.hash` is the global governance-chain tip an AGP run can stamp. It is not the hash of your
 search results.
 
+The daily Tier-A canary runs the same published plugin from the VPS, a separate tailnet node, with a
+dedicated member token. It fails closed on loopback, missing authentication, unhealthy status, or a
+non-tailnet API URL, then requires one successful read-only search in the token's isolated
+`synthetic-probe` tenant to prove authentication without granting it access to team knowledge.
+Operators can inspect its content-safe receipt without exposing the token:
+
+```bash
+ssh intentsolutions 'systemctl --user status teamkb-tailnet-canary.service --no-pager'
+ssh intentsolutions 'jq . ~/.local/state/teamkb-tailnet-canary/latest.json'
+```
+
+Failures go through the Intent OS alert floor to Buzz `sys-incidents`; the canary does not own a
+second notification path.
+
 ---
 
 ## Using the brain day-to-day

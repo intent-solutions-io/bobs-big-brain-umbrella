@@ -1,0 +1,8 @@
+[Unit]
+Description=Bob's Big Brain Tier-A synthetic-teammate tailnet canary
+Documentation=https://github.com/intent-solutions-io/bobs-big-brain-umbrella/blob/main/000-docs/011-AT-RNBK-teammate-brain-onboarding.md
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/lib/bbb-canary/teamkb-tailnet-canary.sh
+TimeoutStartSec=90
