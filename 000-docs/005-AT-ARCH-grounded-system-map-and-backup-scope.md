@@ -108,8 +108,9 @@ raw corpus (brain/raw/)
   spool/manifest pairs had valid manifest hashes and all 810 candidate IDs already recorded as
   `duplicate` in `teamkb.db`, then were archived under
   `spool/ingested/legacy-ico-dead-drop/` with their original names and hashes (bead
-  `compile-then-govern-v4y`). The 0600 receipt is
-  `_reconciliation-receipt.json`; the two JSONL SHA-256 values are
+  `compile-then-govern-v4y`). The 0600 `_reconciliation-receipt.json` records the database check
+  explicitly: `candidateIdsChecked=810`, `candidateIdsFound=810`, and
+  `statuses.duplicate=810`. The two JSONL SHA-256 values are
   `ed7468efadef8018747de25e10f259acbaa0e2013cdb674c740f10c6a8c2aa92` and
   `b13324c4b1043a67ed82bd6192412eaf2af7d719836bb1900a0e795fbd2eabc2`.
 - **The plugin** bundles the INTKB packages and runs the govern→retrieve loop as a local **stdio MCP
@@ -148,7 +149,7 @@ populated) are source-of-truth; `memory_links`, `export_state`, `schema_migratio
 
 ---
 
-## 4. Backup/DR posture (bead `c5k.4`) — **DONE: scope-complete, restore-tested, off-host live**
+## 4. Backup/DR posture (bead `c5k.4`) — **DONE: current trust-bearing scope restore-gated, restore-tested, off-host live**
 
 `~/bin/teamkb-backup.sh` captures the **whole** brain in one age-encrypted archive
 (`~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age`):

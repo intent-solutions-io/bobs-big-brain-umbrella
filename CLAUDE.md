@@ -143,7 +143,8 @@ and the correct backup/DR scope are **code-verified** in
   teammate runs a *local* brain that clones/pulls/**merges** into the team brain) is demand-gated EPIC 1
   (`8da`), and its substrate is **Dolt** (git-for-data: clone/pull/merge with govern-at-merge + an
   audit-readable commit graph) — also not R2. R2 touches neither the live bridge nor the future merge layer.
-- **Backup/DR (`c5k.4`) — DONE: scope-complete, restore-tested, off-host live.**
+- **Backup/DR (`c5k.4`) — DONE: current trust-bearing scope restore-gated, restore-tested,
+  off-host live.**
   `~/bin/teamkb-backup.sh` captures the full brain in one age-encrypted archive
   (`~/.teamkb/backups/teamkb-full-<UTC>.tar.zst.age`): Tier A (`teamkb.db` + `brain/.ico/state.db`,
   both quiesced via `VACUUM INTO`; `brain/raw/` + `brain/audit/` + `spool/` + `audit/` +
@@ -230,9 +231,11 @@ Bare "append-only" / "ordered log" claims are linted too — qualify them (by pr
 The phased decision completed: qmd BM25 shipped first, measurement crossed the semantic-recall
 gate, and Govern now fuses qmd BM25 + native FTS5 + a lean sqlite-vec/EmbeddingGemma-300M dense arm
 through RRF (k=60), followed by freshness/category reranking. Dense is production-default across
-the API, edge daemon, MCP server, CLI, and plugin local mode (registrar PRs #328/#334; plugin PR
-#60); it fails open to lexical retrieval if the embedder is unavailable. The heavier qmd hybrid and
-stale NEXUS RAG stack remain rejected. Serving uses no query-time generative LLM.
+the API, edge daemon, MCP server, CLI, and plugin local mode (registrar PRs #328/#334, merged as
+`46f6bf5`/`861ecc7` and confirmed on `origin/main` `628c225`; plugin PR #60, merged as `f684448`
+and confirmed on `origin/main` `dae88b5`, all verified 2026-08-17); it fails open to lexical
+retrieval if the embedder is unavailable. The heavier qmd hybrid and stale NEXUS RAG stack remain
+rejected. Serving uses no query-time generative LLM.
 
 **Delivered foundation** (epic `qmd-team-intent-kb-0t9`, all in the INTKB `qmd-adapter` package):
 
