@@ -25,16 +25,12 @@ You talk to it through three tools inside Claude Code: `brain_search` (read), `b
 
 ## Prerequisites (one-time)
 
-0. **GitHub access.** You must be a member of the `intent-solutions-io` GitHub org (or a
-   collaborator on `team-intent-claude-plugins`) with `gh auth login` / git credentials working on
-   your machine — otherwise Step 2's `/plugin marketplace add` fails with "repository not found."
-   Ask Jeremy to add you first.
 1. **Tailscale installed + on the Intent Solutions tailnet.** Install Tailscale
    (<https://tailscale.com/download>), accept Jeremy's invite, then `tailscale status` should list
    the `dev` node. The brain is **tailnet-only** — not reachable from the public internet.
-2. **Claude Code installed** (a recent version — private marketplaces + plugin env interpolation
-   need a current build) and you can log in and run it. **Launch it from a terminal** (see the
-   desktop caveat in Step 1).
+2. **Claude Code installed** (a recent version with plugin support) and you can log in and run it.
+   The plugin repository is public, so GitHub organization membership is not required. **Launch it
+   from a terminal** (see the desktop caveat in Step 1).
 3. **Your token.** Jeremy hands you a per-user bearer token privately. It identifies you in the
    brain's audit trail — don't share it, don't paste it in chat or a repo.
 
@@ -58,13 +54,13 @@ own files — that's the solo/showcase mode, not the team brain.)
 > set and the plugin silently falls back to *local* mode (searching an empty brain on your laptop).
 > If `echo $TEAMKB_API_URL` is blank, re-open the terminal after editing your profile, then start `claude`.
 
-## Step 2 — install the plugin from the private marketplace
+## Step 2 — install the public plugin
 
 Inside Claude Code:
 
 ```
-/plugin marketplace add intent-solutions-io/team-intent-claude-plugins
-/plugin install governed-second-brain@intent-solutions-io
+/plugin marketplace add jeremylongshore/bobs-big-brain-plugin
+/plugin install governed-second-brain@governed-second-brain
 ```
 
 Then **restart Claude Code** so it loads the plugin and reads your env vars.
