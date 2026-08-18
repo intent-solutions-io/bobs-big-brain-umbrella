@@ -1,163 +1,138 @@
-# 011 · AT · RNBK — Teammate onboarding: plug into "the big brain"
+# 011 · AT · RNBK — Teammate onboarding: plug into the big brain
 
-**Audience:** Pablo, Ope, Ezekiel, Tim, Max (and any future teammate).
-**Goal:** in ~5 minutes, read and feed the one governed team brain from your own Claude Code.
-**Status:** the brain API is live on the tailnet; per-user tokens are minted. This is the
-reusable "here's how you plug in" doc for the all-at-once kickoff (rollout epic A, bead
-`compile-then-govern-jfv.1.3`).
+**Audience:** Intent Solutions teammates and future invitees.
 
----
+**Goal:** connect a desktop Claude to the one governed team brain in about five minutes.
 
-## What "the big brain" is
+**Status:** the tailnet-only API and public plugin are live. A teammate still needs to accept a
+one-time Tailscale invite and receive an individual brain token over a trusted channel.
 
-One governed knowledge brain for Intent Solutions. It is **not** each of us running a private
-copy — there is exactly **one** brain, and you reach it over the tailnet. You can:
+## What you are joining
 
-- **Search it** — every hit comes back with a `qmd://` citation you can trace.
-- **Feed it** — propose a memory; a deterministic nightly pass governs it (dedupe → policy →
-  secret-scan → promotion) and it shows up in search the next day. The model proposes; code
-  decides what becomes durable, and every promotion leaves a hash-chained receipt.
+Bob's Big Brain is one shared, governed knowledge system. Teammates use the public
+`governed-second-brain` plugin in **team mode** to reach it over Tailscale. The same plugin runs in
+local mode when team configuration is absent.
 
-You talk to it through three tools inside Claude Code: `brain_search` (read), `brain_capture`
-(propose), and `brain_transition` (admins only).
+- `brain_search` reads governed memories and returns `qmd://` citations.
+- `brain_capture` proposes a memory for server-side governance.
+- Admin review tools handle the shared inbox; members cannot perform admin transitions.
 
-### How it fits with Intent OS and governed agents
+## Prerequisites
 
-- **Intent OS is where the company is organized.** Its approved corpus is one input to Bob's
-  compiler; the brain does not replace the operating record.
-- **Bob's Big Brain is the knowledge plane.** It derives knowledge, governs what becomes durable,
-  and returns traceable `qmd://` citations.
-- **AGP is the action-governance plane.** Its signed journal can carry the Bob's Brain governance
-  tip observed by an agent run.
+1. A desktop Claude: Claude Code or Cowork is recommended. A browser or phone app cannot reach a
+   local plugin over the private network.
+2. Tailscale installed on the teammate's computer.
+3. A distinct one-time Tailscale invite for that teammate.
+4. The teammate's individual Bob's Big Brain bearer token, delivered privately.
 
-The tip answers **"which governance-chain position was observed?"** It does not yet answer
-**"which exact search results did the agent read?"** Exact read-set receipts are tracked separately;
-do not treat a tip hash as proof of knowledge or causation.
+GitHub organization membership and the retired private team marketplace are **not** prerequisites.
+The plugin repository and marketplace are public.
 
----
+## Step 1 — join the team tailnet without Google Workspace
 
-## Prerequisites (one-time)
-
-1. **Tailscale installed + on the Intent Solutions tailnet.** Install Tailscale
-   (<https://tailscale.com/download>), accept Jeremy's invite, then `tailscale status` should list
-   the `dev` node. The brain is **tailnet-only** — not reachable from the public internet.
-2. **Claude Code installed** (a recent version with plugin support) and you can log in and run it.
-   The plugin repository is public, so GitHub organization membership is not required. **Launch it
-   from a terminal** (see the desktop caveat in Step 1).
-3. **Your token.** Jeremy hands you a per-user bearer token privately. It identifies you in the
-   brain's audit trail — don't share it, don't paste it in chat or a repo.
-
----
-
-## Step 1 — set two environment variables
-
-Add these to your shell profile (`~/.zshrc` or `~/.bashrc`), then open a new terminal:
+1. Open the one-time invite in a private or incognito browser window.
+2. Sign in with a passkey or a current identity provider. The login does **not** need to end in
+   `@intentsolutions.io`, and no Gmail account is required.
+3. Open the Tailscale client and select the tailnet labeled `intentsolutions.io` (`tail70fc2c`).
+4. Confirm that the brain is reachable:
 
 ```bash
-export TEAMKB_API_URL="http://dev.tail70fc2c.ts.net:3847"
-export TEAMKB_API_TOKEN="<the token Jeremy gave you>"
+curl -fsS http://100.109.119.103:3847/api/health
 ```
 
-That's the whole switch: **`TEAMKB_API_URL` being set is what puts the plugin in team mode** and
-points it at the one shared brain. (With it unset, the same plugin runs in *local* mode over your
-own files — that's the solo/showcase mode, not the team brain.)
+A healthy JSON response proves private-network reachability. It does not prove token or plugin
+configuration yet.
 
-> ⚠️ **Launch Claude Code from a terminal** where `echo $TEAMKB_API_URL` prints the URL. A
-> desktop/Dock-launched app does **not** read your `~/.zshrc`/`~/.bashrc`, so the env vars won't be
-> set and the plugin silently falls back to *local* mode (searching an empty brain on your laptop).
-> If `echo $TEAMKB_API_URL` is blank, re-open the terminal after editing your profile, then start `claude`.
+Tailscale invitations are one-time links. Do not reuse or post them. See Tailscale's
+[invite guide](https://tailscale.com/docs/features/sharing/how-to/invite-any-user) and
+[passkey guide](https://tailscale.com/docs/integrations/identity/passkeys).
 
-## Step 2 — install the public plugin
+## Step 2 — install and configure the plugin
 
-Inside Claude Code:
+### macOS Claude Code
 
-```
+Download and double-click the public plugin's
+[`install-bobs-big-brain.command`](https://github.com/jeremylongshore/bobs-big-brain-plugin/blob/main/onboarding/install-bobs-big-brain.command).
+It checks tailnet reachability, accepts the token without echoing it, writes the team configuration
+at mode `600`, and installs the plugin.
+
+### Claude Code or Cowork by hand
+
+Install from the public plugin marketplace:
+
+```text
 /plugin marketplace add jeremylongshore/bobs-big-brain-plugin
 /plugin install governed-second-brain@governed-second-brain
 ```
 
-Then **restart Claude Code** so it loads the plugin and reads your env vars.
+Write `~/.teamkb/team.json` (Windows: `%USERPROFILE%\.teamkb\team.json`) with owner-only
+permissions:
 
-## Step 3 — smoke test (you're in)
-
-**First, the reliable check** (works even if the plugin is misconfigured) — from your terminal:
-
-```bash
-curl -fsS http://dev.tail70fc2c.ts.net:3847/api/health
-# → {"status":"healthy",...}   the brain is reachable and you're on the tailnet
-# curl error / hang            you're NOT on the tailnet (fix Tailscale) or the API is down (ping Jeremy)
+```json
+{
+  "apiUrl": "http://100.109.119.103:3847",
+  "apiToken": "<the teammate's individual token>",
+  "tenantId": "intent-solutions"
+}
 ```
 
-Then, inside Claude Code, ask:
+The plugin reads each setting in this order:
 
-> Use brain_search to find what we've decided about governance and receipts.
-
-**Done = you get results with `qmd://` citations.** If you instead see
-`team token rejected — check TEAMKB_API_TOKEN`, your token is wrong or expired — ping Jeremy.
-If you see `unconfigured — set TEAMKB_API_URL`, your env vars didn't load (re-open the terminal
-after editing your profile, or you started Claude Code before setting them).
-
-Optional receipt check — this returns content-safe chain metadata, not memory content:
-
-```bash
-curl -fsS \
-  -H "Authorization: Bearer $TEAMKB_API_TOKEN" \
-  "$TEAMKB_API_URL/api/audit/receipt-tip"
+```text
+real environment variable -> ~/.teamkb/team.json -> absent means local mode
 ```
 
-`current.hash` is the global governance-chain tip an AGP run can stamp. It is not the hash of your
-search results.
+`team.json` is the reliable desktop path because Dock- and GUI-launched applications do not source
+shell profiles. The plugin fails closed if the file is readable by other users, unreadable, or
+invalid JSON; it does not silently turn a broken team configuration into local mode.
 
-The daily Tier-A canary runs the same published plugin from the VPS, a separate tailnet node, with a
-dedicated member token. It fails closed on loopback, missing authentication, unhealthy status, or a
-non-tailnet API URL, then requires one successful read-only search in the token's isolated
-`synthetic-probe` tenant to prove authentication without granting it access to team knowledge.
-Operators can inspect its content-safe receipt without exposing the token:
+Fully restart the desktop Claude after configuration.
 
-```bash
-ssh intentsolutions 'systemctl --user status teamkb-tailnet-canary.service --no-pager'
-ssh intentsolutions 'jq . ~/.local/state/teamkb-tailnet-canary/latest.json'
+## Step 3 — prove cited retrieval
+
+In a new Claude Code or Cowork session, run:
+
+```text
+/brain backup restore
 ```
 
-Failures go through the Intent OS alert floor to Buzz `sys-incidents`; the canary does not own a
-second notification path.
+Done means the answer contains one or more `qmd://` citations. Use strong topic keywords if the
+first query has no hits; retrieval is lexical today.
 
----
+The proof has two independent parts:
 
-## Using the brain day-to-day
+1. `/api/health` succeeds: the device is on the correct tailnet and can reach the API.
+2. `/brain` returns cited hits: the plugin selected team mode and the individual bearer token works.
 
-- **Read:** `brain_search` — ask questions; cite the `qmd://` result when you act on it.
-- **Feed:** `brain_capture` — propose a durable memory (a decision, a gotcha, a convention).
-  It lands in the shared inbox and is **governed automatically overnight** — you don't promote it
-  yourself, and duplicates/secrets are caught by code, not vibes. Check `brain_search` the next
-  day to see it promoted.
-- **Admins only:** `brain_transition` — lifecycle changes. Members get a clean permission error;
-  that's expected.
+## Day-to-day use
+
+- **Read:** use `/brain <keywords>` or `brain_search`; preserve the returned citation when acting.
+- **Propose:** use `/brain-save` or `brain_capture`; the proposal enters governance before it can
+  become durable team knowledge.
+- **Admin review:** only an admin token can approve, reject, or transition shared memories.
 
 ## Troubleshooting
 
-| Symptom | Cause | Fix |
+| Symptom | Likely cause | Fix |
 |---|---|---|
-| `unconfigured — set TEAMKB_API_URL` | env vars not loaded | Re-open the terminal after editing your profile; restart Claude Code |
-| `team token rejected — check TEAMKB_API_TOKEN` | wrong/expired token | Ask Jeremy for a fresh token |
-| Connection refused / timeout | not on the tailnet | `tailscale status`; reconnect Tailscale |
-| Plugin not listed | marketplace/install step skipped | Re-run Step 2, restart Claude Code |
-| `brain_search` returns nothing for a real query | the brain may not have that topic yet | Feed it with `brain_capture` |
+| Health request times out | Wrong tailnet or Tailscale is disconnected | Run `tailscale switch`; choose `intentsolutions.io` (`tail70fc2c`) |
+| Invite opens the old Google flow | Existing browser session selected the old identity | Sign out and reopen the one-time invite in a private window; choose passkey or another current IdP |
+| `unconfigured — set TEAMKB_API_URL` | Team configuration was not loaded | Check `~/.teamkb/team.json`, mode `600`, then fully restart Claude |
+| `team token rejected` | Token is mistyped, revoked, or expired | Ask the admin to verify or reissue that teammate's token privately |
+| Plugin not listed | Public marketplace install did not finish | Re-run the two `/plugin` commands and restart Claude |
+| Zero hits with healthy status | Query terms did not match | Try concrete keywords such as `backup`, `deploy`, or `govern` |
 
----
+## Admin handoff checklist
 
-## For the record
+- Create one one-time Tailscale **member** invite per teammate; never use a reusable device auth key
+  for a human.
+- Deliver the invite, individual brain token, and installer over the established trusted channel.
+- Confirm the teammate appears as an individual Tailscale user and their device is authorized.
+- Record only invite IDs and test receipts in Beads—never invitation URLs or bearer tokens.
+- Prove member access to TCP `3847` and retain the deny-by-default policy; do not widen the ACL to
+  work around identity enrollment.
 
-- **Brain API:** `http://dev.tail70fc2c.ts.net:3847` (tailnet MagicDNS; IP `100.109.119.103:3847`).
-  Health probe (no token): `curl http://dev.tail70fc2c.ts.net:3847/api/health` → `{"status":"healthy"}`.
-- **Auth:** per-user scrypt-hashed bearer tokens; unknown token → 401. Roles: admin (Jeremy, Pablo)
-  may write/promote and transition; member (Ope, Max, Ezekiel, Tim) may search and propose.
-- **Where the brain lives:** one directory (`~/.teamkb`) on the dev-box VPS; see
-  [`005-AT-ARCH`](005-AT-ARCH-grounded-system-map-and-backup-scope.md) for the full data map and
-  [`006-AT-RNBK`](006-AT-RNBK-brain-backup-and-restore-runbook.md) for backup/restore.
-- **Local (solo) mode** — leave `TEAMKB_API_URL` unset and the same plugin runs entirely over your
-  own `~/.teamkb`, no network. That's the outsider showcase, not the team brain.
-- **Agent seam:** [`007-AT-SMAP` §5](007-AT-SMAP-repo-topology-and-working-surface.md) defines the
-  Intent OS → Bob's Big Brain → AGP boundary and the exact proof each layer can make.
-
-_Reference: repo topology [`007-AT-SMAP`](007-AT-SMAP-repo-topology-and-working-surface.md)._
+The non-Google identity migration and rollback procedure is
+[`022-AT-RNBK`](022-AT-RNBK-tailscale-non-google-identity-migration.md). Live completion for Tim is
+tracked by Beads `compile-then-govern-jfv.1.9`; the durable identity-provider migration is
+`compile-then-govern-jfv.1.10`.
