@@ -53,8 +53,10 @@
 # Plaintext is never written to durable disk; decrypt happens only on /dev/shm.
 #
 # Concurrency (bead compile-then-govern-e06.12 / risk 010-AT-RISK R13 / umbrella #27):
-#   All ~/.teamkb writers (this backup + teamkb-compile-daily.sh, and e06.5's coming
-#   on-push compile) serialize on ONE exclusive flock at $TEAMKB_HOME/.write.lock.
+#   All brain writes (this backup + brain_govern, including govern invoked by the
+#   nightly or on-push compiler) serialize on one exclusive flock at
+#   $TEAMKB_HOME/.write.lock. The outer teamkb-compile-daily.sh wrapper deliberately
+#   uses .compile.lock so its brain_govern child can acquire this writer lock.
 #   The govern pipeline mutates SQLite + file export + qmd index + anchor-git
 #   NON-atomically, so a backup snapshot taken mid-compile would VACUUM a DB that no
 #   longer matches the exported wiki / qmd index / anchor head — an internally
@@ -169,9 +171,10 @@ trap _backup_on_exit EXIT
 # ── ~/.teamkb single-writer lock (e06.12 / R13 / #27) ─────────────────────────
 # Acquire an EXCLUSIVE flock BEFORE any DB/file mutation, hold it for the whole
 # run (flock auto-releases when fd 9 closes on process exit). Serializes against
-# teamkb-compile-daily.sh (and e06.5's on-push compile) so a snapshot is never
-# taken across a non-atomic govern write. The backup waits for an in-flight
-# compile (TEAMKB_LOCK_WAIT, default 300s); a delayed nightly backup is fine.
+# brain_govern (including govern invoked by teamkb-compile-daily.sh or e06.5's
+# on-push compile) so a snapshot is never taken across a non-atomic govern write.
+# The backup waits for an in-flight writer (TEAMKB_LOCK_WAIT, default 300s); a
+# delayed nightly backup is fine.
 LOCK="${TEAMKB_LOCK:-$TEAMKB_HOME/.write.lock}"
 LOCK_WAIT="${TEAMKB_LOCK_WAIT:-300}"
 if command -v flock >/dev/null 2>&1; then

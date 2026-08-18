@@ -13,14 +13,18 @@
 # (here or in the crontab line) once the digests look right.
 #
 # Concurrency (bead compile-then-govern-e06.12 / risk 010-AT-RISK R13 / umbrella #27):
-#   All ~/.teamkb writers (this compile, teamkb-backup.sh, and e06.5's coming on-push
-#   compile) serialize on ONE exclusive flock at $TEAMKB_HOME/.write.lock. govern's
-#   runGovern spans SQLite + file export + qmd index + anchor-git NON-atomically, so
-#   two overlapping compiles (or a compile racing the backup snapshot) can skew the
-#   brain across artifacts. This wrapper takes the lock at the top and, if another
-#   writer holds it, SKIPS gracefully (log + exit 0) — a missed nightly compile is
-#   fine, and an on-push compile that collides simply defers to the running one
-#   rather than corrupting or blocking.
+#   TWO locks, deliberately distinct — see the lock section below before changing either.
+#     $TEAMKB_HOME/.compile.lock — THIS wrapper's run-level lock. Serializes compile
+#       vs compile (nightly vs e06.5 on-push). Held across the whole `claude -p` run.
+#     $TEAMKB_HOME/.write.lock   — the brain's writer lock, taken by brain_govern
+#       (src/write-lock.ts) and teamkb-backup.sh around their own writes.
+#   govern's runGovern spans SQLite + file export + qmd index + anchor-git
+#   NON-atomically, so a govern racing the backup snapshot can skew the brain across
+#   artifacts — that is what .write.lock prevents, at the brain layer, without this
+#   wrapper having to hold it. The wrapper must NOT take .write.lock: in auto mode it
+#   would deadlock the brain_govern running inside its own claude child.
+#   A wrapper that can't get .compile.lock SKIPS gracefully (log + exit 0) — a missed
+#   nightly compile is fine, and a colliding on-push compile defers to the running one.
 
 set -uo pipefail
 # Scratch files (signal doc, transcripts, digest, candidates) can contain
@@ -113,15 +117,25 @@ run_inbox_review() {
   return 0
 }
 
-# ── ~/.teamkb single-writer lock (e06.12 / R13 / #27) ─────────────────────────
+# ── compile run-level lock (e06.12 / R13 / #27) ───────────────────────────────
 # Acquire an EXCLUSIVE flock BEFORE resolving mode / invoking claude, hold it for
-# the whole run (fd 9 auto-releases on process exit). Serializes against
-# teamkb-backup.sh and any concurrent compile (nightly vs e06.5 on-push). A compile
-# that can't get the lock SKIPS gracefully (exit 0) — it must never block forever
-# nor snapshot/write a half-written brain. Short wait: a colliding compile defers to
-# the running one rather than queueing.
+# the whole run (fd 9 auto-releases on process exit). A compile that can't get the
+# lock SKIPS gracefully (exit 0) — it must never block forever nor snapshot/write a
+# half-written brain. Short wait: a colliding compile defers to the running one.
+#
+# This MUST be .compile.lock, NOT .write.lock. The wrapper holds this lock across
+# the whole `claude -p` invocation, and in auto mode that child calls brain_govern,
+# whose src/write-lock.ts takes an flock on .write.lock. Sharing one file makes the
+# wrapper deadlock its own child: capture (spool-only) succeeds, govern returns
+# "brain busy", and the night's candidates strand in the spool. Serialization is
+# still correct because compile-vs-backup is enforced at the brain layer — govern
+# and teamkb-backup.sh both take .write.lock themselves, and more tightly than a
+# whole-run hold. Do not "simplify" these back to one lock.
+# Deadlocked 2026-07-12/13, fixed via .compile.lock, regressed 2026-08-16, cost the
+# 08-17 and 08-18 nights. Claimed local brain receipt (queryable only where the
+# brain endpoint is available): qmd://kb-guides/4ff153f8-afd8-5110-8d7d-f5c34ed8f691.md
 TEAMKB_HOME="${TEAMKB_HOME:-$HOME/.teamkb}"
-LOCK="${TEAMKB_LOCK:-$TEAMKB_HOME/.write.lock}"
+LOCK="${TEAMKB_LOCK:-$TEAMKB_HOME/.compile.lock}"
 LOCK_WAIT="${TEAMKB_LOCK_WAIT:-10}"
 if command -v flock >/dev/null 2>&1; then
   mkdir -p "$TEAMKB_HOME"

@@ -43,3 +43,6 @@ jobs:
           # positives, SC2029 intentional ssh client-side expansion, SC2012/SC2015
           # style) that are noisy-but-safe — gating on those would be a wall of nits.
           shellcheck --severity=warning "${FILES[@]}"
+
+      - name: Prove compile and brain-writer locks remain independent
+        run: bash scripts/test-teamkb-compile-lock.sh
