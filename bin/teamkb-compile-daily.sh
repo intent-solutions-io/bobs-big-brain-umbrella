@@ -132,7 +132,8 @@ run_inbox_review() {
 # and teamkb-backup.sh both take .write.lock themselves, and more tightly than a
 # whole-run hold. Do not "simplify" these back to one lock.
 # Deadlocked 2026-07-12/13, fixed via .compile.lock, regressed 2026-08-16, cost the
-# 08-17 and 08-18 nights. Brain: qmd://kb-guides/4ff153f8-afd8-5110-8d7d-f5c34ed8f691.md
+# 08-17 and 08-18 nights. Claimed local brain receipt (queryable only where the
+# brain endpoint is available): qmd://kb-guides/4ff153f8-afd8-5110-8d7d-f5c34ed8f691.md
 TEAMKB_HOME="${TEAMKB_HOME:-$HOME/.teamkb}"
 LOCK="${TEAMKB_LOCK:-$TEAMKB_HOME/.compile.lock}"
 LOCK_WAIT="${TEAMKB_LOCK_WAIT:-10}"
