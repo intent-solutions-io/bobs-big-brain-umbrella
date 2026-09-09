@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-09-09T17:08:19Z -->
+<!-- fetched-at: 2026-09-09T17:12:24Z -->
 
 # Changelog
 
@@ -33,6 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Hardened the three public skills for skills.sh: `brain`, `brain-save`, and `teamkb` now distinguish
+  the shipped read-only `intent-brain` client from the source-built local operator server, document
+  the real authentication and storage boundaries, use explicit model/effort metadata and runtime
+  references, and report spool writes as proposals rather than promotions. `teamkb` is now a bounded,
+  self-contained workflow that requires explicit approval before importing up to 20 Markdown files.
 - **`bulk_import` candidates are stamped low-trust at the schema boundary (`5bm.8`).** A
   `bulk_import` candidate must now carry `trustLevel` `low` or `untrusted` (the default `medium` is
   refused by `MemoryCandidate`), so a whole-machine digestion can never claim curated-grade trust and
