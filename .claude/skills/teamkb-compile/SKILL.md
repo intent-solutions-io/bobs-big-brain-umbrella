@@ -120,7 +120,10 @@ Emit `[phase: setup] ...`. Then:
    (`YYYY-MM-DD`, the start day) and `NEXT_DATE` (exclusive end). Resolve `MODE` (`auto` or `digest`):
    explicit `--auto`/`--digest` wins, else `$TEAMKB_COMPILE_MODE`, else `digest`. Echo the resolved
    window + mode.
-2. **Sanity-check the brain.** Call **`brain_status`**. If it errors with `native-store-unavailable`,
+2. **Use only the supplied governed-brain MCP for brain writes.** The nightly MCP boundary applies
+   the canonical C8 disclosure policy before every capture. Never write directly to the spool,
+   database, wiki, or exported memories, and never bypass a policy rejection.
+3. **Sanity-check the brain.** Call **`brain_status`**. If it errors with `native-store-unavailable`,
    STOP — the box can't reach the brain (wrong host, or `better-sqlite3` missing); report and exit. The
    status's current counts are your before-snapshot for the audit record.
 
@@ -136,8 +139,9 @@ ${CLAUDE_SKILL_DIR}/scripts/gather-signals.sh "$DATE" "$NEXT_DATE" > "$SIGNALS"
 (`SIGNALS=/tmp/teamkb-compile/signals-$DATE.txt`, created by the script.) It collects, across
 `~/000-projects` for the window: git commits (all repos), merged PRs, closed beads, changed decision
 records (`000-docs/*-AT-DECR-*`), and Claude session transcripts (via the vendored
-`scan-session-transcripts.py`). **If the signal doc is empty / shows no activity, exit clean (no-op)** —
-do not invent memories from nothing. Log `"No activity for <window> — nothing to compile."`
+`scan-session-transcripts.py`). **If the signal doc is empty / shows no activity, propose zero candidates** —
+do not invent memories from nothing. Continue through the normal govern, audit, and digest phases;
+even an empty day needs a valid per-date outcome instead of an unverified clean exit.
 
 ### Phase 2 — Compile: distill candidates (the model PROPOSES)
 
@@ -204,7 +208,7 @@ this file and emails it + pushes an ntfy status (single notification owner, exac
 | Situation | Response |
 |---|---|
 | `brain_status` → `native-store-unavailable` | Not on the brain's host (or `better-sqlite3` missing). Stop; do not fabricate. |
-| Empty signal doc / no activity | Exit clean (no-op). Never invent memories. |
+| Empty signal doc / no activity | Propose zero candidates; complete govern/audit/digest and record actual outcomes. Never invent memories. |
 | `memory-distiller` returns `[]` | Valid — emit a "0 candidates" digest/summary + audit record. |
 | Task tool errors | Inline-distill as a fallback (only after a real tool error), per `references/distill-candidates.md`. |
 | `brain_govern` rejects / dedupes a candidate | Governance working as designed. Record the reason in the audit line. |

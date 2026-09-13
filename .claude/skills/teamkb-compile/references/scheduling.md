@@ -80,3 +80,27 @@ re-graduate after the soak again) — or set `TEAMKB_COMPILE_MODE=digest` in the
 - **Idempotent:** a second run for a date that already has an audit record is a clean no-op.
 - **Notifications:** email (full digest) + ntfy topic from `~/.ntfy-topic` (status only). 3+ consecutive
   failures escalate to max priority — catches a silent multi-day stall.
+
+## September 2026 reliability correction
+
+The umbrella entry verifies a commit-addressed compiler bundle under
+`~/.local/lib/teamkb-compile/current`; it no longer embeds a second runner or executes a mutable
+source checkout. The compiler defaults to the already configured MiniMax Anthropic-compatible
+Claude path, with the key read from `~/.config/intentsolutions/api-providers.sops.json` in memory.
+Missing authentication fails visibly without changing provider. The nightly C8 MCP boundary checks
+actual capture proposals before the native spool; the native govern kernel remains authoritative.
+
+A clean agent exit is insufficient: the date needs a complete governed outcome, a refreshed index,
+and independent live audit verification. Invalid old records remain in the append-only history and
+do not suppress retries. No-activity dates still produce a zero-candidate audit record and digest.
+
+The dispatcher initially examines seven days and persists pending dates before work begins.
+Persisted misses survive longer outages. Each nightly invocation handles at most three dates
+(`TEAMKB_COMPILE_MAX_DATES`, 1–7), current date first; an explicit `TEAMKB_COMPILE_DATE` runs only
+that day. `pending-dates.json` and `verified-YYYY-MM-DD.json` expose backlog and successful proof.
+
+Deploy after both owning PRs merge with `bin/deploy-teamkb-compile.sh --compile-only`. The option
+preserves backup/quality script versions and the runtime methodology log. Previous bundles remain
+under `~/.local/lib/teamkb-compile/releases/`; `previous` records the earlier active bundle.
+Rollback repoints `current` atomically to that retained, verified bundle; do not restore or rewrite
+brain data or methodology history. The first migration also backs up the previous entry script.

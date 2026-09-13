@@ -10,6 +10,13 @@ engine and plugin repos. Format based on
 
 ### Fixed
 
+- **Nightly compiler deployment drift:** the installed entry verifies an immutable compiler
+  bundle read from reviewed Git objects, preserving the compiler's provider, C8, outcome and
+  lock safeguards when umbrella scripts are redeployed. `--compile-only` leaves backup/quality
+  runtimes untouched; prior bundles and the previous entry remain available for rollback.
+  The methodology audit log is preserved, and fixture tests cover stale checkouts, unreviewed
+  revisions, incomplete bundles, runtime drift, idempotence and rollback.
+
 - **Mermaid verification guidance:** local `mmdc` rendering through Playwright Chromium is now
   documented and backed by a committed no-sandbox Puppeteer config; GitHub remains the visual
   parity check, not the only available validation path.

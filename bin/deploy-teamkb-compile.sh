@@ -14,6 +14,17 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+COMPILE_ONLY=0
+case "${1:-}" in
+  '') ;;
+  --compile-only) COMPILE_ONLY=1 ;;
+  *) printf '%s\n' 'Usage: deploy-teamkb-compile.sh [--compile-only]' >&2; exit 64 ;;
+esac
+COMPILER_REPO="${TEAMKB_COMPILER_REPO:-$HOME/000-projects/bobs-big-brain-compiler}"
+COMPILER_RELEASES="$HOME/.local/lib/teamkb-compile"
+# Resolve files from reviewed Git objects, never the compiler's mutable checkout.
+python3 "$REPO_DIR/bin/install-teamkb-compiler.py" --source "$COMPILER_REPO" \
+  --destination "$COMPILER_RELEASES" --revision "${TEAMKB_COMPILER_REVISION:-refs/remotes/origin/main}"
 SKILL_SRC="$REPO_DIR/.claude/skills/teamkb-compile"
 SKILL_DST="$HOME/.claude/skills/teamkb-compile"
 REVIEW_SRC="$REPO_DIR/.claude/skills/teamkb-review"
@@ -41,9 +52,15 @@ rsync -a --delete \
 # Sync the review skill (no runtime-local state to preserve).
 rsync -a --delete "$REVIEW_SRC/" "$REVIEW_DST/"
 
-install -m 0755 "$WRAP_SRC" "$WRAP_DST"
-install -m 0755 "$DIGEST_SRC" "$DIGEST_DST"
-install -m 0755 "$BACKUP_SRC" "$BACKUP_DST"
+if [[ -f "$WRAP_DST" ]] && ! cmp -s "$WRAP_SRC" "$WRAP_DST"; then
+  install -m 0700 "$WRAP_DST" "$HOME/.local/state/teamkb-compile-daily/wrapper-before-$(date -u +%Y%m%dT%H%M%SZ).sh"
+fi
+install -m 0755 "$WRAP_SRC" "$WRAP_DST.new"
+mv -f "$WRAP_DST.new" "$WRAP_DST"
+if [[ "$COMPILE_ONLY" = 0 ]]; then
+  install -m 0755 "$DIGEST_SRC" "$DIGEST_DST"
+  install -m 0755 "$BACKUP_SRC" "$BACKUP_DST"
+fi
 chmod +x "$SKILL_DST/scripts/gather-signals.sh" "$SKILL_DST/scripts/scan-session-transcripts.py" 2>/dev/null || true
 
 echo "Deployed:"

@@ -44,6 +44,10 @@ Do **not** call `brain_capture` or `brain_govern`. The digest (Phase 5) reports 
    ```
    brain_govern   // no args
    ```
+
+   In auto mode this also runs when there are zero new candidates, so the outcome records
+   the actual index/audit result. The native kernel may process an existing spool backlog;
+   report its returned counts honestly rather than assuming that zero proposals means zero writes.
    It drains the **whole** spool in one deterministic pass — dedupe → policy/secret-detection →
    promotion — appends **one hash-chained audit event per decision**, and refreshes the qmd index.
    Calling it once after N captures is correct and efficient (it is not per-candidate).
