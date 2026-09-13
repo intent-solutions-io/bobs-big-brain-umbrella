@@ -80,3 +80,39 @@ re-graduate after the soak again) — or set `TEAMKB_COMPILE_MODE=digest` in the
 - **Idempotent:** a second run for a date that already has an audit record is a clean no-op.
 - **Notifications:** email (full digest) + ntfy topic from `~/.ntfy-topic` (status only). 3+ consecutive
   failures escalate to max priority — catches a silent multi-day stall.
+
+## September 2026 reliability correction
+
+The umbrella entry verifies a commit-addressed compiler bundle under
+`~/.local/lib/teamkb-compile/current`; it no longer embeds a second runner or executes a mutable
+source checkout. The compiler defaults to the already configured MiniMax Anthropic-compatible
+Claude path, with the key read from `~/.config/intentsolutions/api-providers.sops.json` in memory.
+Missing authentication fails visibly without changing provider. The nightly C8 MCP boundary checks
+actual capture proposals before the native spool; the native govern kernel remains authoritative.
+
+A clean agent exit is insufficient: the date needs a complete governed outcome, a refreshed index,
+and independent live audit verification. Invalid old records remain in the methodology history (append-only by protocol) and
+do not suppress retries. No-activity dates still produce a zero-candidate audit record and digest.
+
+The dispatcher initially examines seven days and persists pending dates before work begins.
+Persisted misses survive longer outages. Each nightly invocation handles at most three dates
+(`TEAMKB_COMPILE_MAX_DATES`, 1–7), current date first; an explicit `TEAMKB_COMPILE_DATE` runs only
+that day. `pending-dates.json` and `verified-YYYY-MM-DD.json` expose backlog and successful proof.
+
+Deploy after both owning PRs merge with
+`TEAMKB_COMPILER_REVISION=<full-reviewed-commit-sha> bin/deploy-teamkb-compile.sh --compile-only`.
+An omitted SHA or mutable ref is rejected before any installation. Fetch the compiler remote
+before selecting the reviewed SHA; the installer also requires it to belong to `origin/main`. The option
+preserves backup/quality script versions and the runtime methodology log. Previous bundles remain
+under `~/.local/lib/teamkb-compile/releases/`; `previous` records the earlier active bundle.
+Rollback repoints `current` atomically to that retained, verified bundle; do not restore or rewrite
+brain data or methodology history. The first migration also backs up the previous entry script.
+
+The compiler behavior and original lock-independence regression are owned by
+[compiler PR 213](https://github.com/jeremylongshore/bobs-big-brain-compiler/pull/213).
+Its `Test` CI job executes `scripts/distiller/test_nightly_compile.py`, including
+`test_compile_lock_never_takes_brain_writer_lock`; the
+[reviewed implementation and test](https://github.com/jeremylongshore/bobs-big-brain-compiler/tree/dbc2125b075bc82c4f8225b8df9142adca81da56/scripts/distiller)
+passed [CI run 34779530820](https://github.com/jeremylongshore/bobs-big-brain-compiler/actions/runs/34779530820).
+The umbrella retains installation tooling and its installed-entry/rollback tests; moving the
+actual runner and lock test together removes the duplicate implementation that drifted.

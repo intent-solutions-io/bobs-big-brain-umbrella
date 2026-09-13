@@ -44,6 +44,10 @@ Do **not** call `brain_capture` or `brain_govern`. The digest (Phase 5) reports 
    ```
    brain_govern   // no args
    ```
+
+   In auto mode this also runs when there are zero new candidates, so the outcome records
+   the actual index/audit result. The native kernel may process an existing spool backlog;
+   report its returned counts honestly rather than assuming that zero proposals means zero writes.
    It drains the **whole** spool in one deterministic pass — dedupe → policy/secret-detection →
    promotion — appends **one hash-chained audit event per decision**, and refreshes the qmd index.
    Calling it once after N captures is correct and efficient (it is not per-candidate).
@@ -74,11 +78,12 @@ safety net, not the primary gate — if you ever see a secret in a candidate, **
 
 If `qmd` is not on `PATH`, `brain_govern` still completes capture + policy + promotion + the audit
 receipt; only the post-promote **index refresh** is skipped (`indexUpdated: false`, with a note). The new
-memory won't appear in `brain_search` until qmd is installed and govern re-runs. This is non-fatal — log
-it and continue.
+memory won't appear in `brain_search` until qmd is installed and govern re-runs. Retain the truthful
+`indexUpdated: false` outcome and report failure; the nightly dispatcher must retain this date for retry.
 
-## Verify (optional, recommended in auto mode)
+## Verify (required in auto mode)
 
 After the night's writes, call `brain_audit_verify` to confirm the SHA-256 chain **and** the external
 anchor log are intact (it catches a silent history rewrite the chain alone would miss). Include the
-verdict in the summary.
+verdict in the summary and methodology record. Verification failure prevents successful completion;
+the wrapper also performs its own independent live audit read before issuing the verified receipt.
