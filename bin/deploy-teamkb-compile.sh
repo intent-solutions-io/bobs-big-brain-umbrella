@@ -22,9 +22,6 @@ case "${1:-}" in
 esac
 COMPILER_REPO="${TEAMKB_COMPILER_REPO:-$HOME/000-projects/bobs-big-brain-compiler}"
 COMPILER_RELEASES="$HOME/.local/lib/teamkb-compile"
-# Resolve files from reviewed Git objects, never the compiler's mutable checkout.
-python3 "$REPO_DIR/bin/install-teamkb-compiler.py" --source "$COMPILER_REPO" \
-  --destination "$COMPILER_RELEASES" --revision "${TEAMKB_COMPILER_REVISION:-refs/remotes/origin/main}"
 SKILL_SRC="$REPO_DIR/.claude/skills/teamkb-compile"
 SKILL_DST="$HOME/.claude/skills/teamkb-compile"
 REVIEW_SRC="$REPO_DIR/.claude/skills/teamkb-review"
@@ -40,6 +37,17 @@ mkdir -p "$SKILL_DST" "$REVIEW_DST" "$HOME/bin"
 # Cron opens the `>> .../cron.log` redirect BEFORE the wrapper runs, so the state
 # dir must exist on a fresh install or the very first cron tick fails silently.
 mkdir -p "$HOME/.local/state/teamkb-compile-daily"
+umask 077
+BACKUP_DIR="$(mktemp -d "$HOME/.local/state/teamkb-compile-daily/deploy-$(date -u +%Y%m%dT%H%M%SZ).XXXXXXXX")"
+if [[ -d "$SKILL_DST" ]]; then
+  tar -czf "$BACKUP_DIR/compile-skill-before.tar.gz" -C "$SKILL_DST" .
+fi
+if [[ "$COMPILE_ONLY" = 0 && -d "$REVIEW_DST" ]]; then
+  tar -czf "$BACKUP_DIR/review-skill-before.tar.gz" -C "$REVIEW_DST" .
+fi
+# Resolve files from reviewed Git objects, never the compiler's mutable checkout.
+python3 "$REPO_DIR/bin/install-teamkb-compiler.py" --source "$COMPILER_REPO" \
+  --destination "$COMPILER_RELEASES" --revision "${TEAMKB_COMPILER_REVISION:-refs/remotes/origin/main}"
 
 # Sync the compile skill, but never clobber the runtime audit log.
 rsync -a --delete \
@@ -50,7 +58,9 @@ rsync -a --delete \
 [ -f "$SKILL_DST/methodology/decisions.jsonl" ] || : > "$SKILL_DST/methodology/decisions.jsonl"
 
 # Sync the review skill (no runtime-local state to preserve).
-rsync -a --delete "$REVIEW_SRC/" "$REVIEW_DST/"
+if [[ "$COMPILE_ONLY" = 0 ]]; then
+  rsync -a --delete "$REVIEW_SRC/" "$REVIEW_DST/"
+fi
 
 if [[ -f "$WRAP_DST" ]] && ! cmp -s "$WRAP_SRC" "$WRAP_DST"; then
   install -m 0700 "$WRAP_DST" "$HOME/.local/state/teamkb-compile-daily/wrapper-before-$(date -u +%Y%m%dT%H%M%SZ).sh"
@@ -65,8 +75,13 @@ chmod +x "$SKILL_DST/scripts/gather-signals.sh" "$SKILL_DST/scripts/scan-session
 
 echo "Deployed:"
 echo "  compile skill  -> $SKILL_DST"
-echo "  review skill   -> $REVIEW_DST"
 echo "  compile wrapper-> $WRAP_DST"
-echo "  quality digest -> $DIGEST_DST"
-echo "  backup script  -> $BACKUP_DST  (teamkb-backup.service reads it; no daemon-reload needed — it is Documentation=/ExecStart= to this path)"
+echo "  private backup -> $BACKUP_DIR"
+if [[ "$COMPILE_ONLY" = 0 ]]; then
+  echo "  review skill   -> $REVIEW_DST"
+  echo "  quality digest -> $DIGEST_DST"
+  echo "  backup script  -> $BACKUP_DST"
+else
+  echo "  review skill, quality digest and backup script left unchanged (--compile-only)"
+fi
 echo "Crontab (install once): 30 3 * * * $WRAP_DST >> \$HOME/.local/state/teamkb-compile-daily/cron.log 2>&1"
