@@ -10,7 +10,16 @@ engine and plugin repos. Format based on
 
 ### Fixed
 
-- **Nightly compiler deployment drift:** the installed entry verifies an commit-addressed, hash-verified compiler
+- **Nightly recovery verified (2026-09-13):** reviewed compiler bundles restored the five
+  September 8–12 target dates: 15 proposals, 14 promotions, refreshed indexes, and independent
+  audit receipts with zero tamper signatures or anchor breaks. All 14 published memories
+  were retrieved from the tenant index. Repeating all five dates performed no model calls,
+  sends, or methodology writes; the default dispatcher reports zero pending dates. The final
+  bundle bounds each date at 3,000 seconds plus a 10-second termination grace and reaps nested
+  orphaned processes. Source/deployment details, exact rollback, tests, and the unobserved next
+  scheduled night are recorded in the [scheduling runbook](.claude/skills/teamkb-compile/references/scheduling.md).
+
+- **Nightly compiler deployment drift:** the installed entry verifies a commit-addressed, hash-verified compiler
   bundle read from reviewed Git objects, preserving the compiler's provider, C8, outcome and
   lock safeguards when umbrella scripts are redeployed. `--compile-only` leaves backup/quality
   runtimes untouched; prior bundles and the previous entry remain available for rollback.

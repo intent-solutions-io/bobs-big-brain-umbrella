@@ -69,7 +69,9 @@ re-graduate after the soak again) — or set `TEAMKB_COMPILE_MODE=digest` in the
 | `TEAMKB_COMPILE_SOAK_NIGHTS` | `3` | Clean digest nights before the wrapper auto-graduates itself to `auto`. |
 | `TEAMKB_COMPILE_DRYRUN` | *(unset)* | Resolve mode + graduation, log the decision, then exit (no claude, no writes) — for testing. |
 | `TEAMKB_COMPILE_DATE` | yesterday | Target day (`YYYY-MM-DD`) — for manual backfill of a missed night. |
-| `TEAMKB_COMPILE_TIMEOUT` | `1800` | Hard wall-clock ceiling (seconds). |
+| `TEAMKB_COMPILE_TIMEOUT` | `1800` | Compile-model phase timeout in seconds, followed by a 10-second termination grace. |
+| `TEAMKB_COMPILE_RUN_TIMEOUT` | `3000` | Whole-date deadline including review, audit and notification work; 10-second termination grace and at most 1 second of child reap bookkeeping follow. |
+| `TEAMKB_COMPILE_MAX_DATES` | `3` | Maximum dates per dispatcher invocation (1–7); pending dates persist across invocations. |
 | `TEAMKB_COMPILE_MAX_TRANSCRIPT_LINES` | `5000` | Transcript cap in the gather doc (truncation is logged). |
 | `TEAMKB_COMPILE_PROJECTS_ROOT` | `/home/jeremy/000-projects` | Repo root to scan. |
 
@@ -77,7 +79,9 @@ re-graduate after the soak again) — or set `TEAMKB_COMPILE_MODE=digest` in the
 
 - **Logs:** `~/.local/state/teamkb-compile-daily/run-<DATE>.log` (per run) + `cron.log` (crontab stdout).
 - **Manual backfill of a missed night:** `TEAMKB_COMPILE_DATE=2026-06-27 ~/bin/teamkb-compile-daily.sh`.
-- **Idempotent:** a second run for a date that already has an audit record is a clean no-op.
+- **Idempotent:** a second run skips only when the date/mode decision has a matching independent
+  verification receipt. A valid historical decision without that receipt is verified read-only
+  before adoption; a changed previously verified decision fails visibly without recertifying it.
 - **Notifications:** email (full digest) + ntfy topic from `~/.ntfy-topic` (status only). 3+ consecutive
   failures escalate to max priority — catches a silent multi-day stall.
 
@@ -116,3 +120,89 @@ Its `Test` CI job executes `scripts/distiller/test_nightly_compile.py`, includin
 passed [CI run 34779530820](https://github.com/jeremylongshore/bobs-big-brain-compiler/actions/runs/34779530820).
 The umbrella retains installation tooling and its installed-entry/rollback tests; moving the
 actual runner and lock test together removes the duplicate implementation that drifted.
+
+## Verified deployment and recovery — 2026-09-13
+
+The installed compiler is
+[`1a6a5f474c64b3c6edc3790e9da261030bc0ad6a`](https://github.com/jeremylongshore/bobs-big-brain-compiler/commit/1a6a5f474c64b3c6edc3790e9da261030bc0ad6a)
+([PR 214](https://github.com/jeremylongshore/bobs-big-brain-compiler/pull/214)); the installer is
+[`1e8b512db5f2b03b4b835c791665df5a9a62b3c0`](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/commit/1e8b512db5f2b03b4b835c791665df5a9a62b3c0)
+([PR 95](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/pull/95)). The final bundle
+was deployed at **20:41:37.446374 UTC**, with all five payload hashes verified. The wrapper,
+backup/quality scripts, review skill and methodology history were unchanged by that upgrade.
+The initial migration separately preserved the old wrapper and runtime skill archive.
+
+| Target date | Actual completion UTC | Proposals | Promoted | Independent audit |
+|---|---|---:|---:|---|
+| 2026-09-08 | 20:24:50.603629 | 7 | 7 | Passed |
+| 2026-09-09 | 20:29:24.739614 | 2 | 1 | Passed |
+| 2026-09-10 | 20:33:53.754716 | 2 | 2 | Passed |
+| 2026-09-11 | 20:36:11.645625 | 2 | 2 | Passed |
+| 2026-09-12 | 20:39:48.053109 | 2 | 2 | Passed |
+
+All completions above occurred on September 13 under the first repaired bundle
+`723d243cd1478b03876675dc3158f1ce5b0d570b`. Native govern also processed an older held inbox;
+its rejection/flag counts were retained separately instead of attributed to the new proposals.
+Each date refreshed the index. The independent audit ended at 25,132 events and 783 anchors,
+with zero tamper signatures or anchor breaks; the 155 previously known chain forks were unchanged.
+All 14 promoted memories were retrieved from the correct tenant index. The September 11
+methodology row omitted its two citations, so those two were independently located in curated
+storage and retrieved by their indexed export paths; the old row was preserved.
+
+The existing mail sender recorded SMTP acceptance and a Sent-folder copy for all five summaries.
+This proves transport acceptance, not that the recipient read the messages. No separate manual
+recap was sent. Exact delivery IDs and private corpus remain in the private incident evidence.
+
+The final installed bundle's default dispatcher passed at **20:42:04.218685 UTC** with zero
+pending dates. It adopted already-valid September 6/7 decisions through independent read-only
+verification without recapture. At **20:42:54.651914 UTC**, explicit duplicate runs for all five
+recovered dates returned success without model calls, email sends or methodology changes.
+
+The deployment host schedules `30 3 * * *` in fixed **CST / UTC−06:00**, hence **09:30 UTC daily**.
+Its persisted mode is `auto` and provider is MiniMax-M3 via the configured Claude API path.
+Three dates allow 9,030 seconds of run/termination budget plus up to three seconds of child reap
+bookkeeping and local dispatch I/O; the operational monitor may allow 9,300 seconds. This does
+not shorten the native writer lock or bypass governance. The next scheduled night has **not yet
+been observed**; durable pending state, verified-date receipts, failure exits and `.beat`/`.ok`
+markers remain the ongoing detection signals.
+
+Validation includes 24 hermetic process tests in the
+[compiler CI run](https://github.com/jeremylongshore/bobs-big-brain-compiler/actions/runs/34781388936),
+with the existing 131 TypeScript test files and required CodeQL/lint/type/coverage gates passing;
+9 installer tests passed in the
+[umbrella CI run](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/actions/runs/34780202733).
+An isolated replay also exercised the **actually installed** deadline code against stubborn
+nested-session and earlier-orphan fixtures, proving child termination and lock release.
+Three original regressions failed against the old runner; the later orphan regression also failed
+against its prior implementation before the correction. All fixture processes were reaped.
+
+Private operator evidence is under
+`~/.local/state/intent-os/alert-review/20260913T193100Z/teamkb/`: `deadline-actual-deploy.json`,
+`recovery-YYYY-MM-DD.json`, `brain-audit-after.json`,
+`recovery-governance-delivery-retrieval.json`, `actual-default-dispatch.json`,
+`actual-duplicate-replay.json`, and `installed-deadline-replay.log`. These are local receipts,
+not publicly accessible links. Mail bodies and memory content are intentionally not published.
+
+### Rollback without rewriting brain data
+
+Confirm no compile owns the lock, then atomically select the retained previous verified bundle:
+
+```bash
+python3 - <<'PY_ROLLBACK'
+from pathlib import Path
+import os, uuid
+root = Path.home() / '.local/lib/teamkb-compile'
+previous = (root / 'previous').resolve(strict=True)
+link = root / ('.rollback-' + uuid.uuid4().hex)
+link.symlink_to(previous)
+os.replace(link, root / 'current')
+PY_ROLLBACK
+```
+
+At this deployment, `previous` is `723d243cd1478b03876675dc3158f1ce5b0d570b`; the installed
+entry verifies its manifest before execution. Preserve `pending-dates.json`, all verification
+receipts, methodology history and the brain database. The first-migration artifacts are
+`~/.local/state/teamkb-compile-daily/wrapper-before-20260913T201710Z.sh` and
+`deploy-20260913T201709Z.rEFUeP3N/compile-skill-before.tar.gz`; restoring that older Claude-only
+wrapper also restores its known authentication problem, so the retained repaired bundle is the
+normal rollback target.
