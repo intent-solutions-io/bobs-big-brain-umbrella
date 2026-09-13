@@ -91,7 +91,7 @@ Missing authentication fails visibly without changing provider. The nightly C8 M
 actual capture proposals before the native spool; the native govern kernel remains authoritative.
 
 A clean agent exit is insufficient: the date needs a complete governed outcome, a refreshed index,
-and independent live audit verification. Invalid old records remain in the append-only history and
+and independent live audit verification. Invalid old records remain in the methodology history (append-only by protocol) and
 do not suppress retries. No-activity dates still produce a zero-candidate audit record and digest.
 
 The dispatcher initially examines seven days and persists pending dates before work begins.
@@ -99,8 +99,20 @@ Persisted misses survive longer outages. Each nightly invocation handles at most
 (`TEAMKB_COMPILE_MAX_DATES`, 1–7), current date first; an explicit `TEAMKB_COMPILE_DATE` runs only
 that day. `pending-dates.json` and `verified-YYYY-MM-DD.json` expose backlog and successful proof.
 
-Deploy after both owning PRs merge with `bin/deploy-teamkb-compile.sh --compile-only`. The option
+Deploy after both owning PRs merge with
+`TEAMKB_COMPILER_REVISION=<full-reviewed-commit-sha> bin/deploy-teamkb-compile.sh --compile-only`.
+An omitted SHA or mutable ref is rejected before any installation. Fetch the compiler remote
+before selecting the reviewed SHA; the installer also requires it to belong to `origin/main`. The option
 preserves backup/quality script versions and the runtime methodology log. Previous bundles remain
 under `~/.local/lib/teamkb-compile/releases/`; `previous` records the earlier active bundle.
 Rollback repoints `current` atomically to that retained, verified bundle; do not restore or rewrite
 brain data or methodology history. The first migration also backs up the previous entry script.
+
+The compiler behavior and original lock-independence regression are owned by
+[compiler PR 213](https://github.com/jeremylongshore/bobs-big-brain-compiler/pull/213).
+Its `Test` CI job executes `scripts/distiller/test_nightly_compile.py`, including
+`test_compile_lock_never_takes_brain_writer_lock`; the
+[reviewed implementation and test](https://github.com/jeremylongshore/bobs-big-brain-compiler/tree/dbc2125b075bc82c4f8225b8df9142adca81da56/scripts/distiller)
+passed [CI run 34779530820](https://github.com/jeremylongshore/bobs-big-brain-compiler/actions/runs/34779530820).
+The umbrella retains installation tooling and its installed-entry/rollback tests; moving the
+actual runner and lock test together removes the duplicate implementation that drifted.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Installed entry only. The compiler owns implementation; deployment installs a
-# reviewed immutable bundle so an unrelated repo checkout cannot change cron.
+# reviewed commit-addressed, hash-verified bundle so an unrelated repo checkout cannot change cron.
 set -euo pipefail
 export PATH="${HOME}/.local/bin:${HOME}/.bun/bin:${HOME}/bin:/usr/local/bin:/usr/bin:/bin:${PATH:-}"
 RELEASE="${TEAMKB_COMPILE_RELEASE:-$HOME/.local/lib/teamkb-compile/current}"

@@ -22,6 +22,11 @@ case "${1:-}" in
 esac
 COMPILER_REPO="${TEAMKB_COMPILER_REPO:-$HOME/000-projects/bobs-big-brain-compiler}"
 COMPILER_RELEASES="$HOME/.local/lib/teamkb-compile"
+# An explicitly selected release cannot silently resolve to a stale tracking ref.
+if [[ ! "${TEAMKB_COMPILER_REVISION:-}" =~ ^[a-f0-9]{40}$ ]]; then
+  printf '%s\n' 'TEAMKB_COMPILER_REVISION must name the full reviewed compiler commit SHA' >&2
+  exit 64
+fi
 SKILL_SRC="$REPO_DIR/.claude/skills/teamkb-compile"
 SKILL_DST="$HOME/.claude/skills/teamkb-compile"
 REVIEW_SRC="$REPO_DIR/.claude/skills/teamkb-review"
@@ -47,7 +52,7 @@ if [[ "$COMPILE_ONLY" = 0 && -d "$REVIEW_DST" ]]; then
 fi
 # Resolve files from reviewed Git objects, never the compiler's mutable checkout.
 python3 "$REPO_DIR/bin/install-teamkb-compiler.py" --source "$COMPILER_REPO" \
-  --destination "$COMPILER_RELEASES" --revision "${TEAMKB_COMPILER_REVISION:-refs/remotes/origin/main}"
+  --destination "$COMPILER_RELEASES" --revision "${TEAMKB_COMPILER_REVISION}"
 
 # Sync the compile skill, but never clobber the runtime audit log.
 rsync -a --delete \

@@ -69,6 +69,22 @@ class InstallTests(unittest.TestCase):
             installer.install(self.source, self.destination, self.git("rev-parse", "HEAD").strip())
         self.assertEqual((self.destination / "current").resolve().name, self.revision)
 
+    def test_mutable_ref_is_refused_even_when_local_main_exists(self):
+        for revision in ("refs/remotes/origin/main", "main", self.revision[:12], ""):
+            with self.subTest(revision=revision), self.assertRaises(ValueError):
+                installer.install(self.source, self.destination, revision)
+        self.assertFalse((self.destination / "current").exists())
+
+    def test_deploy_requires_explicit_revision_before_any_install(self):
+        env = os.environ.copy()
+        env.update(HOME=str(self.root / "empty-home"), TEAMKB_COMPILER_REPO=str(self.source))
+        env.pop("TEAMKB_COMPILER_REVISION", None)
+        result = subprocess.run(["bash", str(ROOT / "bin/deploy-teamkb-compile.sh"), "--compile-only"],
+                                env=env, capture_output=True, text=True, timeout=15)
+        self.assertEqual(result.returncode, 64)
+        self.assertIn("full reviewed compiler commit SHA", result.stderr)
+        self.assertFalse((self.root / "empty-home").exists())
+
     def test_missing_file_refused_without_activation(self):
         (self.payload / "c8-mcp.py").unlink()
         self.git("add", ".")

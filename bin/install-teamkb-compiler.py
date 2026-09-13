@@ -20,6 +20,8 @@ def install(source, destination, revision):
     def git(*args):
         return subprocess.run(["git", "-C", str(source), *args], check=True, capture_output=True).stdout
 
+    if not re.fullmatch(r"[a-f0-9]{40}", revision):
+        raise ValueError("an explicit full reviewed compiler commit is required")
     resolved = git("rev-parse", "--verify", f"{revision}^{{commit}}").decode().strip()
     if not re.fullmatch(r"[a-f0-9]{40}", resolved):
         raise ValueError("invalid compiler revision")
@@ -72,7 +74,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--destination", type=Path, required=True)
-    parser.add_argument("--revision", default="refs/remotes/origin/main")
+    parser.add_argument("--revision", required=True)
     args = parser.parse_args()
     print(json.dumps(install(args.source, args.destination, args.revision)))
 
