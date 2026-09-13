@@ -20,12 +20,13 @@ try:
     if not re.fullmatch(r'[a-f0-9]{40}', manifest['revision']):
         raise ValueError('revision')
     expected = {'nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs'}
-    if set(manifest['sha256']) != expected:
+    if not isinstance(manifest['sha256'], dict) or set(manifest['sha256']) != expected:
         raise ValueError('bundle files')
     for name, digest in manifest['sha256'].items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:
             raise ValueError('bundle drift')
 except (OSError, ValueError, KeyError, TypeError):
-    raise SystemExit('teamkb-compile: compiler bundle verification failed') from None
+    print('teamkb-compile: compiler bundle verification failed', file=sys.stderr)
+    raise SystemExit(69) from None
 PY_VERIFY
 exec python3 "$RELEASE/nightly-entry.py" "$@"

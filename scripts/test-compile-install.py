@@ -104,6 +104,17 @@ class InstallTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             installer.install(self.source, self.destination, self.revision)
 
+    def test_malformed_manifest_returns_sanitized_unavailable_status(self):
+        installer.install(self.source, self.destination, self.revision)
+        manifest = self.destination / "current/manifest.json"
+        data = json.loads(manifest.read_text())
+        data["sha256"] = list(installer.FILES)
+        manifest.write_text(json.dumps(data))
+        result = self.run_entry()
+        self.assertEqual(result.returncode, 69)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertEqual(result.stdout, "")
+
     def test_upgrade_retains_previous_bundle_for_rollback(self):
         installer.install(self.source, self.destination, self.revision)
         (self.payload / "nightly-entry.py").write_text("print('second-compiler')\n")

@@ -78,11 +78,12 @@ safety net, not the primary gate — if you ever see a secret in a candidate, **
 
 If `qmd` is not on `PATH`, `brain_govern` still completes capture + policy + promotion + the audit
 receipt; only the post-promote **index refresh** is skipped (`indexUpdated: false`, with a note). The new
-memory won't appear in `brain_search` until qmd is installed and govern re-runs. This is non-fatal — log
-it and continue.
+memory won't appear in `brain_search` until qmd is installed and govern re-runs. Retain the truthful
+`indexUpdated: false` outcome and report failure; the nightly dispatcher must retain this date for retry.
 
-## Verify (optional, recommended in auto mode)
+## Verify (required in auto mode)
 
 After the night's writes, call `brain_audit_verify` to confirm the SHA-256 chain **and** the external
 anchor log are intact (it catches a silent history rewrite the chain alone would miss). Include the
-verdict in the summary.
+verdict in the summary and methodology record. Verification failure prevents successful completion;
+the wrapper also performs its own independent live audit read before issuing the verified receipt.
