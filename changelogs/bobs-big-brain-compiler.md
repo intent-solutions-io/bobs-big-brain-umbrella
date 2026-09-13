@@ -1,12 +1,19 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-09-13T20:16:45Z -->
+<!-- fetched-at: 2026-09-13T20:41:09Z -->
 
 # Changelog
 
 ## [Unreleased]
 
 ### Fixed
+
+- Each nightly compile date now has a 3,000-second outer deadline and a 10-second
+  termination grace, covering compile, review, audit, and notification work. Expired runs
+  terminate their process group and tracked descendants, retain the pending date, and
+  return failure. Linux child supervision also adopts and reaps earlier orphaned PTY
+  descendants after a normal wrapper exit. SMTP/ntfy calls and inbox-review termination
+  also have explicit bounds.
 
 - Nightly compilation uses the configured encrypted MiniMax credential without inheriting
   expired Claude OAuth, refuses implicit provider changes, and checks a valid per-date
