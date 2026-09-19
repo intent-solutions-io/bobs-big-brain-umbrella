@@ -54,7 +54,7 @@ jobs:
   forbidden-words:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Enforcement travels with the code — the in-repo vendored harness, never a ~/.claude/ path
       # (IS Testing SOP). This repo is docs + shell + python with no package.json, so it uses the
