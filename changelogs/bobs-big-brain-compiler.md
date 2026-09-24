@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-09-21T11:11:19Z -->
+<!-- fetched-at: 2026-09-24T23:50:54Z -->
 
 # Changelog
 
@@ -32,6 +32,10 @@
   private diagnostics. The Claude plugin manifest now follows the current spec.
 - The GitHub repository was renamed from `intentional-cognition-os` to `bobs-big-brain-compiler` on 2026-07-19 (public product name: **Bob's Big Brain Compiler**). GitHub 301-redirects the old URLs. The npm package name `intentional-cognition-os`, the `@ico/*` scope, and the bead prefixes are unchanged.
 - Scheduled ICO maintenance is now a separate receipted path from the team distiller. `ico maintain` scans registered mounts case-insensitively, classifies disclosure-blocked files explicitly, and compiles deterministic bounded source-scoped batches under the required writer lock and spend ceiling. `partial` receipts expose processed and remaining counts without claiming freshness, and every receipt names its `mounted-source` scope so the final batch cannot silently expand into an all-corpus rewrite. Provider usage is recorded once per actual API call, so a multi-page response cannot multiply the spend total through duplicated page rows. Incremental affected-set planning now selects only the newest compilation row for each `(type, output_path)`, avoiding obsolete historical rows being recompiled or charged as current work. Commit-addressed CLI installation and user-systemd scheduling are included.
+
+### Fixed
+
+- `ico ingest`, `ico promote --yes`, and `ico unpromote --yes` now serialize their durable database/filesystem mutations with the canonical brain writer lock, report contention as retryable, and surface degraded mode when `flock` is unavailable. Dry-run and confirmation-refusal paths remain non-mutating and lock-free. (#202)
 
 ## [v1.22.0] - 2026-07-18
 
