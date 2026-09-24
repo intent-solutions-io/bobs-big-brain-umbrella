@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-09-24T23:50:54Z -->
+<!-- fetched-at: 2026-09-24T23:56:53Z -->
 
 # Changelog
 
@@ -11,6 +11,13 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+
+- **Onboarding is one universal path.** `onboarding/README.md` (and the live page at
+  `demos.intentsolutions.io/bbb/`) lead with a single paste-to-Claude prompt for Mac *and* Windows —
+  install from the public marketplace + write `~/.teamkb/team.json` with required `tenantId`. No
+  OS-specific installer is required; the macOS `.command` is demoted to a legacy footnote.
 
 ### Fixed
 
