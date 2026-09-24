@@ -1,1 +1,6 @@
+467c67fdf29335d8cd789efe24b34cf420e80beb8a815c51d19412827a57a674  .github/workflows/aggregate-changelogs.yml
+ddf1c842dad41f28d875a8a3dda08cea00f3cf51c77a6270208f9fc1e3c906d2  .github/workflows/docs-honesty.yml
+91d1ba5fa15e638bccf1cc394765b93a988ff0f9075981a3f018c0be0913f1df  .github/workflows/minimax-review.yml
+98ec1eaf1686331efe76b8f7435a2a334093fbc9d6f08b38109351b73f6469ac  .github/workflows/shellcheck.yml
+c6a8299fa8428d56aff13ae8e3e108117b80a75b3884a4ed2701c10ac6da3993  .github/workflows/system-graph-sync.yml
 4a52e7a7b0dd7372ac210df98ffc87fec67c2c7982aabcb3175923389fbd7b10  scripts/lint-forbidden-words.sh
