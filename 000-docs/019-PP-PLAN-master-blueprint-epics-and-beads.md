@@ -98,6 +98,15 @@ Rationale: an architectural-conflict resolution, not a coding task. Per the esta
 
 ### EPIC I. Federation design (strategic, design-only, gated behind Waves 1-2)
 
+> **Scope note (K8, recorded 2026-10-04): cross-organization claim exchange is NOT covered by Epic I.**
+> Epic I designs federation across brains that a single operator controls (hub-and-spoke: person to team to
+> org, never peer). A claim crossing an organizational boundary, into a brain run by a different operator, is a
+> different trust problem: there is no shared operator to arbitrate a merge-gate verdict, no common tenant
+> registry, and no agreed audience model on the receiving side. Nothing in I1 through I6 addresses it, and no
+> build bead exists for it (thin literature on both sides and no demand signal, per `018-RL-RSRC`). A future
+> reader should not assume the federation design extends to another organization's brain. Decision record:
+> registrar `000-docs/053-AT-DECR`.
+
 - **I1. Write the federation design spec, reusing mergeGovern as the second-gate mechanism.** `[bobs-big-brain-compiler + bobs-big-brain-registrar + plugin]` `(extends: compile-then-govern-8da.9)` `serves: O7` `cite: [fed-memclaw][fed-topologies]` `effort: M (design only)` `priority: P2`. Acceptance: a design doc naming which existing modules are reused (merge-gate, signed-merge-anchor, spool tenantId) vs net-new (trust-weight config, per-source receipt-hash reference).
 - **I2. Design the MERGE RECEIPT schema (reference the source brain's receipt hash).** `[plugin + bobs-big-brain-registrar]` `(extends: none)` `serves: O7` `cite: [fed-traceability]` `effort: M (design)` `priority: P2`. Acceptance: design doc specifies the receipt shape, where the source-brain hash is verified before trust, how the verifier walks a cross-brain reference without loading the source DB.
 - **I3. Design the second deterministic gate that re-scans policy/secret/PII on promoted facts (never inherits the source verdict).** `[plugin + bobs-big-brain-registrar]` `(extends: none)` `serves: O7` `cite: [fed-gatemem]` `effort: M (design)` `priority: P2`.
