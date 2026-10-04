@@ -1,8 +1,16 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-04T11:40:22Z -->
+<!-- fetched-at: 2026-10-04T21:45:27Z -->
 
 # Changelog
+
+## [1.23.1](https://github.com/jeremylongshore/bobs-big-brain-compiler/compare/v1.23.0...v1.23.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* **ci:** make the OSV dependency scan fail on HIGH+ and remediate what it was hiding ([#234](https://github.com/jeremylongshore/bobs-big-brain-compiler/issues/234)) ([ee3c6b0](https://github.com/jeremylongshore/bobs-big-brain-compiler/commit/ee3c6b00537688f607748328c556d2e7a38a2194))
+* **spool:** clean up and tolerate crashed spool writes, with per-step crash tests ([#230](https://github.com/jeremylongshore/bobs-big-brain-compiler/issues/230)) ([f68b0d6](https://github.com/jeremylongshore/bobs-big-brain-compiler/commit/f68b0d6a0224df3d0e6e695d6f77ba94864198ae))
 
 ## [1.23.0](https://github.com/jeremylongshore/bobs-big-brain-compiler/compare/v1.22.0...v1.23.0) (2026-09-25)
 
