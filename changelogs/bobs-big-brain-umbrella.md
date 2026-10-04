@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/intent-solutions-io/bobs-big-brain-umbrella/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-04T01:09:14Z -->
+<!-- fetched-at: 2026-10-04T01:12:26Z -->
 
 # Changelog
 
