@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-13T03:47:20Z -->
+<!-- fetched-at: 2026-10-14T22:23:48Z -->
 
 # Changelog
 
@@ -195,6 +195,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from `GITHUB_REPOSITORY` at runtime (with the new slug as a non-CI fallback) instead of a
   hardcoded repo slug, so the manifest subject always matches the cosign OIDC certificate identity
   — rename-proof, and exactly what the fail-closed dashboard ingest verifies.
+
+### Fixed
+
+- **The embedder no longer stays down after an outside stop, and its outage keeps paging (umbrella
+  bead `compile-then-govern-39z.25`).** On 2026-10-10 21:00 CST something outside systemd sent
+  llama-server SIGTERM; it exited 0, `Restart=on-failure` treated that as deliberate, and every
+  search ran lexical-only for 2.5 days (estate-onboarding-v1 Recall@10 0.08 instead of 0.48).
+  `scripts/bbb-embedder.service` now uses `Restart=always` with a 5-starts-in-5-minutes limit. The
+  health check paged Buzz once and the alert floor then dropped 196 identical repeats as duplicates;
+  it is now tracked here (`scripts/bbb-embedder-health.{sh,service,timer}`, previously only in
+  `~/bin`) and stamps each outage's start time and a 6-hour reminder count into the alert, so an
+  outage pages when it starts, every 6 hours while it lasts, and once on recovery. Runbook
+  `000-docs/051-AT-RNBK` §5–6 updated.
 
 ## [0.8.0] - 2026-07-18
 
