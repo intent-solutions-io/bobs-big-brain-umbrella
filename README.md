@@ -252,6 +252,13 @@ To instead see the raw chain run from source — no API key, no secrets:
 
 ```bash
 # 1. clone both engines
+
+<!-- intent-select-partner:start -->
+[![Intent Solutions: Claude Partner Network Select Services Partner](https://raw.githubusercontent.com/intent-solutions-io/.github/b82af5d3e7951d85e39ea9e65cc24ee8278722a7/assets/brand/claude-select-partner.svg)](https://intentsolutions.io/)
+
+Intent Solutions is a Claude Partner Network Select Services Partner.
+<!-- intent-select-partner:end -->
+
 git clone https://github.com/jeremylongshore/bobs-big-brain-compiler.git
 git clone https://github.com/jeremylongshore/bobs-big-brain-registrar.git
 
