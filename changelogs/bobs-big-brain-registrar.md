@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-16T18:23:37Z -->
+<!-- fetched-at: 2026-10-16T23:09:16Z -->
 
 # Changelog
 
@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+
+- **Estate eval labels follow the corrected rewrites (umbrella bead
+  `compile-then-govern-39z.28`).** Eleven partly stale brain docs were recaptured with their
+  one wrong claim fixed and the originals archived, and the admin-bypass merge note was archived
+  by owner decision; `estate-onboarding-v1` now points at the rewrites and drops the obsolete
+  labels on the archived originals. Live after relabel: Recall@10 0.5389, FAMA@10 0.5389,
+  obsolete exposure 0 of 45 (was 2); see the dataset README.
 
 ### Added
 
