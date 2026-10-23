@@ -297,7 +297,7 @@
     "restartsReported": 0
   },
   "oneSyntheticEmbeddingAfterObservation": {
-    "purpose": "One synthetic responsiveness probe,30s observation deadline; production5s contract unchanged",
+    "purpose": "One synthetic responsiveness probe used a30s observation deadline; pinned evaluator default is5s. Effective run configuration and production serving budget were not independently verified.",
     "httpStatus": 200,
     "rowCount": 1,
     "dimensions": [

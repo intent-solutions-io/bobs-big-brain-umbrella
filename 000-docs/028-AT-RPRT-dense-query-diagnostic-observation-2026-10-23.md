@@ -90,6 +90,6 @@ for (let i = 0; i < p.perQuery.length; i++) {
     assert.ok(Number.isFinite(value) && Math.abs(replay.perQuery[i][key] - value) < 1e-12, key);
   }
 }
-console.log('PASS: frozen source,45 citation lists,50 identities and metrics replay');
+console.log('PASS: pinned HEAD, matching dataset,45 citation lists,50 identities and metrics replay');
 NODE
 ```
