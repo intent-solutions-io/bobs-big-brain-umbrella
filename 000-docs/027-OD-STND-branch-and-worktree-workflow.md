@@ -28,29 +28,31 @@ what remains rather than discarding or silently stashing someone else's changes.
 ## Work and review
 
 Follow the applicable repository's instructions. In this stack, branch from the
-fetched remote default branch (`origin/main` under the current PR standard),
-make a focused change, run the owning repository's gates,
+fetched remote default branch, verifying the applicable base against standard013
+section 1 step 1. Make a focused change, run the owning repository's gates,
 and push a reviewable PR. Umbrella documentation checks do not replace engine or
 plugin tests. Hooks must not create, merge or delete branches. No automatic
 merge, deletion or force-push is authorized by this workflow.
 
-The [commit and PR standard](013-OD-STND-commit-branch-pr-conventions.md) requires
+The [commit and PR standard, section 1 steps 4–6 and section 8](013-OD-STND-commit-branch-pr-conventions.md#1-the-workflow-never-merge-blind) requires
 waiting for required checks and pending configured AI review, addressing supported
 findings and passing the Outsider Test before a normal squash merge. Reviewer
 output is advisory; a suggested owner decision does not create a new approval
 requirement when source evidence or the existing authorization resolves it.
 Use the existing `safe-merge OWNER/REPO PR --squash` command for the merge;
-invoke its `--dry-run` first and follow its current documented contract.
+verify the interface in the installed command contract, invoke its `--dry-run`
+first and follow that contract.
 The command is explicitly operator-invoked; do not enable unattended merging or
 bypass it with a direct merge command. Record an unavailable or timed-out review explicitly; do not
 call it an approval.
 Source merge, runtime bundle, release publication and deployed behavior are
 separate states.
 
-For managed repositories, ordinary in-scope status, branch creation, staging,
-commits, pull/rebase, pushes, PRs and Beads Dolt push are covered by the existing
-team-maintainer authority. Follow current user authorization and repository review
-rules; do not repeatedly ask permission for those normal completion steps.
+Apply current user and repository authorization to each operation. The locally
+inspected team-maintainer profile lists ordinary in-scope status, branch creation,
+staging, commits, pull/rebase, pushes, PRs and Beads Dolt push. This transcription
+is not an independent permission grant. Where that profile applies, follow its
+normal completion authority and repository review rules.
 The profile lists routine pull/rebase among normal completion operations; this
 does not authorize rewriting published history. Force-push, destructive history
 rewrites, hard reset, deleting branches/tags and bypassing protection still need
