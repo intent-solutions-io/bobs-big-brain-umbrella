@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-23T20:53:20Z -->
+<!-- fetched-at: 2026-10-23T21:48:35Z -->
 
 # Changelog
 
