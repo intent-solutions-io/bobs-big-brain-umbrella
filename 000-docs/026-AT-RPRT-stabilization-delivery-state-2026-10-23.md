@@ -18,6 +18,13 @@ production-readiness sign-off. Beads remains the task/status authority.
 
 ## Evidence completed in this slice
 
+Review timing exception: Registrar PR387 and plugin PR80 were merged before
+their final advisory lanes completed, contrary to the wait rule in 013. Required
+checks were green. Plugin 80's final adversarial review subsequently returned
+LGTM; Registrar 387's final lane reached its ten-minute limit without a new
+result. The deviation is recorded in Beads; this is not a claim that every
+review approved or that the merge process fully complied with 013.
+
 Registrar [PR384](https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/384)
 closed the pre-spawn signal-ownership race; a real detached-child reproduction
 went from three live survivors in twenty attempts to zero in twenty. Focused
