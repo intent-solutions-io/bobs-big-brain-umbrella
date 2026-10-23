@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-23T03:37:05Z -->
+<!-- fetched-at: 2026-10-23T19:58:12Z -->
 
 # Changelog
 
@@ -12,6 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- **Estate evaluation isolates derived-index writes (`compile-then-govern-1io.3`).**
+  `eval:estate` now backs up the store and selected tenant's qmd/native/dense
+  indexes to a private temporary workspace, runs its worker there, and cleans
+  up after exit. Native refresh and dense model invalidation affect copies;
+  qmd environment overrides and project discovery cannot select live indexes.
+  Reports and probes expose source-index presence and dense degradation,
+  including unavailable construction, empty indexes and dimension mismatch.
+  Each database backup is WAL-consistent; the ensemble and live export tree
+  are not one atomic snapshot. Source read-only SQLite connections may update
+  coordination sidecars, but do not rewrite database or committed WAL data.
 
 - Deprecated memories now export to `archive/` and are excluded from default
   curated search after export reconciliation and index refresh (umbrella bead
