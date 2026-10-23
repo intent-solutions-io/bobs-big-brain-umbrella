@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-23T21:49:41Z -->
+<!-- fetched-at: 2026-10-23T22:10:17Z -->
 
 # Changelog
 
@@ -31,6 +31,14 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Refresh the committed runtime and provenance lock from Registrar
+  `904a077dc460ef8dfc9bf43ca725047ea0c5eae4`. Imported exporter code routes
+  deprecated memories to archive after reconciliation, and dense maintenance
+  defaults to one document per request. The source revision also contains
+  server-side fixes that are not part of this local bundle. This artifact refresh
+  does not publish a version, deploy an API, reconcile an installed corpus or
+  advance the separately reviewed marketplace pin.
 
 - Correct `/brain` and contributor guidance to describe configured BM25/FTS5/dense fusion with lexical fallback; distinguish team API intake deduplication from local spool capture in `/brain-save`. Search-before-save remains required. No runtime or bundle change (umbrella `compile-then-govern-39z.33.1`).
 
