@@ -15,8 +15,8 @@ already lives. Record the owning Bead before implementation.
 An additional worktree needs a real concurrency requirement: two logical tasks
 must run at the same time, and the owning Bead must record that need before
 creation. Do not create a worktree for each subagent or a branch just to run tests.
-Parallel agents can share a checkout when their bounded edits and coordination
-allow it. The older general advice to isolate shared-checkout work protects
+Parallel agents working on the same logical task may share a checkout when
+their bounded edits and coordination allow it. The older general advice to isolate shared-checkout work protects
 against concurrent branch changes; it does not override the 2026-10-09 owner rule
 or make every sequential task a new worktree.
 
@@ -44,7 +44,7 @@ verify the interface in the installed command contract, invoke its `--dry-run`
 first and follow that contract.
 The command is explicitly operator-invoked; do not enable unattended merging or
 bypass it with a direct merge command. Record an unavailable or timed-out review explicitly; do not
-call it an approval.
+call it an approval. A timeout does not waive a required check or review gate.
 Source merge, runtime bundle, release publication and deployed behavior are
 separate states.
 
