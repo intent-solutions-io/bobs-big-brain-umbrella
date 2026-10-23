@@ -1,8 +1,9 @@
 # Branch and worktree workflow
 
-Verified 2026-10-23 for the Bob's Big Brain repositories. This reference publishes
-the existing dated owner workflow and current Git-authority boundaries; it does
-not authorize cleanup or change repository branch protection.
+Transcribed 2026-10-23 from the local owner instructions cited below for the
+managed repositories in [the topology manifest](../repos.yml). This reference
+records the existing workflow and current authority boundaries. Source inspection
+is separate from the pending governed-memory admission and retrieval acceptance.
 
 ## Choose the existing work first
 
@@ -27,7 +28,8 @@ what remains rather than discarding or silently stashing someone else's changes.
 ## Work and review
 
 Follow the applicable repository's instructions. In this stack, branch from the
-fetched `origin/main`, make a focused change, run the owning repository's gates,
+fetched remote default branch (`origin/main` under the current PR standard),
+make a focused change, run the owning repository's gates,
 and push a reviewable PR. Umbrella documentation checks do not replace engine or
 plugin tests. Hooks must not create, merge or delete branches. No automatic
 merge, deletion or force-push is authorized by this workflow.
@@ -38,9 +40,9 @@ findings and passing the Outsider Test before a normal squash merge. Reviewer
 output is advisory; a suggested owner decision does not create a new approval
 requirement when source evidence or the existing authorization resolves it.
 Use the existing `safe-merge OWNER/REPO PR --squash` command for the merge;
-its `--dry-run` explains refusals and its execution checks required results on
-the exact head before submitting a pinned merge. Do not invoke a direct merge
-command instead. Record an unavailable or timed-out review explicitly; do not
+invoke its `--dry-run` first and follow its current documented contract.
+The command is explicitly operator-invoked; do not enable unattended merging or
+bypass it with a direct merge command. Record an unavailable or timed-out review explicitly; do not
 call it an approval.
 Source merge, runtime bundle, release publication and deployed behavior are
 separate states.
@@ -49,8 +51,10 @@ For managed repositories, ordinary in-scope status, branch creation, staging,
 commits, pull/rebase, pushes, PRs and Beads Dolt push are covered by the existing
 team-maintainer authority. Follow current user authorization and repository review
 rules; do not repeatedly ask permission for those normal completion steps.
-Force-push, history rewrites, hard reset, deleting branches/tags and bypassing
-protection still need explicit approval. A general cleanup-eligibility checklist
+The profile lists routine pull/rebase among normal completion operations; this
+does not authorize rewriting published history. Force-push, destructive history
+rewrites, hard reset, deleting branches/tags and bypassing protection still need
+explicit approval. A general cleanup-eligibility checklist
 does not grant that approval.
 
 ## Recovery and cleanup boundaries
@@ -68,9 +72,22 @@ it from the worktree checks. Bulk cleanup is a separate owner-approved task.
 
 ## Authority and scope
 
-The dated owner rule was inspected in the local workflow instructions under
-“Git branches and worktrees (all repos)” (2026-10-09). The older home-directory
-coordination guidance was inspected alongside it and reconciled above. The current
+Local source records inspected on 2026-10-23 (operator transcription, not a
+claim that private instruction files are publicly versioned):
+
+- `~/.claude/CLAUDE.md`, “Git branches and worktrees (all repos)”, owner rule
+  dated 2026-10-09, lines 399–408: one logical task/branch/PR, sequential checkout
+  reuse, recorded concurrency exception, preservation and recovery.
+- The same file, “Git authority in `~/000-projects`”, lines 393–397: explicitly includes ordinary
+  pull/rebase and `bd dolt push`; retains approval for destructive or policy-
+  bypassing actions. This is existing owner authorization, not a new grant here.
+- `~/CLAUDE.md`, “Cross-session coordination”, item 4, line 18: older general
+  shared-checkout isolation advice, reconciled with the dated owner rule above.
+- `~/.claude/CLAUDE.md`, line 286, and the installed `~/bin/safe-merge`
+  contract: use the merge guard. Its implementation is host-managed; this
+  reference does not certify the wrapper implementation.
+
+The older home-directory guidance is reconciled above. The current
 managed-repository Git-authority profile explicitly retains approval for destructive
 or policy-bypassing operations; that boundary takes precedence over an older
 cleanup recipe containing a forced branch-deletion command. Historical instructions
