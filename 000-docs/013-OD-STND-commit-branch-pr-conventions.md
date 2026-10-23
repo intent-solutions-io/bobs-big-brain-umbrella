@@ -31,6 +31,9 @@ Corollary for stateful/live services (e.g. the brain API): a PR that changes run
 
 ## 2. Branch names
 
+For checkout selection, concurrency exceptions and preservation/recovery rules,
+see the [branch and worktree workflow](027-OD-STND-branch-and-worktree-workflow.md).
+
 `<type>/<short-kebab-topic>` — optionally `-<bead-or-issue-handle>`.
 
 - `feat/` new capability · `fix/` bug · `refactor/` no-behavior-change · `docs/` · `test/` · `chore/` tooling/deps.
