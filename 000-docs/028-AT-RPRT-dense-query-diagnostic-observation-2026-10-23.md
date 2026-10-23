@@ -1,6 +1,6 @@
 # Dense-query diagnostic observation — 2026-10-23
 
-This diagnostic did not demonstrate successful dense-query acceptance. After registrar PR388 added per-invocation
+This operator-reported diagnostic did not demonstrate successful dense-query acceptance. After registrar PR388 added per-invocation
 diagnostics, one separately recorded run observed **49 timeouts and one transport
 failure across all 45 scored queries and five unscored gaps**. The receipt contains one categorized event for each expected query ID; the
 source report states its bounded event buffer dropped zero events. The transport failure occurred during scored invocation e07. The
@@ -8,8 +8,7 @@ source report states its bounded event buffer dropped zero events. The transport
 contains sanitized events, exact source/hash references, scopes and limitations.
 
 The run used registrar `15f19d4` from 22:54:38 to 23:03:58 UTC. It retained the original
-45 questions and frozen labels; it ran before the later worktree-policy admission
-or index refresh. It does not replace the earlier five-event degraded capture
+45 questions and frozen labels. It does not replace the earlier five-event degraded capture
 recorded in the [delivery snapshot](026-AT-RPRT-stabilization-delivery-state-2026-10-23.md).
 Those five historical causes remain unknown.
 
@@ -26,9 +25,9 @@ or pure-hybrid comparison is established.
 After the observation, the configured embedder service reported active/running
 and zero restarts; its health endpoint returned 200 in 0.11 s. One separately named
 synthetic embedding request returned 200 and one 768-dimensional vector in 12.883 s,
-using a 30 s observation deadline. The local evaluator used the source-default 5 s embedding budget
+using a 30 s observation deadline. The pinned evaluator source defines a default 5 s embedding budget
 ([pinned client source](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c/packages/qmd-adapter/src/dense/embed-client.ts));
-no serving-artifact verification is claimed.
+the effective run configuration and production serving budget were not independently verified.
 The sanitized journal summary counted 49 cancellation markers during the run.
 A CPU-pressure sample after the run was high; compiler CLI tests were also running.
 These observations are consistent with a responsiveness/cancellation issue in
@@ -73,6 +72,7 @@ assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).tr
 const sha = createHash('sha256').update(readFileSync('packages/qmd-adapter/src/eval/datasets/estate-onboarding-v1.ts')).digest('hex');
 assert.equal(sha, p.datasetSourceSha256);
 assert.equal(p.k, 10);
+assert.equal(p.scoredCitationSlots, p.perQuery.reduce((n, q) => n + q.retrieved.length, 0));
 assert.deepEqual(p.perQuery.map(q => q.id), dataset.queries.map(q => q.id));
 const expected = new Set([...dataset.queries.map(q => `scored:${q.id}`), ...gaps.map(q => `gap:${q.id}`)]);
 assert.equal(p.denseFailureEvents.length, expected.size);

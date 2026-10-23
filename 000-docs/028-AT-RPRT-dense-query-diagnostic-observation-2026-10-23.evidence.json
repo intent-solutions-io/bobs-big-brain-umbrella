@@ -319,7 +319,7 @@
     "Snapshot presence does not prove successful execution of every lexical query arm.",
     "Original five generic failure causes cannot be recovered from this later observation.",
     "Shared host; compiler CLI tests ran concurrently. No controlled latency or production load conclusion.",
-    "Synthetic probe30s observation deadline is not a change to production5s request budget.",
+    "Synthetic probe used a30s observation deadline; pinned evaluator source defines a5000ms default. Effective run configuration and production serving budget were not independently verified.",
     "Launcher uses SQLite backups; no separate per-snapshot integrity_check output is attached. Ensemble/export tree are not atomic."
   ],
   "bead": "compile-then-govern-1io.8",
