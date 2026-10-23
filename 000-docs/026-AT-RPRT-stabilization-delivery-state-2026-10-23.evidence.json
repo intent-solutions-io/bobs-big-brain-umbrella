@@ -1,0 +1,351 @@
+{
+  "scope": "Dated operator-reported metadata snapshot; not a deployment/version attestation, task database, owner waiver or independently witnessed local-test transcript",
+  "observedAt": "2026-10-23T22:24:57.047539+00:00",
+  "repositories": {
+    "compiler": {
+      "repository": "jeremylongshore/bobs-big-brain-compiler",
+      "localBranch": "main",
+      "localHead": "5d45bac1fe93a9a9f3bad375f189da6067e1be12",
+      "localPorcelainEmpty": true,
+      "remoteRefs": [
+        {
+          "sha": "5d45bac1fe93a9a9f3bad375f189da6067e1be12",
+          "ref": "refs/heads/main"
+        },
+        {
+          "sha": "3e0a5902e594d4a63594fffd4de9104641ea166d",
+          "ref": "refs/tags/v1.23.1"
+        }
+      ],
+      "remoteRefCommand": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/heads/main",
+        "refs/tags/v1.23.1",
+        "refs/tags/v1.23.1^{}"
+      ]
+    },
+    "registrar": {
+      "repository": "jeremylongshore/bobs-big-brain-registrar",
+      "localBranch": "main",
+      "localHead": "78ded1048a9f8b9889717bb18a35b5dbf497292a",
+      "localPorcelainEmpty": true,
+      "remoteRefs": [
+        {
+          "sha": "78ded1048a9f8b9889717bb18a35b5dbf497292a",
+          "ref": "refs/heads/main"
+        },
+        {
+          "sha": "a5537139d625bb834ae057f4805fbfe00fd110e1",
+          "ref": "refs/tags/v0.8.0"
+        },
+        {
+          "sha": "90240911d0a713e8384d29b505b3c0bf2fa64e55",
+          "ref": "refs/tags/v0.8.0^{}"
+        }
+      ],
+      "remoteRefCommand": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/heads/main",
+        "refs/tags/v0.8.0",
+        "refs/tags/v0.8.0^{}"
+      ]
+    },
+    "plugin": {
+      "repository": "jeremylongshore/bobs-big-brain-plugin",
+      "localBranch": "main",
+      "localHead": "d7d16e9305b6e28b62b64bc6c6697facf828d537",
+      "localPorcelainEmpty": true,
+      "remoteRefs": [
+        {
+          "sha": "d7d16e9305b6e28b62b64bc6c6697facf828d537",
+          "ref": "refs/heads/main"
+        },
+        {
+          "sha": "2d04d3aa4d50c9baac19247c9714ae0bad09e13f",
+          "ref": "refs/tags/v1.2.0"
+        },
+        {
+          "sha": "53d5dcc4ad89d1d707dcdc18acd7f5cb9db0711d",
+          "ref": "refs/tags/v1.2.0^{}"
+        }
+      ],
+      "remoteRefCommand": [
+        "git",
+        "ls-remote",
+        "origin",
+        "refs/heads/main",
+        "refs/tags/v1.2.0",
+        "refs/tags/v1.2.0^{}"
+      ]
+    }
+  },
+  "pullRequests": {
+    "compilerRelease": {
+      "headRefOid": "f694645194359a5f5472169124fb1df04f090a4c",
+      "isDraft": false,
+      "mergeCommit": null,
+      "state": "OPEN",
+      "url": "https://github.com/jeremylongshore/bobs-big-brain-compiler/pull/240"
+    },
+    "registrarCorrections": {
+      "headRefOid": "f4ed5004a9e91bab3d3a50ffc2e8b497abd2946c",
+      "isDraft": false,
+      "mergeCommit": {
+        "oid": "78ded1048a9f8b9889717bb18a35b5dbf497292a"
+      },
+      "state": "MERGED",
+      "url": "https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/387"
+    },
+    "pluginBundle": {
+      "headRefOid": "73a3a89dd84655c25b1235085a8d512f8ae3caa9",
+      "isDraft": false,
+      "mergeCommit": {
+        "oid": "d7d16e9305b6e28b62b64bc6c6697facf828d537"
+      },
+      "state": "MERGED",
+      "url": "https://github.com/jeremylongshore/bobs-big-brain-plugin/pull/80"
+    },
+    "marketplaceDraft": {
+      "headRefOid": "7803a86c3e7be48b64971298428a9d9d7627b730",
+      "isDraft": true,
+      "mergeCommit": null,
+      "state": "OPEN",
+      "url": "https://github.com/jeremylongshore/tons-of-skills-marketplace/pull/1743"
+    }
+  },
+  "beads": [
+    {
+      "id": "compile-then-govern-1io",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T21:20:40Z"
+    },
+    {
+      "id": "compile-then-govern-1io.1",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T22:22:46Z",
+      "parent": "compile-then-govern-1io"
+    },
+    {
+      "id": "compile-then-govern-1io.1.2",
+      "status": "closed",
+      "updated_at": "2026-10-23T22:12:10Z",
+      "parent": "compile-then-govern-1io.1"
+    },
+    {
+      "id": "compile-then-govern-1io.2",
+      "status": "open",
+      "updated_at": "2026-10-22T04:49:08Z",
+      "parent": "compile-then-govern-1io"
+    },
+    {
+      "id": "compile-then-govern-39z.22",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T03:19:55Z",
+      "parent": "compile-then-govern-39z"
+    },
+    {
+      "id": "compile-then-govern-39z.33",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T22:17:25Z",
+      "parent": "compile-then-govern-39z"
+    },
+    {
+      "id": "compile-then-govern-39z.33.3",
+      "status": "closed",
+      "updated_at": "2026-10-23T22:10:51Z",
+      "parent": "compile-then-govern-39z.33"
+    },
+    {
+      "id": "compile-then-govern-39z.33.4",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T22:15:06Z",
+      "parent": "compile-then-govern-39z.33"
+    },
+    {
+      "id": "compile-then-govern-1io.8",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T22:00:41Z",
+      "parent": "compile-then-govern-1io"
+    },
+    {
+      "id": "compile-then-govern-1io.8.1",
+      "status": "in_progress",
+      "updated_at": "2026-10-23T22:16:22Z",
+      "parent": "compile-then-govern-1io.8"
+    },
+    {
+      "id": "compile-then-govern-6ps.4",
+      "status": "open",
+      "updated_at": "2026-07-12T23:16:36Z",
+      "parent": "compile-then-govern-6ps"
+    },
+    {
+      "id": "compile-then-govern-obk.2",
+      "status": "in_progress",
+      "updated_at": "2026-09-25T22:17:48Z",
+      "parent": "compile-then-govern-obk"
+    }
+  ],
+  "marketplaceSource": {
+    "prHead": "7803a86c3e7be48b64971298428a9d9d7627b730",
+    "lockBlobSha": "c21b94ffe6fc840686ab2ee34f9932e722d9fb3f",
+    "entry": {
+      "repo": "jeremylongshore/bobs-big-brain-plugin",
+      "resolved_ref": "52f1962c00949dd5d9fbb1903af8f7f02cd5f5df",
+      "locked_at": "2026-10-05T02:12:31.649Z",
+      "files": {
+        ".claude-plugin/marketplace.json": "sha256:8d88bb14bb5df1a735a9556f2d05132f6f93887d37105126bac4da444316b9b5",
+        ".claude-plugin/plugin.json": "sha256:fde877e405e4f370ac5bf834668cd857365ad5b88d3f65084081d91e159ac9aa",
+        ".mcp.json": "sha256:1bd53541a222be3eba0f4e6029c66a43b2f9fa394fd9bb6f200cdbe06ff99385",
+        "LICENSE": "sha256:393f9b0a3ffff1e35d5243049719ec982d0663713542fd417b64a7df4c04a361",
+        "README.md": "sha256:a9231feac0d218edfc5a982b9dc8e60347e31edf273ee8be7176cebfa70b817f",
+        "plugin-runtime/bootstrap.cjs": "sha256:66ce30eff81b1ddb78d8f85ee89ac1d7165e86f7401060f911d5aa2c2690fb72",
+        "plugin-runtime/governed-brain.cjs": "sha256:dfc2dabcb95424403d66d5b11d695b8bd3e9764d8534d4243832ffa42bf24799",
+        "plugin-runtime/package-lock.json": "sha256:20cd0ae1e63b44874dff0e6dd53ce897abc7751253ac7886164588169c81523c",
+        "plugin-runtime/package.json": "sha256:486fdccd22a64b801eaaf799591deb987f76eb45cc41b35090be0d7ed4dfb560",
+        "skills/brain-save/SKILL.md": "sha256:7f68834d0fdbda43429fec14d91ffea979f8ca0972d6abd2b2e80d78c1fa9c68",
+        "skills/brain-save/references/runtime-contract.md": "sha256:7c8658ca06c1438bd7a389aabb0a04ba3b0306ad4f61421af222ffcfc0bf3065",
+        "skills/brain/SKILL.md": "sha256:126ea9468b82c0165f26ef8f886330a0172c19217a47d7318f8648a4bd913608",
+        "skills/brain/references/runtime-contract.md": "sha256:4cd0150cd95c6e9677a35224f1c3eebdbc05fce453717a8f032d9e2382693d6b"
+      }
+    },
+    "approvalClaimed": false,
+    "recordUrl": "https://github.com/jeremylongshore/tons-of-skills-marketplace/blob/7803a86c3e7be48b64971298428a9d9d7627b730/sources.lock.json",
+    "proposedReviewTarget": "ca942d4d6f63bb79e6a8aef63306aa8c5ee83255",
+    "lockedBaseline": "52f1962c00949dd5d9fbb1903af8f7f02cd5f5df",
+    "scope": "Proposed upstream review target differs from unchanged locked baseline. No approval or relock is claimed."
+  },
+  "serviceObservation": {
+    "command": "systemctl --user show teamkb-brain-api.service -p ActiveState -p SubState -p WorkingDirectory; readlink current",
+    "activeState": "active",
+    "subState": "running",
+    "configuredReleaseBasename": "f5e696b-f5e696b42a7b",
+    "servingVersionIndependentlyVerified": false,
+    "scope": "Configured symlink and service process state on inspected host only; no authenticated/version endpoint or artifact-digest acceptance"
+  },
+  "localEvidence": {
+    "denseBatchFull": {
+      "scope": "Author-reported local result; private full transcript not published",
+      "command": "pnpm run test --maxWorkers=1",
+      "source": "118c7e43a19babfbf0c9450cb840fceb7fd6fbfa",
+      "logSha256": "58bb76891f1bb83dad33dc52f8c343e10d8348a309507ddd28ed7560f199c033",
+      "summary": [
+        "Test Files  240 passed | 1 skipped (241)",
+        "Tests  3369 passed | 2 skipped (3371)"
+      ]
+    },
+    "apiAtomicityFull": {
+      "scope": "Author-reported local result; private full transcript not published",
+      "command": "pnpm run test --maxWorkers=1",
+      "source": "97259524f7efdca3d9fcc2455a934fff1f5f18ef",
+      "logSha256": "2d243120e03face73f062a4c53c2cb1ccd5671eddfc47a09b202e82f519411f4",
+      "summary": [
+        "Test Files  240 passed | 1 skipped (241)",
+        "Tests  3372 passed | 2 skipped (3374)"
+      ]
+    },
+    "combinedFocused": {
+      "scope": "Author-reported local result; private full transcript not published",
+      "command": "pnpm exec vitest run apps/api/src/__tests__/services.test.ts apps/api/src/__tests__/memories.test.ts packages/qmd-adapter/src/__tests__/dense-indexer.test.ts --maxWorkers=1",
+      "source": "904a077dc460ef8dfc9bf43ca725047ea0c5eae4",
+      "logSha256": "523cf6e10e3afb2116c816ba87690f28e5fb473b1c1c38361635a1b06b40f5bb",
+      "summary": [
+        "Test Files  3 passed (3)",
+        "Tests  56 passed (56)"
+      ]
+    },
+    "pluginConformance": {
+      "scope": "Author-reported local result; private full transcript not published",
+      "command": "node --test scripts/anchor-conformance.test.mjs scripts/anchor-on-transition.test.mjs scripts/subjects-conformance.test.mjs smoke/audit-verify-banner.test.mjs scripts/verify-anchors.test.mjs",
+      "source": "plugin source4e696204 with registrar904a077 built",
+      "logSha256": "4c678d9326a4fbdc0b84143db6158a9e6c84871b2c2415fca012f240d66312a6",
+      "summary": [
+        "# tests 37",
+        "# pass 37",
+        "# fail 0",
+        "# skipped 0"
+      ]
+    }
+  },
+  "correctionEvidence": {
+    "receiptUrl": "https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/78ded1048a9f8b9889717bb18a35b5dbf497292a/packages/qmd-adapter/src/eval/datasets/estate-onboarding-corrections-2026-10-23.json",
+    "receiptSha256": "7c6a01a93e40f7087910bfbec326d437dd5d8270b46f23e834f6cf19a3b43735",
+    "captureHashes": {
+      "old": "4327d237dc93981237b911775caf5774a5f433048b90203385d83684ad262366",
+      "new": "620829f1c3adf6c05bc6ae69ac965d359308f2c9a9e10f57665541911880ffd5"
+    },
+    "captureSlots": {
+      "old": 450,
+      "new": 425
+    },
+    "lifecycle": {
+      "deprecatedOriginals": 17,
+      "retainedAcceptedCorrections": 15,
+      "archiveContentPreserved": true,
+      "nonArchiveExportPaths": 0,
+      "archiveOnlyQmdEntries": 17,
+      "archiveOnlyNativeEntries": 17,
+      "archiveOnlyDenseEntries": 17,
+      "localAnchors": [
+        {
+          "chainHead": "bc6bb887a0833b4c35ec614a850ab950717a702ff46829a0da9b167cc216ae10",
+          "chainedRows": 33836,
+          "committed": true
+        },
+        {
+          "chainHead": "62286553fbaa171c0221ddf2b0e139d7f79b20e28dfec4e06ac498dbbf22dc39",
+          "chainedRows": 33842,
+          "committed": true
+        }
+      ],
+      "anchorPublication": "Local commits only; remote witness publication not established",
+      "rollbackRehearsal": {
+        "firstBatch": 14,
+        "residualBatch": 3,
+        "scope": "Private copies restored originals and removed stale archive paths; accepted corrections retained, not admission rollback"
+      },
+      "finalReconcile": {
+        "export": {
+          "written": 0,
+          "archived": 3,
+          "removed": 0,
+          "skipped": 0,
+          "quarantined": 0,
+          "unchanged": 18093
+        },
+        "index": {
+          "ok": true,
+          "value": {
+            "collectionsCreated": [],
+            "indexUpdated": true,
+            "dense": {
+              "embedded": 3,
+              "removed": 3,
+              "skipped": 0,
+              "totalDocs": 18164,
+              "serviceDown": false
+            }
+          }
+        },
+        "exactCitationReads": 15,
+        "diagnosticTargetsFound": true
+      }
+    },
+    "scope": "Operator-reported local lifecycle/export/index metadata and private rehearsals; captured-list replay is offline. Store retirement is distinct from archive-only index checks; anchors remain local, not external publication."
+  },
+  "hostedEvidence": {
+    "pluginQualityConformance": "https://github.com/jeremylongshore/bobs-big-brain-plugin/actions/runs/40030940686",
+    "pluginCommittedArtifactSmoke": "https://github.com/jeremylongshore/bobs-big-brain-plugin/actions/runs/40030940781",
+    "registrarCorrectionsCi": "https://github.com/jeremylongshore/bobs-big-brain-registrar/actions/runs/40031394833"
+  },
+  "governanceDeviation": {
+    "status": "unratified and recorded; no owner waiver claimed",
+    "bead": "compile-then-govern-1io.1",
+    "provision": "013-OD-STND \u00a71.4 and local workflow safe-merge requirement",
+    "facts": "PR387 and PR80 were merged before final advisory completion; direct matched-head merge commands were used instead of safe-merge. Required CI had passed. Plugin final advisory later LGTM; registrar final advisory timed out. Subsequent merges use prescribed wrapper and wait rule."
+  }
+}

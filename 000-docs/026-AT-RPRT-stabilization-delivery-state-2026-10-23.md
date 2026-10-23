@@ -4,17 +4,21 @@ Snapshot: 2026-10-23, after Registrar PR387 and plugin PR80 merged.
 
 This dated record separates source, artifacts and deployed behavior. The program
 is in progress under `compile-then-govern-1io`; it is not an all-repository or
-production-readiness sign-off. Beads remains the task/status authority.
+production-readiness sign-off. Beads remains the task/status authority. The dated
+[metadata snapshot](026-AT-RPRT-stabilization-delivery-state-2026-10-23.evidence.json)
+records remote refs, local checkout state, PR/Beads states, selected local-test
+output and hashes, and direct hosted-run links. It is passive evidence, not a
+second task database or an independent attestation of private local operations.
 
 ## Repository and delivery states
 
 | Surface | Observed source state | Release or distributed artifact | Acceptance boundary |
 | --- | --- | --- | --- |
 | Compiler | Main `5d45bac1fe93a9a9f3bad375f189da6067e1be12`; original checkout clean | Published [v1.23.1](https://github.com/jeremylongshore/bobs-big-brain-compiler/releases/tag/v1.23.1); existing [release PR240](https://github.com/jeremylongshore/bobs-big-brain-compiler/pull/240) proposes 1.24.0 | No fresh complete Compiler test/release ceremony performed in this stabilization slice. |
-| Registrar | Main `78ded1048a9f8b9889717bb18a35b5dbf497292a`; original checkout clean; correction [PR387](https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/387) merged | Published [v0.8.0](https://github.com/jeremylongshore/bobs-big-brain-registrar/releases/tag/v0.8.0) | Required correction PR checks passed; the preceding code main 904a077 also passed CI. The running API still resolves to recorded release `f5e696b-f5e696b42a7b`; active/running state is not authenticated team acceptance or proof these new fixes are deployed. |
+| Registrar | Main `78ded1048a9f8b9889717bb18a35b5dbf497292a`; original checkout clean; correction [PR387](https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/387) merged | Published [v0.8.0](https://github.com/jeremylongshore/bobs-big-brain-registrar/releases/tag/v0.8.0) | Required correction PR checks passed; the preceding code main 904a077 also passed CI. On the inspected host, the configured service symlink pointed to `f5e696b-f5e696b42a7b`; systemd reported active/running. Serving artifact/version was not independently verified; neither observation proves these new fixes are deployed. |
 | Plugin | Main `d7d16e9305b6e28b62b64bc6c6697facf828d537`; original checkout clean | Published [v1.2.0](https://github.com/jeremylongshore/bobs-big-brain-plugin/releases/tag/v1.2.0). Main lock pins Registrar `904a077dc460ef8dfc9bf43ca725047ea0c5eae4`; [runtime PR80](https://github.com/jeremylongshore/bobs-big-brain-plugin/pull/80) merged | Merged artifact tested locally and all three required hosted checks passed; publication/install/deployment are separate. |
 | Umbrella | Original main checkout retains pre-existing changes in the interactions log and grounded-system-map document | Documentation and generated changelogs; no application runtime | New work uses a separate clean worktree. Existing local changes are preserved; generated changelogs are not hand-edited. |
-| Marketplace | Existing [draft PR1743](https://github.com/jeremylongshore/tons-of-skills-marketplace/pull/1743) retains its reviewed-source target `ca942d4d6f63bb79e6a8aef63306aa8c5ee83255` | No new approval, relock or payload synchronization claimed | The exact upstream-diff human review required by its sync workflow remains pending. Plugin source advances do not silently expand that target. |
+| Marketplace | Existing [draft PR1743](https://github.com/jeremylongshore/tons-of-skills-marketplace/pull/1743) retains proposed upstream review target `ca942d4d6f63bb79e6a8aef63306aa8c5ee83255`, while its lock entry remains at `52f1962c00949dd5d9fbb1903af8f7f02cd5f5df` | No new approval, relock or payload synchronization claimed | The exact upstream-diff human review required by its sync workflow remains pending. Plugin source advances do not silently expand that target. |
 
 ## Evidence completed in this slice
 
@@ -22,8 +26,17 @@ Review timing exception: Registrar PR387 and plugin PR80 were merged before
 their final advisory lanes completed, contrary to the wait rule in 013. Required
 checks were green. Plugin 80's final adversarial review subsequently returned
 LGTM; Registrar 387's final lane reached its ten-minute limit without a new
-result. The deviation is recorded in Beads; this is not a claim that every
-review approved or that the merge process fully complied with 013.
+result. This is an **unratified governance deviation**, recorded in
+`compile-then-govern-1io.1`; no owner waiver is claimed. The exact wait rule is
+[013 §1, step 4](013-OD-STND-commit-branch-pr-conventions.md#1-the-workflow-never-merge-blind).
+Execution also used direct matched-head merge commands instead of the prescribed
+`safe-merge` wrapper. Verified checks do not substitute for that control. Future
+merges use the wrapper and wait rule; no retrospective compliance is claimed.
+
+The local quantitative results below are operator reports. The metadata snapshot
+includes selected command/output summaries and private-log hashes, not complete
+independently hosted local transcripts. Hosted checks corroborate the code/artifact
+gates at their named commits, not every private operational claim.
 
 Registrar [PR384](https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/384)
 closed the pre-spawn signal-ownership race; a real detached-child reproduction
@@ -45,8 +58,8 @@ made lifecycle/category service mutations atomic with their audit receipts on
 the shared SQLite connection. Four real-repository regression cases check
 insert-then-throw rollback, valid retry, receipt fields/predecessor and nested
 outer rollback. Local full suite: 3,372 passed/two skipped; focused 45 passed;
-required hosted checks passed. After both merges, the combined source passed 56
-focused tests and main CI. Separate full-suite counts must not be presented as
+required hosted checks passed. At `904a077dc460ef8dfc9bf43ca725047ea0c5eae4`, containing both merges,
+the combined source passed 56 focused tests and main CI. Separate full-suite counts must not be presented as
 one combined local rerun. No power-loss or cross-connection atomicity claim is made.
 
 [Umbrella PR118](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/pull/118)
@@ -91,7 +104,8 @@ answers; e45's worktree-policy coverage remains partial under 39z.33.4. Unlabele
 stale answers and other unreviewed gold may remain.
 
 The correction receipt/replay is in [Registrar PR387](https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/387).
-Its command checks canonical old projection hash, actual 450/425 slot counts,
+Its offline command checks the canonical old projection hash, the 450/425 counts
+in the captured lists,
 source-versus-frozen label/question identity and finite metrics. Seven corrupted
 receipt controls reject. It uses no live corpus or embedder. Individual SQLite
 backups are consistent, but independent snapshots plus the original export tree
@@ -109,6 +123,10 @@ capture/govern/audit/cited-search, team stub, export reconcile, golden-set,
 inbox-sweep/admin wire and 19 contract tests. These are isolated fixtures; the
 team stub is not an authenticated remote-tailnet round trip. A local pack dry-run
 includes host-provisioned runtime natives and is not a portable-release sign-off.
+
+The snapshot reports `compile-then-govern-1io.1.2` closed for the bundle fix;
+that neither completes parent `compile-then-govern-1io.1` nor establishes fixture
+interoperability task `compile-then-govern-1io.2`.
 
 The program still needs release/distribution reconciliation (`1io.1`/`39z.22`),
 contradiction linkage and precise receipted invalidation (`39z.1`/`39z.2`), actual
