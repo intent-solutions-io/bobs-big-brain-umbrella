@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-23T21:48:35Z -->
+<!-- fetched-at: 2026-10-23T21:49:41Z -->
 
 # Changelog
 
@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make the reranker canned HTTP test fixture reject malformed JSON/documents
   and await connection teardown, so an empty request cannot escape as an unhandled JSON
   exception during otherwise-passing validation (`compile-then-govern-1io.4.1`).
+
+- Commit HTTP memory lifecycle/category updates and their audit receipts in
+  one shared transaction, rolling both back on failure while retaining nested
+  caller transactions (`compile-then-govern-1io.7`).
 
 - Arm qmd host-signal cleanup before spawning the launcher so SIGINT during
   spawn cannot leave a running detached child unregistered. Failed/no-PID
