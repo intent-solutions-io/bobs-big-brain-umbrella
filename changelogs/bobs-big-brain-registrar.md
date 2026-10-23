@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-23T20:22:43Z -->
+<!-- fetched-at: 2026-10-23T20:45:52Z -->
 
 # Changelog
 
@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   restores the active folder and removes the stale archive copy.
 
 ### Changed
+
+- Add seven authority-checked, query-specific obsolete estate labels and a dated local observation/relabel receipt; expose known mixed-current gold awaiting selective repair. No retrieval ranking or corpus mutation.
 
 - **Estate eval labels follow the corrected rewrites (umbrella bead
   `compile-then-govern-39z.28`).** Eleven partly stale brain docs were recaptured with their
