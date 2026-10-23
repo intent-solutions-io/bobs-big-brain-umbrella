@@ -189,20 +189,33 @@ one constraint:
   isolation, and promotion are deterministic in INTKB's kernel. The model never writes durable
   state directly.
 - **Receipts are the wedge** — the differentiator vs. the "AI memory" category is not better
-  recall, it's a **tamper-evident, SHA-256 hash-chained audit trail** (`prev_hash` per JSONL
-  event) plus inline `qmd://` citations, verifiable after the fact via `ico audit verify`.
+  recall, it's **tamper-evident, SHA-256 hash-chained receipts** plus inline `qmd://` citations.
+  The Compiler records JSONL compile traces; the Registrar records governance decisions in
+  SQLite `audit_events`. These are distinct audit surfaces with distinct verifiers.
 
 When editing the README, preserve this framing: the competitive axis is **govern + receipts**,
 not recall. Don't soften "deterministic," "append-only," or "hash-chained" into vague
 memory-marketing language — the precision is the point.
 
-Equally, don't *over*claim. The chain is tamper-**evident** (detection of edits/reordering),
-**not** tamper-proof: a local writer with write access can edit an event *and* re-hash the chain
-forward, and `ico audit verify` passes again. So the README carries a "What the receipt does
-*not* do" trust-model box — local = integrity + ordering; cross-actor non-repudiation needs the
-external chain-head anchor (sign via `git-exporter` / OpenTimestamps), which is **implemented**
-and verifiable via `ico audit verify` (`brain_govern` commits the chain head; `ico audit verify` /
-`brain_audit_verify` cross-check it). Keep that box honest. **Forbidden words** (never claim these): tamper-proof, immutable, non-repudiation (for local mode), blockchain.
+Keep verification scoped to the owning source contract:
+[`ico audit verify`](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/main/packages/kernel/src/audit-verify.ts)
+walks the Compiler's JSONL trace chain, including cross-day links and disclosed legacy boundaries.
+[`brain_audit_verify`](https://github.com/jeremylongshore/bobs-big-brain-plugin/blob/main/src/local-server.ts)
+checks the Registrar's SQLite governance chain and its chain-head snapshots in
+[`audit/anchors.jsonl`](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/main/packages/store/src/audit-anchor.ts).
+Passing one does not establish that the other passed; neither proves the content is true.
+See [005-AT-ARCH, recovery playbook](000-docs/005-AT-ARCH-grounded-system-map-and-backup-scope.md)
+for the two-surface recovery check. These links describe source behavior, not a successful live verification.
+
+Equally, don't *over*claim. Local chains provide integrity checks and ordering evidence, not tamper-proof
+storage. A writer can edit events and re-hash the chain; retained chain-head snapshots
+allow detection of a rewrite before an anchored position. The plugin's
+[anchor writer](https://github.com/jeremylongshore/bobs-big-brain-plugin/blob/main/src/anchor.ts)
+also commits snapshots to a local git witness, but local commit success does not prove a remote
+push or an independent witness. Someone able to rewrite the store, snapshots and witness can evade
+those local checks. A generic external anchor does not establish per-actor identity or non-repudiation.
+Keep the README's "What the receipt does *not* do" box honest.
+**Forbidden words** (never claim these): tamper-proof, immutable, non-repudiation (for local mode), blockchain.
 This honesty discipline is **CI-enforced on the README** (`.github/workflows/docs-honesty.yml`);
 check any brand-surface edit locally with `bash scripts/lint-forbidden-words.sh <file>`.
 Bare "append-only" / "ordered log" claims are linted too — qualify them (by protocol / hash-chained / disclosed same-timestamp forks) or negate them.
