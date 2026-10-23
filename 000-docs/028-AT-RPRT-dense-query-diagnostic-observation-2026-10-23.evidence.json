@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "kind": "operator-reported local isolated diagnostic observation",
+  "kind": "operator-reported local diagnostic using private SQLite snapshots on a shared host",
   "sourceRevision": "15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c",
   "startedAt": "2026-10-23T22:54:38.689322+00:00",
   "finishedAt": "2026-10-23T23:03:58.073631+00:00",
@@ -315,12 +315,12 @@
     "containsRawMessages": false
   },
   "limitations": [
-    "All dense calls degraded; do not interpret as a pure-hybrid evaluation.",
+    "All50 evaluation dense invocations degraded; do not interpret as a pure-hybrid evaluation.",
     "Snapshot presence does not prove successful execution of every lexical query arm.",
     "Original five generic failure causes cannot be recovered from this later observation.",
     "Shared host; compiler CLI tests ran concurrently. No controlled latency or production load conclusion.",
     "Synthetic probe30s observation deadline is not a change to production5s request budget.",
-    "Local SQLite backups are individually consistent; the ensemble and export tree are not atomic."
+    "Launcher uses SQLite backups; no separate per-snapshot integrity_check output is attached. Ensemble/export tree are not atomic."
   ],
   "bead": "compile-then-govern-1io.8",
   "statusAtPublication": "in_progress",
@@ -329,5 +329,583 @@
     "someAvg60Percent": 71.11,
     "someAvg300Percent": 82.81,
     "timing": "Sampled after observation; exact wall timestamp not retained"
-  }
+  },
+  "k": 10,
+  "dataset": "estate-onboarding-v1",
+  "sourceReferences": {
+    "dataset": "https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c/packages/qmd-adapter/src/eval/datasets/estate-onboarding-v1.ts",
+    "scorer": "https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c/packages/qmd-adapter/src/eval/metrics.ts",
+    "aggregation": "https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c/packages/qmd-adapter/src/eval/run-eval.ts",
+    "embeddingBudget": "https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c/packages/qmd-adapter/src/dense/embed-client.ts",
+    "launcher": "https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/15f19d44b8e8f84801c52ce61cfcba2fb9d7b53c/scripts/eval-estate-onboarding.ts",
+    "mergePR": "https://github.com/jeremylongshore/bobs-big-brain-registrar/pull/388",
+    "deliverySnapshot": "026-AT-RPRT-stabilization-delivery-state-2026-10-23.md"
+  },
+  "perQuery": [
+    {
+      "id": "e01",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-decisions/5ff7ac4a-248d-5a29-b434-2949023a143e.md",
+        "qmd://kb-guides/c7decb44-1d37-58f5-aa6e-af043f9516b2.md",
+        "qmd://kb-guides/17b49d32-f0ab-5e22-b841-b102a08e2bfd.md",
+        "qmd://kb-guides/d4c61580-91d8-5eb7-857d-b11c12da68eb.md",
+        "qmd://kb-guides/a7c07268-06cb-4ef6-a864-28424a457b93.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e02",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/f1abddca-3ccc-566f-b7e4-3c02986e8907.md",
+        "qmd://kb-guides/06814f33-71c4-597b-9af4-8b275398d582.md",
+        "qmd://kb-guides/2ffa51ef-8521-5929-a349-ccc16741bc58.md",
+        "qmd://kb-guides/3896b501-3e1f-5c30-9b94-cca9b53c0983.md",
+        "qmd://kb-guides/8b6fbf19-590a-512a-b256-ae30f6133341.md",
+        "qmd://kb-guides/4a5a9fb1-dff6-5e50-88f6-0dedda7151d1.md",
+        "qmd://kb-guides/eca5b5be-d08c-568f-af1e-f803504c9ac4.md",
+        "qmd://kb-curated/830fc56c-df93-564f-8688-aba3bd0a5504.md",
+        "qmd://kb-curated/9f16d9e4-0c8a-5763-ac47-9f2612e57e32.md",
+        "qmd://kb-curated/39316eb0-bc10-5ed2-8746-a247e337fb99.md"
+      ],
+      "recallAtK": 0.3333333333333333,
+      "ndcgAtK": 0.46927872602275644,
+      "famaAtK": 0.3333333333333333,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e03",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e04",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e05",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/17b49d32-f0ab-5e22-b841-b102a08e2bfd.md",
+        "qmd://kb-guides/074bd575-3b6a-5bb9-952e-85a25097eeaf.md",
+        "qmd://kb-guides/cc91447f-c354-5ba2-9626-85a6feb54ea5.md",
+        "qmd://kb-guides/a464ee1b-380f-5469-92d7-ea0980f6ede5.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e06",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-curated/599bc808-bef9-5b6f-95ed-538dd54c573f.md",
+        "qmd://kb-curated/b4c91d39-52d7-5e5f-962e-86824c26cce1.md",
+        "qmd://kb-curated/39316eb0-bc10-5ed2-8746-a247e337fb99.md",
+        "qmd://kb-guides/f1abddca-3ccc-566f-b7e4-3c02986e8907.md",
+        "qmd://kb-guides/31ff051a-68ad-5566-9647-5a7012b99fe3.md",
+        "qmd://kb-guides/1b37a011-165b-5414-947e-5563f1076aaa.md",
+        "qmd://kb-guides/a466369e-de86-570d-bcda-0208836c30f2.md"
+      ],
+      "recallAtK": 0.5,
+      "ndcgAtK": 0.6366824387328317,
+      "famaAtK": 0.5,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e07",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e08",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/7eaa858e-3d5f-5d0c-83ea-dbab3a33a24a.md",
+        "qmd://kb-guides/4ac3697b-0227-4942-ae95-e69b8e1c3452.md",
+        "qmd://kb-guides/b3a3f8f3-3b48-5be2-baf1-8436c3d05117.md",
+        "qmd://kb-guides/a19d6aeb-3c07-5d78-ba67-69267f8b57e0.md",
+        "qmd://kb-guides/964851f9-ccbe-5d9b-8254-6d6723082ee4.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e09",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e10",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e11",
+      "kind": "lexical",
+      "retrieved": [
+        "qmd://kb-guides/c3a4156f-dc5a-5ef0-b4c3-d0d4def2dad5.md",
+        "qmd://kb-guides/f4e22934-95bc-5a53-a872-79c20a7f2239.md",
+        "qmd://kb-guides/2ff209ac-1521-53fd-9fe7-5a7ada267d7f.md",
+        "qmd://kb-guides/033b28cf-c371-58ae-acb1-004625646da8.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e13",
+      "kind": "lexical",
+      "retrieved": [
+        "qmd://kb-curated/41f458f7-cc65-58dd-bd55-af98c362e4eb.md",
+        "qmd://kb-guides/2b16bd66-200c-5afd-8472-ca89bdd146de.md"
+      ],
+      "recallAtK": 0.5,
+      "ndcgAtK": 0.38685280723454163,
+      "famaAtK": 0.5,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e14",
+      "kind": "lexical",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e15",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-curated/c386487e-014d-581c-8b0b-c272c2345e81.md",
+        "qmd://kb-curated/d672cca7-3f08-5ddb-b95b-2175c3b51b50.md",
+        "qmd://kb-guides/42247e58-6791-5c1e-9307-98c59ac1cd16.md",
+        "qmd://kb-guides/b3d09f96-834d-5a18-bf1b-87b2f71f8844.md",
+        "qmd://kb-guides/964851f9-ccbe-5d9b-8254-6d6723082ee4.md",
+        "qmd://kb-curated/fae3fb5c-990b-5dc8-a404-6015430ed3a3.md",
+        "qmd://kb-decisions/79af3f81-3187-545f-b6aa-982a05635680.md",
+        "qmd://kb-guides/d909fc7e-43f5-534a-87f3-0eafb1f3a314.md",
+        "qmd://kb-guides/21aa9a7a-bf02-5874-9393-7e095ebecda7.md",
+        "qmd://kb-guides/e3cc0934-4d60-51f9-9395-b6019020e642.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e17",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e19",
+      "kind": "lexical",
+      "retrieved": [
+        "qmd://kb-decisions/b721ed72-b286-5ead-83e0-cdbd07f7c7f7.md",
+        "qmd://kb-guides/92588d6f-bc7b-543c-84ac-f8e8f9d10282.md",
+        "qmd://kb-guides/debe3112-256a-5c06-8942-762eaf8d25d6.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e20",
+      "kind": "lexical",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e21",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/bb2fdc12-fc2c-5f5b-9651-b4c84b4d96ec.md",
+        "qmd://kb-guides/4ff4c0a6-3756-5ae2-a7f3-a6743e5d95bc.md",
+        "qmd://kb-guides/05b30a0e-1713-52c2-aea3-54b0103a2442.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e22",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e23",
+      "kind": "lexical",
+      "retrieved": [
+        "qmd://kb-guides/f358e49a-4d60-5945-a7ee-7ab09b9e1331.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e24",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e25",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/17b49d32-f0ab-5e22-b841-b102a08e2bfd.md",
+        "qmd://kb-guides/438e947f-a1a3-46f3-ba69-5aae0f3ee156.md",
+        "qmd://kb-guides/621fcd46-478b-4455-bd0e-6bc30ef96885.md",
+        "qmd://kb-guides/5f847898-4d0c-5e6b-ab29-e15de905f486.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e26",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/f866b733-9432-5d3d-8379-0eab99c092db.md",
+        "qmd://kb-curated/39316eb0-bc10-5ed2-8746-a247e337fb99.md",
+        "qmd://kb-guides/9a93cd03-0612-5cde-8e0a-e46ca1c0f8f6.md",
+        "qmd://kb-guides/d480a001-ba46-5ca7-8b62-1c01c1c6decc.md",
+        "qmd://kb-guides/a7fe2e0e-d2f3-5799-b81e-e8adc342fd9f.md",
+        "qmd://kb-guides/d9fb5d6a-22ca-5fa8-b532-af9b73fd22c4.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e27",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/078233c9-8ac3-5d23-b58a-b5ddfc6f4af8.md",
+        "qmd://kb-guides/0c66112b-8c09-4230-975b-2423c9f60fb8.md",
+        "qmd://kb-guides/d480a001-ba46-5ca7-8b62-1c01c1c6decc.md",
+        "qmd://kb-guides/4c412cfc-b990-5b5a-a9a1-3ac958b15648.md",
+        "qmd://kb-guides/f94ad424-6ce3-58ca-af69-7ed8b402be7a.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e28",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e29",
+      "kind": "lexical",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e30",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/d5c1a8ec-fbb8-5f6a-add6-0c2dcfcd92dd.md",
+        "qmd://kb-guides/19eed800-8d15-56d8-8417-de141c11d924.md",
+        "qmd://kb-guides/7d6b43c8-4a04-561b-83c1-b8a8075a6337.md",
+        "qmd://kb-guides/c9f6f82e-b373-59ed-ba0c-8c4a1310c155.md",
+        "qmd://kb-guides/9c2fe3bb-2b0a-5ad5-b0ae-293fc975d533.md",
+        "qmd://kb-guides/a2b928ce-919b-54d4-945f-fe21234148ed.md",
+        "qmd://kb-guides/daa30f78-2e05-5917-90d1-15c0101670ac.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e31",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/acf1acff-6339-5829-9dc2-69903a107579.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e32",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-curated/ec200f93-dfdd-5ece-a2a6-663800795877.md",
+        "qmd://kb-curated/e9c8ace8-ff14-530f-988a-3ad225eef117.md",
+        "qmd://kb-guides/95cd747a-564a-5a78-b855-5c00d9d8307c.md",
+        "qmd://kb-guides/a73cb23b-af79-5c43-8d69-a5b2ebdceb20.md",
+        "qmd://kb-guides/2960262f-d55e-5bef-bb49-e33cd10332ad.md",
+        "qmd://kb-guides/1ded20ab-df9e-57fc-9bf5-a0d5b33e82db.md",
+        "qmd://kb-guides/964851f9-ccbe-5d9b-8254-6d6723082ee4.md"
+      ],
+      "recallAtK": 0.3333333333333333,
+      "ndcgAtK": 0.18154179253735267,
+      "famaAtK": 0.3333333333333333,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e33",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-curated/e9c8ace8-ff14-530f-988a-3ad225eef117.md",
+        "qmd://kb-guides/909253ba-2923-585f-806f-2eaf403a2006.md",
+        "qmd://kb-guides/95cd747a-564a-5a78-b855-5c00d9d8307c.md",
+        "qmd://kb-guides/a73cb23b-af79-5c43-8d69-a5b2ebdceb20.md",
+        "qmd://kb-guides/fbaef8fe-1205-518f-a57f-93028fbbcd98.md",
+        "qmd://kb-guides/4511439e-ca4a-560f-ab69-78a53ec98629.md",
+        "qmd://kb-guides/2f6378df-f5b3-5289-b50c-c53688764184.md",
+        "qmd://kb-guides/62560836-8984-5142-ac7b-7f4a235939df.md",
+        "qmd://kb-guides/97d9173b-a794-56c2-8b0e-e65cea49fcac.md"
+      ],
+      "recallAtK": 0.3333333333333333,
+      "ndcgAtK": 0.23463936301137822,
+      "famaAtK": 0.3333333333333333,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e34",
+      "kind": "lexical",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e35",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/2b16bd66-200c-5afd-8472-ca89bdd146de.md",
+        "qmd://kb-guides/84a42564-fd30-5682-b04e-51a6d814b577.md",
+        "qmd://kb-guides/9050496d-a3ef-5c3f-a27e-2fe8e30f14ce.md"
+      ],
+      "recallAtK": 0.3333333333333333,
+      "ndcgAtK": 0.2960819109658652,
+      "famaAtK": 0.3333333333333333,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e36",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/3896b501-3e1f-5c30-9b94-cca9b53c0983.md",
+        "qmd://kb-guides/c3c359da-9a41-551a-b4d3-0d497c44d94b.md",
+        "qmd://kb-guides/3d51cc8a-24e8-5492-8c0f-32ad36f9039f.md",
+        "qmd://kb-guides/a10657b3-5752-5726-ab4d-edeb55ce4633.md",
+        "qmd://kb-guides/b774f912-f29b-56c1-b0c6-3c5fa3f83079.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e37",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/909253ba-2923-585f-806f-2eaf403a2006.md",
+        "qmd://kb-curated/3ba46971-c58f-5724-9a8e-244cc037cd7d.md",
+        "qmd://kb-guides/c7decb44-1d37-58f5-aa6e-af043f9516b2.md",
+        "qmd://kb-guides/9c2fe3bb-2b0a-5ad5-b0ae-293fc975d533.md",
+        "qmd://kb-guides/3a417696-0f35-551c-9e03-e1d3c115bf2e.md",
+        "qmd://kb-guides/87342698-d908-4a2d-877f-769bb7a12335.md",
+        "qmd://kb-guides/62560836-8984-5142-ac7b-7f4a235939df.md",
+        "qmd://kb-guides/ea73afd4-b1ad-52cb-8c61-34209dcda8a4.md",
+        "qmd://kb-guides/1ded20ab-df9e-57fc-9bf5-a0d5b33e82db.md",
+        "qmd://kb-guides/964851f9-ccbe-5d9b-8254-6d6723082ee4.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e38",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e39",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/2960262f-d55e-5bef-bb49-e33cd10332ad.md"
+      ],
+      "recallAtK": 0.3333333333333333,
+      "ndcgAtK": 0.46927872602275644,
+      "famaAtK": 0.3333333333333333,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e40",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e41",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e42",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/4a97cb81-9f97-590b-ad7c-92c9f1be83ef.md",
+        "qmd://kb-guides/b9b42c39-02b0-5dea-924e-88df0286c944.md",
+        "qmd://kb-guides/13f3125a-87cd-54c4-bd18-39e2cce928b0.md",
+        "qmd://kb-guides/7c740f82-4286-5450-ad9c-10b7719a416d.md",
+        "qmd://kb-guides/6c8742ff-c4f4-51be-b0a9-5f09c9928178.md",
+        "qmd://kb-guides/f5242d7f-0c06-550b-ba1c-d3e696bc77d1.md",
+        "qmd://kb-guides/e4aae8f7-8230-5742-9caf-d3141b1e20c7.md",
+        "qmd://kb-guides/4c4adc25-f1c9-5fc7-a2ac-1229dbea512c.md",
+        "qmd://kb-guides/17b49d32-f0ab-5e22-b841-b102a08e2bfd.md",
+        "qmd://kb-guides/33c38c38-592c-5fa8-ba2f-d646525f9181.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e43",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/3858dd90-a7f7-5766-b2c6-5e2e58d90306.md",
+        "qmd://kb-guides/5aa37d32-52bf-5b58-a2c6-e83b81224477.md",
+        "qmd://kb-guides/3f3b6881-1a9d-4f69-9ea6-e3e4041b81bd.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e44",
+      "kind": "semantic",
+      "retrieved": [
+        "qmd://kb-guides/62560836-8984-5142-ac7b-7f4a235939df.md",
+        "qmd://kb-guides/c3c359da-9a41-551a-b4d3-0d497c44d94b.md"
+      ],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e45",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e46",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e48",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    },
+    {
+      "id": "e49",
+      "kind": "semantic",
+      "retrieved": [],
+      "recallAtK": 0,
+      "ndcgAtK": 0,
+      "famaAtK": 0,
+      "obsoleteRetrieved": []
+    }
+  ],
+  "budgetEvidence": {
+    "localEvaluationDefaultMs": 5000,
+    "syntheticObservationDeadlineMs": 30000,
+    "sourceDefaultChanged": false,
+    "servingArtifactIndependentlyVerified": false
+  },
+  "snapshotEvidence": "Launcher uses SQLite backup API; no separate per-snapshot integrity_check output attached",
+  "droppedEventEvidence": "Source report states denseFailureEventsDropped=0; public projection has one event per50 expected identities"
 }
