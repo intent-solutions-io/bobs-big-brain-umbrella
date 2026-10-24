@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-24T11:25:40Z -->
+<!-- fetched-at: 2026-10-24T11:48:54Z -->
 
 # Changelog
 
@@ -31,6 +31,10 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Validate installer brain paths as canonical strict descendants of HOME before
+  side effects. Refuse HOME aliases, escaping paths and `--clean` overlap with
+  the source folder; recheck directory identities after consent before cleanup.
 
 - Limit npm archives to the four tracked runtime entry files. Provisioned native
   dependencies under `plugin-runtime/node_modules` are installed for the target
