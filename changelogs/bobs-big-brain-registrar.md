@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-24T08:56:53Z -->
+<!-- fetched-at: 2026-10-24T10:03:43Z -->
 
 # Changelog
 
@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Exclude optional standalone HTTP from the owned qmd launcher. Parsed `--http`
+  options are refused before spawning, while MCP stdio, literal arguments and
+  explicit external binary overrides retain their behavior. This restriction
+  requires a newly staged artifact and manifest; it does not patch the included
+  qmd HTTP source or change existing/global installations
+  (`compile-then-govern-1io.1.5.2`).
 
 - Share opt-in owned qmd command selection across adapter and MCP sync, with a
   paired artifact root/manifest digest and no legacy fallback for broken
