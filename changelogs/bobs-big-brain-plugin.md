@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-24T13:10:14Z -->
+<!-- fetched-at: 2026-10-24T13:47:00Z -->
 
 # Changelog
 
@@ -31,6 +31,19 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Bind local search and governance refresh to the configured brain base and
+  tenant through the Registrar's shared qmd command route. Preserve owned command
+  prefixes/provenance instead of pinning a legacy binary over the declaration.
+  Installer availability now precedes cleanup/provisioning after consent; failed
+  explicit selections refuse capture, while undeclared legacy misses report
+  degraded retrieval. No stored-memory migration or operator index repair runs.
+- Reuse bootstrap's lockfile native provisioner and route installer MCP children
+  and registrations through bootstrap. Refuse effective team configuration for
+  local init, persist only successful selected qmd pins/pairs, and keep managed
+  owned artifacts outside the native `node_modules` prefix. A separately hashed
+  headless helper supports availability without starting the MCP server. This
+  does not download or activate an owned native artifact.
 
 - Validate installer brain paths as canonical strict descendants of HOME before
   side effects. Refuse HOME aliases, escaping paths and `--clean` overlap with
