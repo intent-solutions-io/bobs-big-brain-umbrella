@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-24T13:47:00Z -->
+<!-- fetched-at: 2026-10-24T16:21:11Z -->
 
 # Changelog
 
@@ -31,6 +31,14 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Retain the existing brain in a recoverable sibling backup for `init --clean`,
+  using Linux directory handles and no-overwrite rename through an isolated
+  stdlib Python helper. Refuse changed bindings without recursively deleting old
+  data; record recovery before moving it. Existing-root cleanup requires Linux
+  and `/usr/bin/python3` and does not reclaim disk space. Full compilation now
+  retains a fresh workspace for every attempt rather than resetting prior state.
+  Later provisioning/capture writes remain outside the cleanup transaction.
 
 - Bind local search and governance refresh to the configured brain base and
   tenant through the Registrar's shared qmd command route. Preserve owned command
