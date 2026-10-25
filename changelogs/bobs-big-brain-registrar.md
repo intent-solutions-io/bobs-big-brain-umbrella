@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T21:11:32Z -->
+<!-- fetched-at: 2026-10-25T21:40:53Z -->
 
 # Changelog
 
@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add bounded generated audit-chain contracts with version-aware hash and
+  tamper checks, bounded sequential insertion/sequence ordering, exception
+  tuple/reason pins and
+  retained-anchor rewrite controls. Use synthetic rows, private in-memory stores
+  and fixed-seed shrinking; preserve existing production formats and example
+  assertions (`compile-then-govern-6ps.10`).
 
 - Add a read-only promoted-receipt identity and export-header check with a
   hermetic promotion-to-export proof. Report order inherits the store query order;
