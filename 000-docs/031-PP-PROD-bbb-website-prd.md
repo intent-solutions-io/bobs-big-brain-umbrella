@@ -59,7 +59,7 @@ limit), `forbidden` (never said). Sources are in 029 unless noted.
 | CLM-08 | Team mode: one governed brain on a server, reached over a private network with per-user tokens; members propose, admins approve. | verified (code; not clean-room) |
 | CLM-09 | Four public Apache-2.0 repositories; qmd (MIT) by @tobi upstream. | verified |
 | CLM-10 | Requirements: Claude Code or Cowork; Node 20+ and npm; optional qmd 2.x; git for anchors. | verified |
-| CLM-11 | The optional compiler sends file text only to the model provider you configure; a local provider keeps it on the machine. | verified (compiler `packages/types/src/providers.ts:72-237`, `api/claude-client.ts:384`) |
+| CLM-11 | The optional compiler sends file contents to the model provider you configure; with a local provider the contents stay on the machine. | verified (compiler `packages/types/src/providers.ts:72-237`, `api/claude-client.ts:384`) |
 | CLM-12 | The anchor log is committed locally and pushed only if you add a git remote. | verified (plugin `src/anchor.ts:24-34`) |
 | CLM-13 | The team server stores each token only as a salted scrypt hash. | verified (registrar `apps/api/src/auth/token-registry.ts:96-115`) |
 | CLM-14 | In team mode members search and propose; approve, reject and retire are admin-only. | verified (plugin `src/remote-server.ts`; code only, not clean-room) |
@@ -88,3 +88,4 @@ limit), `forbidden` (never said). Sources are in 029 unless noted.
 | RISK-1 | The site drifts from code as the plugin ships. | REQ-07 data module + verified-at dates; status page owns volatile facts. |
 | RISK-2 | Limits read as weakness. | Present them as the receipts thesis applied to ourselves; one section, plain words. |
 | RISK-3 | The demonstration is mistaken for the product. | Label it illustrative; link the real verifier commands. |
+| RISK-4 | The legacy `demos.intentsolutions.io/bbb/` page stays public: it violates FBD-03 and publishes the team API address, tenant and token issuer. | Not remediated by the new site; retire or redirect it (owner decision, bead compile-then-govern-eqw.7). |

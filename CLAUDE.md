@@ -14,8 +14,9 @@ auto-redirects. The local working directory was renamed to match — it is
 governance files (`CONTRIBUTING.md`/`SECURITY.md`/`LICENSE`), `assets/` (banner + social-card), the
 program-level beads tracker, the topology manifest [`repos.yml`](repos.yml), and `bin/`. **No
 product code lives here** (the engines and plugin own that), but `bin/` + `.claude/skills/` are more
-than mapping helpers: they are the **canonical source of the brain's live runtime ops scripts** (see
-"Runtime ops scripts" below).
+than mapping helpers: `bin/deploy-teamkb-compile.sh` (its header: "The repo copy under bin/ is
+CANONICAL; ~/bin holds deploy artifacts", bead `compile-then-govern-6ps.1`) deploys the brain's
+runtime ops scripts from here (see "Runtime ops scripts" below).
 
 ## Commands (validation = what CI runs)
 
@@ -48,12 +49,14 @@ shellcheck bin/*.sh scripts/*.sh                     # shellcheck workflow lints
 implementation is installed as a commit-addressed, hash-verified bundle under
 `~/.local/lib/teamkb-compile`), is idempotent, and is run **after merge**. Never hand-edit the `~/bin`
 copies; change `bin/` here, merge, redeploy. `teamkb-tailnet-canary.sh` (+ its deploy script) is the
-daily Tier-A proof run from a separate tailnet node through the published plugin.
+daily Tier-A proof run from a separate tailnet node through the plugin installed from its public
+GitHub marketplace (`jeremylongshore/bobs-big-brain-plugin`).
 
 ## Public product site
 
-The public product site is **`https://intentsolutions.io/bbb/`** (landing repo
-`intent-solutions-landing`, `astro-site/src/pages/bbb/`, facts in `src/data/bbb.mjs`). Its product
+The public product site is being built at **`https://intentsolutions.io/bbb/`** (landing repo
+`intent-solutions-landing` PR #93, pending merge as of 2026-10-25: `astro-site/src/pages/bbb/`, facts in
+`src/data/bbb.mjs`). Its product
 record, claims register, site map and acceptance criteria are `000-docs/029`–`035` here; change a
 public claim there first, then the data module. The older `demos.intentsolutions.io/bbb/` page predates
 it.
@@ -169,9 +172,9 @@ and the correct backup/DR scope are **code-verified** in
   governed brain; teammates reach it over the tailnet, they do not each run their own. Two shipped pieces:
   (1) the Registrar's **Fastify HTTP API** (`bobs-big-brain-registrar/apps/api`, scrypt-hashed per-user bearer tokens,
   tailnet-bound) — **deployed live** on the team-server (`650.5` closed); (2) the **one unified plugin**
-  (`bobs-big-brain-plugin`, `650.1` closed; now v1.2.0) with two runtime modes dispatched by
+  (`bobs-big-brain-plugin`, `650.1` closed; latest tag v1.2.0, with `main` 33 commits ahead as of 2026-10-25) with two runtime modes dispatched by
   `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`) and **team** (remote proxy to the live
-  brain over the tailnet with a per-user token). **Local mode exposes the FULL `brain_*` surface
+  brain over the tailnet with a per-user token). **Local mode exposes the six core `brain_*` tools
   in-process** (read: `brain_search` / `brain_status` / `brain_audit_verify`; write: `brain_capture` /
   `brain_govern` / `brain_transition`); **team mode registers nine tools** in
   `src/remote-server.ts`: `brain_search` / `brain_status` / `brain_capture` (member) plus admin-only

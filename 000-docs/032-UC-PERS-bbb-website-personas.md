@@ -37,7 +37,7 @@ requirements. No user interviews exist; these personas must not be cited as rese
 
 - **Situation:** runs a small engineering or operations team using Claude; knowledge is scattered and
   teammates' agents disagree.
-- **Job:** "Give my team one governed brain where saves are reviewed and nothing is quietly rewritten."
+- **Job:** "Give my team one governed brain where saves are reviewed and a quiet rewrite is detectable."
 - **Evaluates by:** governance model (who can write, who approves), auditability, where data lives.
 - **Needs from the site:** a clear description of team mode and its permission model, an honest beta
   status, a way to ask for help setting it up.

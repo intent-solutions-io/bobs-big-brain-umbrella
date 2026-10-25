@@ -111,9 +111,13 @@ works so the index does not open on a hedge. The head ships as "Memory your agen
 of "Your agent, with receipts." because the original reads as every answer carrying a receipt, which
 the claims register forbids (031 FBD-03); receipts cover governance decisions, not searches.
 
-FINISH REVIEWS (2026-10-25, fresh context): Hallmark `fix` (8 findings) and Impeccable `fix` (8 material
-fixes) were applied in one batch; truth fixes removed a performance figure and a "no model" overclaim,
+FINISH REVIEWS (2026-10-25, fresh context, on landing PR jeremylongshore/intent-solutions-landing#93,
+head `11b1738`; outputs and scores in that PR and in the `bbb.css` stamp): Hallmark `fix` (8 findings)
+and Impeccable `fix` (8 material fixes) were applied in one batch; truth fixes removed a performance figure and a "no model" overclaim,
 added CLM-11..15, labelled the demo records as made up, and qualified team mode as checked in code.
+No raster images ship on these routes. No DESIGN.md was written: the surface extends the incumbent
+Intent brand recorded in landing `000-docs/084-AT-DSGN-brand-family-contract.md`, so per Impeccable an
+ordinary extension preserves the incumbent record instead of creating a new one.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 

@@ -25,15 +25,19 @@ blueprint:
 
 <!-- impeccable:product-schema 1 -->
 
-This file is the canonical product record for Bob's Big Brain and the source of the `PRODUCT.md`
-that design tooling reads. Every capability below was checked against code on 2026-10-25; the
+This file is the proposed canonical product record for Bob's Big Brain (draft; owner review pending).
+Design tooling (Impeccable) reads a `PRODUCT.md` copied by hand from it into the landing worktree,
+untracked, so the only committed copy is this one. Every capability below was checked against code on 2026-10-25; the
 evidence state follows each claim in brackets (`verified` = read in code or proven in the
-clean-room run; `provided` = owner statement; `unknown` = not yet established). Design tools
-receive a generated copy; edit this file, never the copy.
+clean-room run; `provided` = owner statement; `unknown` = not yet established). Edit this
+file, never the copy.
 
 ## Platform
 
 web
+
+(The platform of the surface this record designs, the website. The product itself is a Claude Code and
+Cowork MCP plugin.)
 
 ## Users
 
@@ -49,8 +53,9 @@ web
 A governed knowledge brain for Claude. You capture facts, decisions and lessons; deterministic code
 decides what becomes durable memory; Claude answers from that memory with a `qmd://` citation to
 the exact entry; and every governance decision leaves a SHA-256 hash-chained receipt you can
-verify. Success for a builder: they install it in minutes, save something, get it back cited, and
-can prove the trail was not quietly edited.
+verify. Success for a builder [goal, not a measured result]: they install it, save something, get it back cited,
+and can detect any edit to the receipt trail (tamper-evident; an edit is caught by an anchor mismatch, and
+an outside witness needs the anchor log pushed to a remote).
 
 ## Positioning
 
@@ -71,7 +76,8 @@ about the limit: tamper-evident, not tamper-proof [verified: `plugin/README.md:6
 ## Capabilities and Constraints
 
 **Local mode (default)** [verified, clean-room 2026-10-25 at plugin a1b74ca]
-- In-process stdio MCP server; data under `~/.teamkb`; no daemon.
+- In-process stdio MCP server; data under `~/.teamkb`; no daemon. The plugin's govern never invokes the
+  compiler; compiling files is a separate, optional step (CLM-11).
 - First start provisions three lockfile-pinned native modules once with npm (24 s in the clean
   room); after that, search, capture and govern make no network calls [verified:
   `plugin/plugin-runtime/bootstrap.cjs:87-108`].
@@ -95,8 +101,8 @@ about the limit: tamper-evident, not tamper-proof [verified: `plugin/README.md:6
 - One governed brain on a server; teammates reach it over a private network with a per-user
   bearer token (stored server-side as salted scrypt hashes) [verified:
   `registrar/apps/api/src/auth/token-registry.ts:96-115`].
-- The plugin becomes a thin proxy; govern runs on the server; members read and propose, admins
-  approve [verified: `plugin/src/remote-server.ts`].
+- The plugin becomes a thin proxy and does not expose `brain_govern`; governance runs on the server,
+  members read and propose, admins approve [verified: `plugin/src/remote-server.ts`].
 - `brain_audit_verify` is local-only; team users cannot verify from the plugin [verified].
 
 **Known limits (must be stated, not hidden)** [verified 2026-10-25; tracked in compile-then-govern-eqw]
@@ -131,7 +137,8 @@ audit event; "anchor" means a committed chain-head snapshot.
 - Clean-room transcript: first start, capture, govern, supersession, search, audit verify
   (bead compile-then-govern-eqw) [verified].
 - Live brain health 2026-10-25: 18,206 memories, `brain_audit_verify` over 33,887 events with 0
-  tamper signatures, consistent with 847 anchors [verified, owner's brain; not a customer metric].
+  tamper signatures, consistent with 847 anchors [verified, owner's brain; internal evidence only,
+  never shown on the site as a product or usage metric].
 - Public source: four Apache-2.0 repositories; qmd (MIT) upstream by @tobi [verified].
 - **Absent, never to be fabricated**: customers, testimonials, logos, usage counts, benchmark
   wins, performance figures, pricing.
