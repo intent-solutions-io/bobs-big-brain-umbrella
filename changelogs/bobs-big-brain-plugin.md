@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T22:54:57Z -->
+<!-- fetched-at: 2026-10-25T23:14:29Z -->
 
 # Changelog
 
@@ -31,6 +31,14 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Refuse local `brain_capture` disclosure-bearing proposals before creating an
+  origin secret or writing the spool, using the Registrar's canonical full-candidate
+  gate. Return a fixed refusal code/category without echoing the matched value;
+  unexpected scanner faults fail closed. Clean captures retain their spool/origin
+  and govern behavior. This adds immediate caller feedback, not a durable refusal
+  receipt or cleanup of existing archives (`compile-then-govern-eqw.3`;
+  intake/archive accounting remains `compile-then-govern-eqw.9`).
 
 - Settle hard policy rejections as retained terminal candidates, with the
   Registrar's canonical per-candidate rejection receipt and the sweep receipt in
