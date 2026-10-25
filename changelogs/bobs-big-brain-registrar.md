@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-24T16:21:11Z -->
+<!-- fetched-at: 2026-10-25T16:33:33Z -->
 
 # Changelog
 
@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- Add a pure contradiction dry-run planner over caller-verified compilation
+  lineage and explicit emission-to-promotion endpoint mappings. Eligible pairs
+  retain source evidence and require review; malformed, ambiguous, cross-tenant,
+  inactive, self, duplicate and exact-restatement pairs are refused. No graph,
+  lifecycle or search activation is included (`compile-then-govern-39z.1.1`).
 
 ### Fixed
 
