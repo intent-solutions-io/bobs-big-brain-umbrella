@@ -1,8 +1,19 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T19:19:35Z -->
+<!-- fetched-at: 2026-10-25T20:41:22Z -->
 
 # Changelog
+
+## [Unreleased]
+
+### Fixed
+
+- Disambiguate new wiki outputs using typed source/page identity suffixes and
+  preserve `+`/`#` in derived-title comparison. Refuse conflicting file, path or
+  cross-kind database ownership before staging; retain summary cache IDs on reruns.
+  Resolve unique title links to suffixed pages and report duplicate output paths
+  separately from ambiguous legacy rows in lint. Existing pages and history are
+  not migrated or retired (`intentional-cognition-os-l13.12`, decision 047).
 
 ## [1.23.1](https://github.com/jeremylongshore/bobs-big-brain-compiler/compare/v1.23.0...v1.23.1) (2026-10-04)
 
