@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T21:40:53Z -->
+<!-- fetched-at: 2026-10-25T22:22:25Z -->
 
 # Changelog
 
@@ -35,6 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lifecycle or search activation is included (`compile-then-govern-39z.1.1`).
 
 ### Fixed
+
+- Run explicitly enabled retrieval acceptance over an internally owned export
+  copy and rebuild qmd/native indexes in a private worker. Preserve source
+  indexes, registries and state databases; remove validated successful scratch
+  after worker exit and retain uncertain failure scratch for investigation.
+  Reports describe the copied corpus, with existing default-lane isolation and
+  dataset assertions retained (`compile-then-govern-39z.23`).
 
 - Include equal-watermark memories in incremental exports and persist the clock
   sampled before the memory read, rather than a completion timestamp. Preserve
