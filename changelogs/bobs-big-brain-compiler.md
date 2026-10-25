@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T18:19:56Z -->
+<!-- fetched-at: 2026-10-25T19:19:35Z -->
 
 # Changelog
 
@@ -48,6 +48,12 @@
 * **provider:** make the MiniMax-M3 compile path actually usable — strip inline &lt;think&gt; and price it ([#183](https://github.com/jeremylongshore/bobs-big-brain-compiler/issues/183)) ([cddb2fe](https://github.com/jeremylongshore/bobs-big-brain-compiler/commit/cddb2fe0e16c9e793483b5635c85e7f284f9f748))
 
 ## [Unreleased]
+
+### Added
+
+- Record client-reported model IDs and versioned exact-prompt hashes in model-backed
+  compile traces, retaining retry attempts and all merged map/reduce contributors
+  without storing prompt text (`intentional-cognition-os-l13.13`).
 
 ### Fixed
 
