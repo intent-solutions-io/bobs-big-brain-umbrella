@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T22:22:25Z -->
+<!-- fetched-at: 2026-10-25T22:54:57Z -->
 
 # Changelog
 
@@ -31,6 +31,17 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Settle hard policy rejections as retained terminal candidates, with the
+  Registrar's canonical per-candidate rejection receipt and the sweep receipt in
+  the same immediate transaction. Repeated sweeps no longer reconsider those
+  rejected rows. Settlement conflicts or missing evidence refuse the call and
+  roll back the deferred batch; already committed promotions/holds retain their
+  own transactions. Flagged review items, bounded holds and member quarantine retain
+  their behavior; settlement rechecks a full pre-evaluation candidate snapshot,
+  and receipt failure or candidate drift rolls back deferred status changes. Regenerate
+  the local runtime from Registrar e0cff6d without provisioning natives or
+  activating a live brain (`compile-then-govern-eqw.2`).
 
 - Persist local `brain_transition` supersession through the Registrar's dedicated
   repository operation, with fresh endpoint validation and its audit event in one
