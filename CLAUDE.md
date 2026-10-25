@@ -12,9 +12,54 @@ auto-redirects. The local working directory was renamed to match — it is
 `~/000-projects/bobs-big-brain-umbrella/` (the bead prefix stays `compile-then-govern`).) It contains
 **ecosystem-level documentation plus the cross-repo working-surface helpers** — the landing README,
 governance files (`CONTRIBUTING.md`/`SECURITY.md`/`LICENSE`), `assets/` (banner + social-card), the
-program-level beads tracker, the topology manifest [`repos.yml`](repos.yml), and the `bin/` helpers
-([`gsb`](bin/gsb) + [`teamkb-systemmap.sh`](bin/teamkb-systemmap.sh)). **No application code lives
-here** — the `bin/` scripts are orchestration/mapping over the sub-repos, not the product.
+program-level beads tracker, the topology manifest [`repos.yml`](repos.yml), and `bin/`. **No
+product code lives here** (the engines and plugin own that), but `bin/` + `.claude/skills/` are more
+than mapping helpers: `bin/deploy-teamkb-compile.sh` (its header: "The repo copy under bin/ is
+CANONICAL; ~/bin holds deploy artifacts", bead `compile-then-govern-6ps.1`) deploys the brain's
+runtime ops scripts from here (see "Runtime ops scripts" below).
+
+## Commands (validation = what CI runs)
+
+There is no build or unit-test suite. CI is five workflows; run the matching command locally before
+pushing:
+
+```bash
+bash scripts/lint-forbidden-words.sh README.md       # docs-honesty: forbidden claim-words (any brand-surface .md)
+bash scripts/test-lint-forbidden-words.sh            # docs-honesty: the lint's own self-test
+./scripts/audit-harness verify                       # docs-honesty: hash pins in .harness-hash
+python3 scripts/render-system-graph.py --check       # system-graph-sync: system-graph.yml ↔ 020-AT-SMAP
+python3 scripts/render-system-graph.py --check-local # box-only extra: systemd units/cron really exist (not in CI)
+bash scripts/test-teamkb-compile-lock.sh             # shellcheck workflow: compile-deploy ownership/rollback
+shellcheck bin/*.sh scripts/*.sh                     # shellcheck workflow lints every tracked shebang file
+```
+
+- **`.harness-hash` pins every workflow file and `scripts/lint-forbidden-words.sh`.** Editing any of
+  them fails `audit-harness verify` until you re-pin with `./scripts/audit-harness init` after review.
+- After editing `system-graph.yml`, regenerate the doc block with
+  `python3 scripts/render-system-graph.py --write` (never hand-edit the rendered block).
+- `bin/teamkb-systemmap.sh` rewrites the generated live-stats block in `000-docs/005-AT-ARCH`;
+  preserve its markers.
+
+## Runtime ops scripts (repo copy is canonical, `~/bin` is a deploy artifact)
+
+`bin/deploy-teamkb-compile.sh` copies the reviewed scripts to where cron/systemd run them —
+`teamkb-compile-daily.sh` (cron 03:30), `teamkb-quality-digest.sh` (nightly govern-quality canary),
+`teamkb-backup.sh` (`teamkb-backup.service` 04:30), plus `.claude/skills/teamkb-{compile,review}/` →
+`~/.claude/skills/`. It requires `TEAMKB_COMPILER_REVISION=<full 40-char compiler SHA>` (the compiler
+implementation is installed as a commit-addressed, hash-verified bundle under
+`~/.local/lib/teamkb-compile`), is idempotent, and is run **after merge**. Never hand-edit the `~/bin`
+copies; change `bin/` here, merge, redeploy. `teamkb-tailnet-canary.sh` (+ its deploy script) is the
+daily Tier-A proof run from a separate tailnet node through the plugin installed from its public
+GitHub marketplace (`jeremylongshore/bobs-big-brain-plugin`).
+
+## Public product site
+
+The public product site is being built at **`https://intentsolutions.io/bbb/`** (landing repo
+`intent-solutions-landing` PR #93, pending merge as of 2026-10-25: `astro-site/src/pages/bbb/`, facts in
+`src/data/bbb.mjs`). Its product
+record, claims register, site map and acceptance criteria are `000-docs/029`–`035` here; change a
+public claim there first, then the data module. The older `demos.intentsolutions.io/bbb/` page predates
+it.
 
 **The plugin moved out (2026-06-16).** The installable **Governed Second Brain plugin** now lives in
 its own personal repo, **[`jeremylongshore/bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin)**.
@@ -127,13 +172,15 @@ and the correct backup/DR scope are **code-verified** in
   governed brain; teammates reach it over the tailnet, they do not each run their own. Two shipped pieces:
   (1) the Registrar's **Fastify HTTP API** (`bobs-big-brain-registrar/apps/api`, scrypt-hashed per-user bearer tokens,
   tailnet-bound) — **deployed live** on the team-server (`650.5` closed); (2) the **one unified plugin**
-  (`bobs-big-brain-plugin` v1.0.0, `650.1` closed) with two runtime modes dispatched by
+  (`bobs-big-brain-plugin`, `650.1` closed; latest tag v1.2.0, with `main` 33 commits ahead as of 2026-10-25) with two runtime modes dispatched by
   `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`) and **team** (remote proxy to the live
-  brain over the tailnet with a per-user token). **Local mode exposes the FULL `brain_*` surface
+  brain over the tailnet with a per-user token). **Local mode exposes the six core `brain_*` tools
   in-process** (read: `brain_search` / `brain_status` / `brain_audit_verify`; write: `brain_capture` /
-  `brain_govern` / `brain_transition`); **team mode proxies `brain_search` plus the write tools
-  `brain_capture` (member) and `brain_transition` (admin)** to the remote brain
-  (`src/remote-server.ts`) — the team write loop shipped via plugin PR #8 (`650.2` closed 2026-06-25).
+  `brain_govern` / `brain_transition`); **team mode registers nine tools** in
+  `src/remote-server.ts`: `brain_search` / `brain_status` / `brain_capture` (member) plus admin-only
+  `brain_transition` / `brain_inbox` / `brain_approve` / `brain_reject` / `brain_holds` /
+  `brain_hold_recommend` (the two holds tools are unreleased past tag v1.2.0); `brain_govern` and
+  `brain_audit_verify` are local-only — the team write loop shipped via plugin PR #8 (`650.2` closed 2026-06-25).
   Only the DATA + `TEAMKB_API_URL` + token are private. What's left is **publish + hardening, not
   architecture**: `650.3` (publish to the marketplaces; deferred → 2026-09-01), `650.6` (API hardening:
   token expiry/rotation, anon health probe, dedicated tailnet VM; deferred → 2026-08-15).
@@ -159,7 +206,7 @@ and the correct backup/DR scope are **code-verified** in
   restore steps: [`000-docs/006-AT-RNBK`](000-docs/006-AT-RNBK-brain-backup-and-restore-runbook.md).
   Second off-host target — Cloudflare R2 (`c5k.6`) — **LIVE (2026-06-25)**: each run also pushes the
   `.age` to `r2-teamkb:teamkb-backups`; S3 keys in runbook `secrets.prod.sops.yaml` (`r2_teamkb_*`) +
-  `rclone.conf`. R2 is **backup only** (encrypted blobs), **not** the team bridge — see line 113.
+  `rclone.conf`. R2 is **backup only** (encrypted blobs), **not** the team bridge — see the local↔team bridge bullet above.
 
 ### The agent↔brain seam (AGP) — composed at a contract, not absorbed
 
@@ -243,9 +290,10 @@ Bare "append-only" / "ordered log" claims are linted too — qualify them (by pr
   not outlined paths. Regenerate the PNGs if the SVG changes with **`rsvg-convert`** (NOT ImageMagick
   `convert`, whose internal renderer mangles the SVG fonts/gradients):
   `rsvg-convert -w 2400 -h 680 banner-dark.svg -o banner-dark.png` (social-card uses `-w 1280 -h 640`).
-- **The thesis doc is byte-identical across repos**: *"Compile, Then Govern"* lives at
-  `000-docs/034-AT-NTRP-ecosystem-thesis.md` in **both** flagships (not in this repo). If a claim
-  in this README is sourced from it, keep them consistent.
+- **The thesis doc is meant to match across repos but currently does not**: *"Compile, Then Govern"*
+  lives at `000-docs/034-AT-NTRP-ecosystem-thesis.md` in **both** flagships (not in this repo). As of
+  2026-10-25 the two copies differ in 7 hunks and the registrar copy still uses a word the trust model forbids
+  (consistency audit; bead compile-then-govern-eqw.6). Source README claims from the compiler copy.
 - **Status table** (versions / licenses near the bottom of the README) drifts as the flagships
   release. Verify against the actual repo tags before changing version numbers.
 - **[`AGENTS.md`](AGENTS.md)** is the concise contributor guide (scope boundary, validation,
