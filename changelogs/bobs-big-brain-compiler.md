@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T17:58:30Z -->
+<!-- fetched-at: 2026-10-25T18:19:56Z -->
 
 # Changelog
 
@@ -50,6 +50,8 @@
 ## [Unreleased]
 
 ### Fixed
+
+- Preserve explicitly configured batch response-token ceilings above 8,000 while retaining the automatic scaling cap and per-call override priority.
 
 - Pass resolved workspace provider settings into `loadConfig`-based CLI clients so `.env`-only
   provider, wire, base URL, key and model values reach the selected transport.
@@ -488,11 +490,18 @@ consistency audit doc).
 
 ## [v1.0.0] - 2026-05-19
 
+Historical release text, recorded 2026-05-19:
+
 **First stable release.** All 10 epics complete. The system is operator-ready:
 compiles a local-first knowledge base from raw sources, supports interactive
 Q&A grounded in compiled wiki, runs multi-agent research tasks, and generates
-durable artifacts — all with append-only audit traces and deterministic
+durable artifacts — all with append-only audit traces (by protocol) and deterministic
 control-plane invariants.
+
+_2026-10-25 clarification: the release text above is historical, not a current readiness
+assessment. Local integrity, ordering and rewrite detection follow the
+[hash-chained trace protocol](packages/kernel/src/traces.ts); receipts do not establish
+the truth of generated content._
 
 ### Added
 
