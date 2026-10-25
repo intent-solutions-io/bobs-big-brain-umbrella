@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T17:15:59Z -->
+<!-- fetched-at: 2026-10-25T17:22:04Z -->
 
 # Changelog
 
@@ -50,6 +50,11 @@
 ## [Unreleased]
 
 ### Fixed
+
+- Pass resolved workspace provider settings into `loadConfig`-based CLI clients so `.env`-only
+  provider, wire, base URL, key and model values reach the selected transport.
+  Environment variables retain precedence without exporting file settings into
+  the process environment (`intentional-cognition-os-6g8`).
 
 - Upgrade all resolved Zod dependencies to 4.6.7 and Vite to 7.3.7 to address
   GHSA-mrhx-c7xc-m3w5 and GHSA-587h-7wmj-h5pm. Early collection rejection
