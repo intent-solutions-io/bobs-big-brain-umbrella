@@ -106,8 +106,14 @@ by Impeccable concept-seed key `a7c59586` (mode persuade, surface scope); locked
 AMENDMENT (2026-10-25, after the fresh-context Hallmark hero review returned `fix`): the first-viewport
 index reads Govern, Retrieve, Verify, Package, and each row carries a real proof line (a receipt hash
 link and an audit-verify result from the clean-room install, a `qmd://` citation from the owner's
-brain, the plugin id). The citation is the index's single accent. Compile moved to How it works so the
-index does not open on a hedge.
+brain, and the team-mode switch). The citation is the index's single accent. Compile moved to How it
+works so the index does not open on a hedge. The head ships as "Memory your agent can cite." instead
+of "Your agent, with receipts." because the original reads as every answer carrying a receipt, which
+the claims register forbids (031 FBD-03); receipts cover governance decisions, not searches.
+
+FINISH REVIEWS (2026-10-25, fresh context): Hallmark `fix` (8 findings) and Impeccable `fix` (8 material
+fixes) were applied in one batch; truth fixes removed a performance figure and a "no model" overclaim,
+added CLM-11..15, labelled the demo records as made up, and qualified team mode as checked in code.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
 

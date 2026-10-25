@@ -59,6 +59,11 @@ limit), `forbidden` (never said). Sources are in 029 unless noted.
 | CLM-08 | Team mode: one governed brain on a server, reached over a private network with per-user tokens; members propose, admins approve. | verified (code; not clean-room) |
 | CLM-09 | Four public Apache-2.0 repositories; qmd (MIT) by @tobi upstream. | verified |
 | CLM-10 | Requirements: Claude Code or Cowork; Node 20+ and npm; optional qmd 2.x; git for anchors. | verified |
+| CLM-11 | The optional compiler sends file text only to the model provider you configure; a local provider keeps it on the machine. | verified (compiler `packages/types/src/providers.ts:72-237`, `api/claude-client.ts:384`) |
+| CLM-12 | The anchor log is committed locally and pushed only if you add a git remote. | verified (plugin `src/anchor.ts:24-34`) |
+| CLM-13 | The team server stores each token only as a salted scrypt hash. | verified (registrar `apps/api/src/auth/token-registry.ts:96-115`) |
+| CLM-14 | In team mode members search and propose; approve, reject and retire are admin-only. | verified (plugin `src/remote-server.ts`; code only, not clean-room) |
+| CLM-15 | New local brains reject notes under 25 characters; `/brain` works best with one to four keywords. | verified (plugin `src/seed-policy.ts:49-58`, `skills/brain/SKILL.md:64`) |
 | LIM-01 | Fresh local installs leave 8 of 10 governance rules dormant (eqw.1). | limit |
 | LIM-02 | Rejected candidates stay in the inbox without a per-candidate receipt (eqw.2). | limit |
 | LIM-03 | A capture containing a secret is dropped without a receipt or feedback (eqw.3). | limit |
