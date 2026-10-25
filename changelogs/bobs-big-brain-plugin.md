@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T23:14:29Z -->
+<!-- fetched-at: 2026-10-25T23:34:24Z -->
 
 # Changelog
 
@@ -31,6 +31,13 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Seed a fresh local tenant with the Registrar's canonical recommended policy,
+  covering all ten current registered rule types. Any existing tenant policy,
+  including custom, disabled or older policies, remains unchanged. Real rules can
+  reject, flag for review or create a human hold; this is not ten decisions per
+  capture or a fail-closed seed-failure guarantee. Installed-user review/resolution
+  remains separate work (`compile-then-govern-eqw.1`; follow-up `eqw.10`).
 
 - Refuse local `brain_capture` disclosure-bearing proposals before creating an
   origin secret or writing the spool, using the Registrar's canonical full-candidate
