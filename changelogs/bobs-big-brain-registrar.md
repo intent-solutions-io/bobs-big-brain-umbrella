@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T16:33:33Z -->
+<!-- fetched-at: 2026-10-25T17:15:59Z -->
 
 # Changelog
 
@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lifecycle or search activation is included (`compile-then-govern-39z.1.1`).
 
 ### Fixed
+
+- Persist explicit MCP and HTTP supersession transitions with a canonical
+  replacement link and audit event in one transaction. Require an existing active,
+  distinct replacement in the same tenant; reject state-only supersession writes
+  and accept current content-derived UUIDs. Preserve curator promotion behavior
+  and the batch CLI's explicit supersession refusal (`qmd-team-intent-kb-ehi`).
 
 - Verify owned qmd artifact files through a reused bounded buffer and precompute
   layout lookups, preserving full-byte hashes, native-file verification and strict
