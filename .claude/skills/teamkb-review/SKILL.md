@@ -166,7 +166,12 @@ The review agent runs under a **dedicated `teamkb-review-agent` admin token** so
 distinct, filterable actor on the audit chain. It is **not** provisioned by default — the nightly
 wrapper skips this phase until it is, which is the deliberate activation gate.
 
-To activate (on the box that owns `~/.teamkb`):
+Before provisioning on the box that owns `~/.teamkb`, keep scheduled review
+launchers disabled and wait for any existing review to finish. These are operator
+instructions; this source change adds no automatic activation gate. The wrapper's
+token-file presence check alone is not acceptance evidence.
+
+For a separately authorized activation:
 
 1. Mint a token value (any high-entropy string) and add a **scrypt-hashed** admin record for actor
    `teamkb-review-agent` to the brain's token registry (`~/.teamkb/tokens.json`) — the same
@@ -174,11 +179,28 @@ To activate (on the box that owns `~/.teamkb`):
    new record.
 2. Store the **plaintext** token value in `~/.teamkb/.review-agent-token` (mode `600`). The wrapper
    reads it into `TEAMKB_REVIEW_AGENT_TOKEN`.
-3. With the provisioned `TEAMKB_API_URL` and `TEAMKB_REVIEW_AGENT_TOKEN` already
-   set without printing their values, confirm: `claude -p '/teamkb-review --dry-run' --mcp-config <skill>/scripts/review-mcp-config.json --strict-mcp-config`
-   → `brain_status` reports team + healthy + tokenSet.
+3. **Basic wiring/connectivity check:** with the provisioned `TEAMKB_API_URL`
+   and `TEAMKB_REVIEW_AGENT_TOKEN` already set without printing their values,
+   run the requested dry-run with the reviewed MCP configuration. `brain_status`
+   should report team mode, token presence and service health. Its health request
+   is authentication-free: this does **not** validate the token, dedicated actor
+   identity, or administrative authority.
+4. Before enabling scheduled review, obtain separately authorized acceptance
+   evidence for the dedicated actor: an authenticated inbox read and approve/reject
+   checks against operator-owned fixture candidates, with resulting audit receipts
+   bound to `teamkb-review-agent`. Include refusal checks for an invalid token and
+   a non-admin actor. Verify identity against the authoritative server token/actor
+   records without publishing token values. Do not use unrelated queued team
+   proposals as activation fixtures. Decision014's audited-actor and deterministic
+   refusal requirements still apply.
+5. Keep review launchers disabled if actor binding, authenticated reads, fixture
+   write authority or receipts are unverified. Only enable them after that evidence
+   has been reviewed under the existing activation authority.
 
-Until step 2's file exists, the nightly review is skipped (logged), by design.
+The wrapper skips review when the token file is absent. A present file can enable
+its review phase, so keep launchers disabled throughout preparation and failed
+verification. These instructions do not claim the wrapper enforces all acceptance
+steps automatically, or that any environment has passed them.
 
 ## Related
 
