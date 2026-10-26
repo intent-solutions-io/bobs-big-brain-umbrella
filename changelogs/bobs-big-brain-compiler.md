@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T12:39:58Z -->
+<!-- fetched-at: 2026-10-26T14:10:23Z -->
 
 # Changelog
 
@@ -517,7 +517,7 @@ control-plane invariants.
 
 _2026-10-25 clarification: the release text above is historical, not a current readiness
 assessment. Local integrity, ordering and rewrite detection follow the
-[hash-chained trace protocol](packages/kernel/src/traces.ts); receipts do not establish
+[hash-chained trace protocol](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/main/packages/kernel/src/traces.ts); receipts do not establish
 the truth of generated content._
 
 ### Added
