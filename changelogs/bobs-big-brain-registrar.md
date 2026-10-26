@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T06:15:41Z -->
+<!-- fetched-at: 2026-10-26T06:57:10Z -->
 
 # Changelog
 
@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add strict recovery-only qmd2.5.3 registry inspection for an explicit owned
+  runtime. Compare YAML and SQLite collection names, source roots and behavior;
+  refuse hooks, filters, conflicting paths and file replacement. Distinguish
+  partial setup from a complete registry, and verify actual selected list
+  execution before/after stage checks. Generic legacy setup is unchanged;
+  document/index completeness and fixed recovery integration remain parent work
+  (`compile-then-govern-eqw.8.1.2.7.1`).
 
 - Add trusted asynchronous recovery composition that keeps the validated physical
   store, existing database and acquired kernel flock bound through awaited postprocessing.
