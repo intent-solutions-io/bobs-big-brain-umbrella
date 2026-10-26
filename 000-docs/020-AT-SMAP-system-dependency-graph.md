@@ -128,7 +128,7 @@ graph LR
     snapshot_lock["snapshot-lock"]
     fused_floor["fused-floor"]
     dense_floor["dense-floor"]
-    import_discipline_guard["import-discipline-guard"]
+    serving_eval_convention["serving-eval-convention"]
     graph_sync_gate["graph-sync-gate"]
   end
   subgraph schedules[schedules]
@@ -190,7 +190,7 @@ graph LR
   weight_pins -->|gates| bbb_embedder
   weight_pins -->|gates| bbb_reranker
   registrar_ci -->|invokes| retrieval_ratchet
-  import_discipline_guard -.->|gates| qmd_adapter
+  serving_eval_convention -.->|mirrors| qmd_adapter
   graph_sync_gate -.->|gates| system_graph_yml
   beads_umbrella -.->|mirrors| beads_000_projects
   cross_session_log -.->|mirrors| beads_000_projects

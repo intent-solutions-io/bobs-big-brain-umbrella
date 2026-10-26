@@ -17,7 +17,7 @@ engine and plugin repos. Format based on
   sends, or methodology writes; the default dispatcher reports zero pending dates. The final
   bundle bounds each date at 3,000 seconds plus a 10-second termination grace and reaps nested
   orphaned processes. Source/deployment details, exact rollback, tests, and the unobserved next
-  scheduled night are recorded in the [scheduling runbook](.claude/skills/teamkb-compile/references/scheduling.md).
+  scheduled night are recorded in the [scheduling runbook](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/blob/main/.claude/skills/teamkb-compile/references/scheduling.md).
 
 - **Nightly compiler deployment drift:** the installed entry verifies a commit-addressed, hash-verified compiler
   bundle read from reviewed Git objects, preserving the compiler's provider, C8, outcome and

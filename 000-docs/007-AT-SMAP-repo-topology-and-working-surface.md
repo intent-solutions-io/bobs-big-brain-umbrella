@@ -1,6 +1,6 @@
 # 007-AT-SMAP — Repo topology + working surface
 
-**What this is:** the canonical map of *which repos make up the Governed Second Brain, where each
+**What this is:** the canonical map of *which repos make up the Bob's Big Brain, where each
 one lives (local path **and** GitHub remote), and how they relate*. It is the durable home for the
 "what's what" diagram. Companion to [`005-AT-ARCH`](005-AT-ARCH-grounded-system-map-and-backup-scope.md),
 which maps *where the data lives*. **007 = which repos · 005 = where the state lives.** Two distinct
@@ -20,7 +20,7 @@ maps, deliberately split.
 ```mermaid
 flowchart TB
   subgraph ISO["org: intent-solutions-io  ·  COMPANY"]
-    UMB["<b>bobs-big-brain-umbrella</b><br/>UMBRELLA · landing<br/>docs + map only<br/><b>◀ you are here</b>"]
+    UMB["<b>bobs-big-brain-umbrella</b><br/>UMBRELLA · landing<br/>docs + operations helpers<br/><b>◀ you are here</b>"]
     MKT["<b>team-intent-claude-plugins</b><br/>✗ RETIRED + archived 2026-07-17<br/>was private team marketplace<br/>(redirect-only, no private content)"]
   end
   subgraph JL["org: jeremylongshore  ·  PERSONAL"]
@@ -35,7 +35,7 @@ flowchart TB
   UMB -. points at .-> ICO
   UMB -. points at .-> INTKB
   UMB -. points at .-> PLUG
-  PLUG --> ICO
+  PLUG -. optional Compiler CLI .-> ICO
   PLUG --> INTKB
   ICO -- compile --> DATA
   INTKB -- govern --> DATA
@@ -82,7 +82,7 @@ eval" epic) into the canonical store.
 ### Not under this umbrella (separate ecosystem — don't conflate)
 
 `claude-code-slack-channel`, `agent-governance-plane`, and `claude-code-plugins-plus-skills` are a
-**different** Intent Solutions ecosystem. They are not part of the Governed Second Brain and are not
+**different** Intent Solutions ecosystem. They are not part of the Bob's Big Brain and are not
 in `repos.yml`. The agent-governance-plane does, however, integrate with the brain **at a contract
 seam** — see §5.
 

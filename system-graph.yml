@@ -205,10 +205,11 @@ nodes:
     layer: gates
     locus: eval-results/governed-brain-v1-dense-floor.json
     note: "gates the arm production actually serves — committed on main via #334 (2026-08-03)"
-  - id: import-discipline-guard
-    kind: gate
+  - id: serving-eval-convention
+    kind: artifact
     layer: gates
-    locus: qmd-adapter/src/__tests__/dense-policy-import-discipline.test.ts
+    locus: packages/qmd-adapter/src/config.ts + packages/qmd-adapter/src/eval/ci-retrieval-ratchet.ts
+    note: "Documented configuration convention, not an automated import-discipline test"
   - id: graph-sync-gate
     kind: gate
     layer: gates
@@ -322,7 +323,7 @@ edges:
   - { from: weight-pins, to: bbb-embedder, kind: gates, tier: derived, evidence: "unit ExecStartPre sha256sum -c embedder-weights.sha256 (fail-closed)" }
   - { from: weight-pins, to: bbb-reranker, kind: gates, tier: derived, evidence: "unit ExecStartPre sha256sum -c reranker-weights.sha256 (fail-closed)" }
   - { from: registrar-ci, to: retrieval-ratchet, kind: invokes, tier: derived, evidence: "ci.yml:154 retrieval-eval job — synthetic corpus, individually-named required check" }
-  - { from: import-discipline-guard, to: qmd-adapter, kind: gates, tier: semantic, evidence: "INVARIANT: the eval harness must never consume the production serving policy, and the CI ratchet must stay lexical — enforced by dense-policy-import-discipline.test.ts, not by convention" }
+  - { from: serving-eval-convention, to: qmd-adapter, kind: mirrors, tier: semantic, evidence: "CONFIGURATION CONVENTION: apps/api/src/main.ts explicitly supplies default dense configuration; eval/ci-retrieval-ratchet.ts constructs its adapter without dense. No static import guard enforcing this separation was found at Registrar3dede3c; this edge is not a test gate" }
   - { from: graph-sync-gate, to: system-graph-yml, kind: gates, tier: semantic, evidence: "INVARIANT: this model and its rendered doc cannot drift apart — system-graph-sync.yml runs render-system-graph.py --check on every touching PR" }
 
   # coordination

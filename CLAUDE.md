@@ -54,8 +54,8 @@ GitHub marketplace (`jeremylongshore/bobs-big-brain-plugin`).
 
 ## Public product site
 
-The public product site is being built at **`https://intentsolutions.io/bbb/`** (landing repo
-`intent-solutions-landing` PR #93, pending merge as of 2026-10-25: `astro-site/src/pages/bbb/`, facts in
+The public product site is **`https://intentsolutions.io/bbb/`** (landing repo
+`intent-solutions-landing` PR #93 merged; source: `astro-site/src/pages/bbb/`, facts in
 `src/data/bbb.mjs`). Its product
 record, claims register, site map and acceptance criteria are `000-docs/029`–`035` here; change a
 public claim there first, then the data module. The older `demos.intentsolutions.io/bbb/` page predates
@@ -64,8 +64,7 @@ it.
 **The plugin moved out (2026-06-16).** The installable **Governed Second Brain plugin** now lives in
 its own personal repo, **[`jeremylongshore/bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin)**.
 This company-org repo is the **umbrella / landing**: the thesis, the competitive teardown, and the map
-that *points at* the plugin + the engines. The README is the primary deliverable — treat it as the
-product page — alongside the working-surface tooling (`repos.yml` + `bin/gsb` + `bin/teamkb-systemmap.sh`)
+that *points at* the plugin + the engines. The README is the repository entry point; the public site has its own claims register — alongside the working-surface tooling (`repos.yml` + `bin/gsb` + `bin/teamkb-systemmap.sh`)
 that makes the umbrella the one place to operate the whole stack from.
 
 **Repo map:**
@@ -105,8 +104,7 @@ This umbrella is the **single working surface** for the whole stack — the one 
   `.github/workflows/aggregate-changelogs.yml` workflow (weekly Mon 06:00 UTC, `workflow_dispatch`, or
   a `changelog-updated` `repository_dispatch` from any sub-repo). **Do not hand-edit** — the source of
   truth is each repo's own `CHANGELOG.md`. (The private `team-intent-claude-plugins` was an optional
-  token-gated source here; it was **retired + archived 2026-07-17**, so it no longer contributes a
-  changelog — the aggregation warn-skips it.)
+  token-gated source here; it was **retired + archived 2026-07-17**, but the aggregator still attempts its token-gated historical changelog. It warn-skips only when the token or file is unavailable; retirement does not itself disable that fetch.)
 
 **The exact local↔remote map** (4 repos + 1 live-data dir across 2 orgs; local dir name == remote
 repo name for all of them — the plugin's local dir was renamed
@@ -139,7 +137,7 @@ flagship repos:
 | [`bobs-big-brain-compiler`](https://github.com/jeremylongshore/bobs-big-brain-compiler) | **Compile** | Local-first knowledge OS (npm: `intentional-cognition-os`). Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 6 compiler passes → emits a governance spool. |
 | [`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) | **Govern** | Deterministic control plane. Consumes the Compiler's spool, runs dedupe → policy → promotion, hash-chained by-protocol append-only audit log. |
 | [`qmd`](https://github.com/tobi/qmd) (by @tobi) | **Retrieve** | The pinned lexical BM25 arm. Govern fuses it with native FTS5 and dense sqlite-vec/EmbeddingGemma through RRF, then freshness/category reranks; every result is a `qmd://` citation. |
-| [`bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles the engines; this umbrella points at it. |
+| [`bobs-big-brain-plugin`](https://github.com/jeremylongshore/bobs-big-brain-plugin) | **Package** | The installable Claude Code + Cowork plugin (local stdio MCP, read + write). Bundles Registrar libraries; the Compiler CLI is optional and separate. |
 
 Per `CONTRIBUTING.md`: code/feature PRs go to the flagship repos (or the plugin repo). Only
 **ecosystem-level doc fixes** (this README, the dependency map, the status table, the diagrams) belong here.
@@ -172,7 +170,7 @@ and the correct backup/DR scope are **code-verified** in
   governed brain; teammates reach it over the tailnet, they do not each run their own. Two shipped pieces:
   (1) the Registrar's **Fastify HTTP API** (`bobs-big-brain-registrar/apps/api`, scrypt-hashed per-user bearer tokens,
   tailnet-bound) — **deployed live** on the team-server (`650.5` closed); (2) the **one unified plugin**
-  (`bobs-big-brain-plugin`, `650.1` closed; latest tag v1.2.0, with `main` 33 commits ahead as of 2026-10-25) with two runtime modes dispatched by
+  (`bobs-big-brain-plugin`, `650.1` closed; latest tag v1.2.0, with unreleased changes on `main`; see the dated source-versus-release register) with two runtime modes dispatched by
   `TEAMKB_API_URL`: **local** (default, in-process `~/.teamkb`) and **team** (remote proxy to the live
   brain over the tailnet with a per-user token). **Local mode exposes the six core `brain_*` tools
   in-process** (read: `brain_search` / `brain_status` / `brain_audit_verify`; write: `brain_capture` /
@@ -293,7 +291,7 @@ Bare "append-only" / "ordered log" claims are linted too — qualify them (by pr
 - **The thesis doc is meant to match across repos but currently does not**: *"Compile, Then Govern"*
   lives at `000-docs/034-AT-NTRP-ecosystem-thesis.md` in **both** flagships (not in this repo). As of
   2026-10-25 the two copies differ in 7 hunks and the registrar copy still uses a word the trust model forbids
-  (consistency audit; bead compile-then-govern-eqw.6). Source README claims from the compiler copy.
+  (consistency audit; bead compile-then-govern-eqw.6). Use current owning code for capability claims; treat both thesis copies as historical analysis, not interchangeable current specifications.
 - **Status table** (versions / licenses near the bottom of the README) drifts as the flagships
   release. Verify against the actual repo tags before changing version numbers.
 - **[`AGENTS.md`](AGENTS.md)** is the concise contributor guide (scope boundary, validation,
@@ -314,7 +312,7 @@ rejected. Serving uses no query-time generative LLM.
 
 **Delivered foundation** (epic `qmd-team-intent-kb-0t9`, all in the INTKB `qmd-adapter` package):
 
-- `0t9.5` — the qmd binary + GGUF weights are **SHA-256-pinned, fail-closed**
+- `0t9.5` — owned qmd runtime artifacts and semantic weights have **SHA-256 verification contracts**; legacy executable discovery is only version-checked
   (`packages/qmd-adapter/src/weights`). Non-negotiable before any semantic path: a
   govern-by-receipts brand can't ship an unverified retrieval brain.
 - `0t9.6` — a Recall@10 / nDCG@10 **eval harness** (`packages/qmd-adapter/src/eval`),
