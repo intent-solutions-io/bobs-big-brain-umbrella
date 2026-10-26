@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T11:40:09Z -->
+<!-- fetched-at: 2026-10-26T11:54:22Z -->
 
 # Changelog
 
@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Share fixed spool-intake observation counters across the curator CLI and daemon,
+  including disclosure categories, tampered files and admission refusals. Preserve
+  detailed legacy output and existing policy/archive behavior; daemon observations
+  are unavailable on failed or skipped intake. Document retained raw refused
+  content and repeat-call limits; counters are not unique audit receipts.
 
 - Check every copied owned-launcher option field and parser configuration against
   the SHA-256-pinned qmd2.5.3 CLI metadata without importing qmd. Regression
