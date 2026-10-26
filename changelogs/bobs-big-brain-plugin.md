@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T00:23:33Z -->
+<!-- fetched-at: 2026-10-26T01:01:54Z -->
 
 # Changelog
 
@@ -13,6 +13,14 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 ## [Unreleased]
 
 ### Added
+
+- Separate `governed-second-brain-review` local command to list sanitized inbox/hold
+  metadata, reject pending proposals and release or reject eligible human holds.
+  Uses canonical atomic dispositions, local anchor and derived refresh; reports
+  committed expiry separately from refusal and preserves committed decisions when
+  refresh fails. Requires an existing store and native setup, refuses team mode,
+  adds no MCP authority or general flag approval override, and does not authenticate
+  a physical person (`compile-then-govern-eqw.10.2`).
 
 - **Human-escalation holds (registrar Epic K bead K6).** The deterministic pipeline now puts a
   candidate on a bounded hold when an audience or secret question can be detected but not decided;
@@ -37,7 +45,7 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   including custom, disabled or older policies, remains unchanged. Real rules can
   reject, flag for review or create a human hold; this is not ten decisions per
   capture or a fail-closed seed-failure guarantee. Installed-user review/resolution
-  remains separate work (`compile-then-govern-eqw.1`; follow-up `eqw.10`).
+  uses the separate local command above (`compile-then-govern-eqw.1`, `eqw.10.2`).
 
 - Refuse local `brain_capture` disclosure-bearing proposals before creating an
   origin secret or writing the spool, using the Registrar's canonical full-candidate
