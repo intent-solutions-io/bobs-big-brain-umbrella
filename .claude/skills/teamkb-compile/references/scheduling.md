@@ -121,6 +121,34 @@ passed [CI run 34779530820](https://github.com/jeremylongshore/bobs-big-brain-co
 The umbrella retains installation tooling and its installed-entry/rollback tests; moving the
 actual runner and lock test together removes the duplicate implementation that drifted.
 
+## Six-payload installation contract — source change 2026-10-26
+
+The current installer and matching umbrella wrapper require `nightly-entry.py`,
+`runtime-proof.py`, `c8-mcp.py`, `teamkb-compile-daily.sh`,
+`eval-distiller-output.mjs` and **`notify-routing.sh`**. The Compiler shell sources
+that sibling helper even when the external Intent OS alert-floor library is absent.
+Both shell payloads receive syntax checks before activation, and all six hashes
+must match the local manifest before entry execution. This is local consistency
+checking, not an independent trust anchor against coordinated manifest rewrites.
+The external alert-floor library remains operator-owned and outside this bundle.
+
+This source change is **not a deployment receipt**. The five-file deployment below
+is dated historical evidence. The new wrapper refuses five-file manifests; do not
+replace an active wrapper before preparing a compatible six-file bundle. Existing
+release directories are never overwritten under the same compiler SHA: if that SHA
+already holds a five-file bundle, installation refuses it. Select a reviewed newer
+Compiler commit that contains the helper, retaining the old bundle and wrapper.
+Do not delete the old directory or edit its manifest to bypass the refusal.
+
+For a later authorized rollout, confirm no compile owns its lock, prepare and
+validate the six-file bundle first, then replace the wrapper using the paired
+installer/deployment tooling. For rollback, use a previously verified six-file
+bundle with the new wrapper. If returning to a five-file bundle, restore its
+matching prior wrapper as part of the same quiescent operation; repointing `current`
+alone is insufficient. Preserve pending dates, verification receipts, methodology
+history and brain data. The September rollback example below applies to its dated
+five-file wrapper/bundle pair.
+
 ## Verified deployment and recovery — 2026-09-13
 
 The installed compiler is

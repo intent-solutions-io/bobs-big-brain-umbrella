@@ -13,7 +13,7 @@ import tempfile
 import uuid
 
 
-FILES = ("nightly-entry.py", "runtime-proof.py", "c8-mcp.py", "teamkb-compile-daily.sh", "eval-distiller-output.mjs")
+FILES = ("nightly-entry.py", "runtime-proof.py", "c8-mcp.py", "teamkb-compile-daily.sh", "eval-distiller-output.mjs", "notify-routing.sh")
 
 
 def install(source, destination, revision):
@@ -37,8 +37,9 @@ def install(source, destination, revision):
             (stage / name).write_bytes(data)
             (stage / name).chmod(0o755)
             hashes[name] = hashlib.sha256(data).hexdigest()
-        subprocess.run(["bash", "-n", str(stage / "teamkb-compile-daily.sh")], check=True)
         for name in FILES:
+            if name.endswith(".sh"):
+                subprocess.run(["bash", "-n", str(stage / name)], check=True)
             if name.endswith(".py"):
                 compile((stage / name).read_bytes(), name, "exec")
         manifest = {"revision": resolved, "sha256": hashes}
