@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T01:58:09Z -->
+<!-- fetched-at: 2026-10-26T02:11:40Z -->
 
 # Changelog
 
@@ -39,6 +39,12 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
   leaves the wire shape unchanged. Team mode stays dependency-free via a mirrored validator.
 
 ### Fixed
+
+- Replace deployed team connection details in public onboarding with operator-
+  supplied URL, tenant and token placeholders, and link the current product and
+  installation pages. Local setup still requires native dependency provisioning;
+  this documentation change does not alter runtime configuration or rotate any
+  credentials (`compile-then-govern-eqw.7.2`).
 
 - Seed a fresh local tenant with the Registrar's canonical recommended policy,
   covering all ten current registered rule types. Any existing tenant policy,
