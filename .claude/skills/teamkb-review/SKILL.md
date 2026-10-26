@@ -63,6 +63,15 @@ This is the frontier principle: *Claude does the judgment; deterministic code bu
   *Provisioning* below). If the token is absent, the wrapper skips this phase; run standalone only
   when the env is set.
 
+### Authentication
+
+The existing team-mode MCP configuration maps `TEAMKB_REVIEW_AGENT_TOKEN` to the
+client's API token. Use the dedicated provisioned actor and the configured API
+URL; do not print its value or substitute another administrator's token. Missing
+authentication is a missing prerequisite, not an empty inbox. See Provisioning
+for the existing activation process; editing or validating this skill does not
+activate it.
+
 ## Instructions
 
 **Phase markers (for cron diagnosability)** — emit one Bash echo before each phase:
@@ -119,13 +128,37 @@ writes were made**.
 | Promoted memories | the governed brain (`brain_approve`; cited `qmd://…` next day) |
 | Review summary (stdout) | captured by the cron wrapper → the nightly digest/email |
 
+## Examples
+
+These are invocation examples, not run receipts.
+
+- `/teamkb-review --dry-run`: inspect the quarantined queue, search for existing
+  coverage and print proposed promote/hold/reject decisions. Do not call approve
+  or reject; report that no disposition requests were made.
+- An authenticated empty inbox produces a zero-review summary with no writes.
+  A failed inbox request must not be reported as an empty queue.
+- During an explicitly authorized live invocation, a candidate with uncertain
+  sensitivity stays held. A deterministic approval refusal is recorded as a
+  refusal, not counted as a promotion.
+
+## Error Handling
+
+| Situation | Response |
+|---|---|
+| Missing token, authentication failure, wrong mode or unhealthy status | Stop and report the missing prerequisite; do not substitute credentials. |
+| Inbox or search request fails | Report incomplete review; never invent candidates or treat failure as no results. |
+| Approval is refused by deterministic rules | Keep the refusal in the summary; do not bypass it or retry through another tool. |
+| A write request times out or its outcome is ambiguous | Do not blindly repeat it. Report the uncertain result and inspect authoritative state before any retry. |
+| Only part of the queue was processed | Report confirmed outcomes and the unprocessed remainder; do not claim full review. |
+| Candidate may contain sensitive content | Hold or reject; never promote merely to test the server's disclosure gate. |
+
 ## Guardrails
 
 - You **recommend**; the deterministic pipeline **owns** the durable write. Never treat a verdict as
   a write.
 - **Conservative default is HOLD.** A small, honest set of promotions beats an eager one.
 - Never approve sensitive content; a server 422 means you misjudged — hold it.
-- Every approve/reject carries a specific `reason` (it is a permanent receipt).
+- Every approve/reject carries a specific `reason` (it is recorded in the audit receipt).
 
 ## Provisioning (one-time, per environment — the activation gate)
 
@@ -141,7 +174,8 @@ To activate (on the box that owns `~/.teamkb`):
    new record.
 2. Store the **plaintext** token value in `~/.teamkb/.review-agent-token` (mode `600`). The wrapper
    reads it into `TEAMKB_REVIEW_AGENT_TOKEN`.
-3. Confirm: `TEAMKB_API_URL=<api> TEAMKB_API_TOKEN=<value> claude -p '/teamkb-review --dry-run' --mcp-config <skill>/scripts/review-mcp-config.json --strict-mcp-config`
+3. With the provisioned `TEAMKB_API_URL` and `TEAMKB_REVIEW_AGENT_TOKEN` already
+   set without printing their values, confirm: `claude -p '/teamkb-review --dry-run' --mcp-config <skill>/scripts/review-mcp-config.json --strict-mcp-config`
    → `brain_status` reports team + healthy + tokenSet.
 
 Until step 2's file exists, the nightly review is skipped (logged), by design.

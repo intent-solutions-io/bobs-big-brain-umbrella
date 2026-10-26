@@ -7,6 +7,12 @@ color: purple
 version: 1.0.0
 author: Jeremy Longshore <jeremy@intentsolutions.io>
 tags: [brain, governance, compile, distillation]
+disallowedTools: []
+skills: []
+background: false
+hooks: {}
+mcpServers: {}
+permissionMode: default
 ---
 
 > **Parent skill:** `~/.claude/skills/teamkb-compile/SKILL.md`
