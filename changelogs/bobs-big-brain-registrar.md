@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T03:49:20Z -->
+<!-- fetched-at: 2026-10-26T04:11:27Z -->
 
 # Changelog
 
@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add read-only finite recovery plans binding complete reviewed source snapshots,
+  exclusions, target policies, store locator and declared human authority to
+  fresh canonical proposals. Preserve source kind and import risk, cap trust,
+  retain source sensitivity floors and refuse target conflicts. Reuse canonical
+  intake preparation without writing rows or loading origin keys; optional
+  supplied keys mint fresh tokens. Validate private JSON plans against an
+  externally reviewed digest. Apply, locking, archival, anchors and live recovery
+  remain separate (`compile-then-govern-eqw.8.1.2.4`).
 
 - Bind reviewed recovery sensitivity floors into selected manifests and durable
   candidate audit receipts. Preserve the strongest same-store floor through
