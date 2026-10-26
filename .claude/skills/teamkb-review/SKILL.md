@@ -80,8 +80,10 @@ activate it.
 ### Phase 0 — Setup
 
 Emit `[phase: setup] ...`. Resolve the mode (`--dry-run` present or not). Call **`brain_status`** to
-confirm you are in **team** mode, reachable, with a token set (`{ mode:'team', healthy:true,
-tokenSet:true }`). If not team mode or unhealthy, STOP and report — do not fabricate.
+check **team** mode, service reachability and a locally configured nonempty token
+(`{ mode:'team', healthy:true, tokenSet:true }`). This status does not authenticate
+the token or establish actor/admin authority. If any setup check fails, STOP and
+report — do not fabricate. The authenticated inbox request is a separate check.
 
 ### Phase 1 — Read the quarantined queue
 
@@ -160,7 +162,7 @@ These are invocation examples, not run receipts.
 - Never approve sensitive content; a server 422 means you misjudged — hold it.
 - Every approve/reject carries a specific `reason` (it is recorded in the audit receipt).
 
-## Provisioning (one-time, per environment — the activation gate)
+## Provisioning and recommended pre-enable verification
 
 The review agent runs under a **dedicated `teamkb-review-agent` admin token** so its decisions are a
 distinct, filterable actor on the audit chain. It is **not** provisioned by default — the nightly
@@ -171,7 +173,9 @@ launchers disabled and wait for any existing review to finish. These are operato
 instructions; this source change adds no automatic activation gate. The wrapper's
 token-file presence check alone is not acceptance evidence.
 
-For a separately authorized activation:
+For a separately authorized activation, the following operator checklist recommends
+how to verify the existing requirements in Decision014. It does not amend that
+decision or create new approval authority:
 
 1. Mint a token value (any high-entropy string) and add a **scrypt-hashed** admin record for actor
    `teamkb-review-agent` to the brain's token registry (`~/.teamkb/tokens.json`) — the same
@@ -182,7 +186,7 @@ For a separately authorized activation:
 3. **Basic wiring/connectivity check:** with the provisioned `TEAMKB_API_URL`
    and `TEAMKB_REVIEW_AGENT_TOKEN` already set without printing their values,
    run the requested dry-run with the reviewed MCP configuration. `brain_status`
-   should report team mode, token presence and service health. Its health request
+   should report team mode, a locally configured nonempty-token flag and service health. Its health request
    is authentication-free: this does **not** validate the token, dedicated actor
    identity, or administrative authority.
 4. Before enabling scheduled review, obtain separately authorized acceptance

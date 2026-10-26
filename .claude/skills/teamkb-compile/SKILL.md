@@ -4,8 +4,8 @@ description: |
   Compile gathered work signals for a date window into memory candidates. Use when
   an operator invokes /teamkb-compile to review a digest or request capture through
   deterministic governance. The model proposes; policy, dedupe and disclosure
-  checks dispose. Digest mode writes local run artifacts without brain captures;
-  auto mode requests durable brain writes. Scheduling and notifications belong to
+  checks dispose. The prompt instructs digest mode to write local run artifacts
+  without brain captures; auto mode requests durable brain writes. Scheduling and notifications belong to
   the selected nightly runner. Trigger with "/teamkb-compile".
 allowed-tools: 'Read, Write, Edit, Glob, Grep, Bash(command:*), Task, mcp__governed-brain__brain_search, mcp__governed-brain__brain_capture, mcp__governed-brain__brain_govern, mcp__governed-brain__brain_status, mcp__governed-brain__brain_audit_verify'
 version: 1.0.0
