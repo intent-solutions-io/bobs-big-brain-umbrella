@@ -1,3 +1,5 @@
+> Historical audit snapshot. Current-source correction (2026-10-26): the team plugin now registers nine tools, adding `brain_holds` and `brain_hold_recommend` to the seven listed below. Local mode remains six tools. This note records source inventory, not released-package or deployed-team acceptance. The graph's former import-discipline test citation was unverified; current model evidence labels serving/eval separation as a configuration convention. Original audit observations below retain their dates.
+
 # Bob's Big Brain: Operator-Grade System Analysis
 *Generated: 2026-08-07*
 *Version: umbrella `4cffc31` (local) / `origin main 49a8d0d`+`ba15e80` · compiler (Compile) `v1.22.0` @ `cddb2fe` · registrar (Govern) `v0.8.0`+29 unreleased @ `628c2257` · plugin (Package) `v1.2.0` @ `f684448` · qmd (Retrieve, pinned external) `2.5.3`*

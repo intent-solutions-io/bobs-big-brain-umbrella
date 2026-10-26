@@ -37,11 +37,11 @@ This repo is the umbrella for the **Bob's Big Brain** stack — local-first know
 
 ## The 60-second version
 
-Most "AI memory" gives an agent better **recall**. This stack does two things the category skips: it **compiles** raw corpus into derived knowledge (summaries, concepts, contradictions — not raw chunks), and it **governs** that knowledge through a deterministic pipeline before anything is trusted. Every answer ships a **receipt**: a `qmd://` citation to its source, backed by a SHA-256 hash-chained audit trail you can verify after the fact. Runs on your machine. No vector-blob lock-in.
+Most "AI memory" gives an agent better **recall**. This stack does two things the category skips: it **compiles** raw corpus into derived knowledge (summaries, concepts, contradictions — not raw chunks), and it **governs** that knowledge through a deterministic pipeline before anything is trusted. Search returns `qmd://` source citations. Durable governance settlements write SHA-256 hash-chained receipts; a citation or search result is not itself a governance receipt. Runs on your machine. No vector-blob lock-in.
 
 ## The problem
 
-AI agents are getting better memory by the week. None of it answers the question that matters when something breaks: **what did the agent actually do with what it remembered, and can you prove it?**
+AI agents are getting better memory by the week. Recall alone does not answer the question that matters when something breaks: **what did the agent actually do with what it remembered, and can you prove it?**
 
 A better memory makes an agent *recall* more. It says nothing about whether that knowledge was ever vetted, where it came from, or what the agent used at decision time. **Memory is not accountability.** Recall is table stakes. The hard problem — the one a compliance officer, an on-call engineer, or a postmortem actually needs — is the **receipt**: what was retrieved, what was used, where it came from, provable later, tamper-evident.
 
@@ -51,39 +51,33 @@ This stack is built around that gap.
 
 The category optimizes one axis: recall. We compete on a different one: **govern + receipts.**
 
-| Capability | Vector stores<br><sub>Pinecone · Chroma · pgvector</sub> | Agent-memory layers<br><sub>gstack/GBrain · Mem0 · Letta · Zep</sub> | **Bob's Big Brain** |
-|---|:---:|:---:|:---:|
-| Recall / retrieval | ✅ | ✅ | ✅ |
-| **Derived** knowledge (summaries, concepts, contradictions) | ❌ raw chunks | ◑ extraction | ✅ 6 compiler passes |
-| Deterministic governance (dedupe · policy · promotion) | ❌ | ❌ | ✅ |
-| Provenance tracked end-to-end | ◑ | ◑ | ✅ |
-| **Receipts** — tamper-evident hash-chained audit | ❌ | ❌ | ✅ SHA-256 chain |
-| Inline citations on every answer | ❌ | ◑ | ✅ `qmd://` |
-| Local-first / on-device | ◑ | ◑ | ✅ |
-| Deterministic control plane (model proposes, system decides) | ❌ | ❌ | ✅ |
+| Capability | Mechanism | Boundary |
+|---|---|---|
+| Derived knowledge | Optional Compiler CLI with six passes | Compilation uses the configured provider; it is separate from the plugin govern path. |
+| Deterministic governance | Dedupe, policy and durable settlement | Pre-intake refusals and review-only flags have different receipt behavior. |
+| Cited retrieval | Search hits carry `qmd://` source URIs | A citation does not prove an answer used the fact or is correct. |
+| Tamper-evident history | Hash-chained governance events and retained anchors | A local writer can rewrite the store and all local witnesses. |
+| Local and team modes | In-process local server or authenticated remote proxy | Team mode is code-checked; released and deployed acceptance are separate evidence. |
 
-<sub>✅ first-class · ◑ partial / varies · ❌ not in the architecture. This is an architectural contrast, not a feature-by-feature audit — those tools are good at recall; we're playing a different game.</sub>
+These are implementation boundaries, not a current competitor benchmark. The linked
+[ecosystem thesis](#documentation) records the historical comparison. Recall alone
+does not establish how knowledge was governed or what a model actually used.
 
-**What they offer:** fast, scalable recall — drop in embeddings, get back similar chunks (or, for the agent-memory frameworks, scored/extracted memories across turns).
-
-**What we do better:** we don't hand the model a pile of similar chunks and hope. We *derive* knowledge, *govern* what's allowed to become durable memory with deterministic code, and *prove* every retrieval with a citation + an audit chain. The model proposes; the system decides and records.
-
-> **On gstack / GBrain.** [gstack](https://github.com/garrytan/gstack) (Garry Tan's Claude Code harness, ~90K★) ships [GBrain](https://github.com/garrytan/gstack) as its memory layer, and it's genuinely strong at the thing it's built for: recall — top LongMemEval-S scores, ~92% fewer tokens per session, near-zero-friction capture. That's the recall axis, done well. What a memory layer doesn't do — by design, it's memory, not a control plane — is gate what becomes durable knowledge through deterministic policy, or hand you a tamper-evident receipt of what the agent actually used. *"Better memory for agents, but no receipt for what the agent did with it"* was the exact critique that kicked off this project. Bob's Big Brain is the answer: recall **and** governance **and** receipts.
 
 ## What's in the stack
 
 | Repo | Layer | What it does |
 |------|-------|--------------|
 | **[bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler)** | **Compile** | Reads and organizes raw sources (npm: `intentional-cognition-os`). Ingests raw corpus (PDF / markdown / web clips) and compiles it into semantic knowledge through six passes, runs episodic research tasks, and emits a governance spool. Deterministic kernel (SQLite + JSONL) + probabilistic compiler (LLM). 5 workspace packages, Apache-2.0. |
-| **[bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar)** | **Govern** | Decides what's admitted to team memory (by code) and keeps the tamper-evident record. Consumes the Compiler's spool, runs every candidate through dedupe → policy → promotion, keeps a hash-chained, by-protocol append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 9 packages, Apache-2.0. |
+| **[bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar)** | **Govern** | Decides what's admitted to team memory (by code) and keeps the tamper-evident record. Consumes the Compiler's spool, runs every candidate through dedupe → policy → promotion, keeps a hash-chained, by-protocol append-only audit log, and exports curated memory to a searchable tree. The deterministic control plane. 6 apps + 10 packages, Apache-2.0. |
 | **[qmd](https://github.com/tobi/qmd)** (`@tobilu/qmd`) | **Retrieve** | On-device search for markdown, by [@tobi](https://github.com/tobi). qmd supplies the lexical BM25 arm; Govern fuses it with native FTS5 and a lean sqlite-vec/EmbeddingGemma dense arm through RRF (k=60), then freshness/category reranks. No query-time generative LLM call. Every hit is a `qmd://<collection>/<path>` URI — the citation. |
-| **[bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles** the engines into one in-process stdio MCP server — cited search **and** governed capture (capture → govern → promote, with a hash-chained receipt), no daemon, no network. |
+| **[bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** | **Package** | The thing you install. A local-first Claude Code + Cowork plugin that **bundles the Registrar libraries** into one stdio MCP server. Local mode governs and searches in-process; team mode proxies to a server. The Compiler CLI is optional and separate. Native setup needs registry access; semantic retrieval needs a separately provisioned local embedder. |
 
 **Powered by [tobi/qmd](https://github.com/tobi/qmd).** We pin `@tobilu/qmd`, track bumps with Dependabot, and gate upgrades with canary + integration tests. We **do not fork** the search engine — Bob's Big Brain is the product surround (compile + govern + receipts + plugin).
 
 **Operator tip (local team brain):** bare `qmd` uses your personal `~/.cache/qmd`. The team index lives under `~/.teamkb/qmd-index/<tenant>/`. From a [bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar) checkout: `./scripts/bbb-qmd status` (pinned `@tobilu/qmd` binary + team XDG) and `pnpm search-canary`. Full runbook: [000-docs/042-OD-OPSM-bbb-qmd-operator-runbook.md](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/main/000-docs/042-OD-OPSM-bbb-qmd-operator-runbook.md).
 
-**How the repos fit together** — this umbrella maps them; the plugin bundles the engines; the engines + qmd form the compile → govern → retrieve pipeline. Each box is its own independently released repo:
+**How the repos fit together** — this umbrella maps them; the plugin bundles governance libraries and can invoke the optional Compiler CLI; the engines + qmd form the compile → govern → retrieve pipeline. Each box is its own independently released repo:
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{
@@ -101,7 +95,7 @@ flowchart TB
     UMB -. documents .-> ICO
     UMB -. documents .-> INTKB
     UMB -. documents .-> PLUG
-    PLUG -->|bundles| ICO
+    PLUG -. optional CLI .-> ICO
     PLUG -->|bundles| INTKB
     ICO -->|spool| INTKB
     INTKB -->|curated tree| QMD
@@ -110,7 +104,7 @@ flowchart TB
 
 ## How it works
 
-A single fact's journey from raw source to cited, audited answer:
+A source proposal can become governed memory and then a cited search result:
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{
@@ -133,11 +127,11 @@ sequenceDiagram
     KB->>KB: dedupe → policy → promote (deterministic)
     KB->>Q: export curated tree + index
     A->>Q: query
-    Q-->>A: answer + qmd:// citation
-    Note over ICO,Q: every hop appended to a SHA-256 hash-chained trace → receipts
+    Q-->>A: search hits + qmd:// citations
+    Note over ICO,KB: Compiler JSONL traces and Registrar SQLite governance receipts are separate
 ```
 
-**The five steps:** ingest → **compile** (derive, don't dump) → spool (the tenant-scoped JSONL contract between repos) → **govern** (dedupe/policy/promote, by code) → **retrieve** (cited, on-device). Underneath all of it, an append-only trace where each event carries the hash of the one before it.
+**The five steps:** ingest → **compile** (derive, don't dump) → spool (the tenant-scoped JSONL contract between repos) → **govern** (dedupe/policy/promote, by code) → **retrieve** (cited, on-device). The Compiler records its own hash-chained JSONL traces. The Registrar separately records governance settlements in SQLite `audit_events`; their verifiers and scopes differ.
 
 ## Architecture
 
@@ -167,7 +161,7 @@ flowchart TB
     IDX --> MCP --> Out["Agents + Humans<br/>answers with qmd:// citations"]
 ```
 
-**The constraint that makes it work:** *the model proposes; the deterministic system owns durable state and control.* Compilation, synthesis, and contradiction-detection are probabilistic and live in the compiler. File storage, governance, permissions, audit, and promotion rules are deterministic and live in the kernel. The model never writes durable state directly. That boundary is the whole design — it's what lets a probabilistic system produce an auditable record.
+**The constraint that makes it work:** *the model proposes; the deterministic system owns durable state and control.* Compilation, synthesis, and contradiction-detection are probabilistic and live in the compiler. File storage, governance, permissions, audit, and promotion rules are deterministic and live in the kernel. Models propose derived content; deterministic code performs the durable writes and policy transitions. That boundary is the whole design — it's what lets a probabilistic system produce an auditable record.
 
 ## The two flagships, up close
 
@@ -177,17 +171,17 @@ flowchart TB
 
 ### The Registrar — the governance layer
 
-[`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) is the deterministic control plane for team memory. It ingests the Compiler's spool and runs every candidate through **dedupe → policy → promotion** — secret detection, trust levels, and tenant isolation all live here, enforced by code, not by a model. Promotions and rejections are written to a **hash-chained, by-protocol append-only audit log**; curated memory is exported to a category-routed markdown tree and indexed by qmd. An MCP server exposes governed, curated-only search to agents.
+[`bobs-big-brain-registrar`](https://github.com/jeremylongshore/bobs-big-brain-registrar) is the deterministic control plane for team memory. It ingests the Compiler's spool and runs every candidate through **dedupe → policy → promotion** — secret detection, trust levels, and tenant isolation all live here, enforced by code, not by a model. Durable promotions and rejections are written to a **hash-chained, by-protocol append-only audit log**; curated memory is exported to a category-routed markdown tree and indexed by qmd. An MCP server exposes governed, curated-only search to agents.
 
 ### qmd — the retrieval substrate
 
 [`qmd`](https://github.com/tobi/qmd) (by [@tobi](https://github.com/tobi)) is on-device search for markdown, no API key required. We pin it, track it with Dependabot, and gate every version bump through integration tests. In the delivered serving path, qmd supplies one lexical BM25 arm; Govern adds native in-process FTS5 plus a lean sqlite-vec/EmbeddingGemma-300M dense arm and fuses all three with reciprocal-rank fusion (RRF, k=60), then applies freshness/category reranking. Dense fails open to the lexical arms if its embedder is unavailable, and no query-time generative LLM is involved. Every result is a `qmd://<collection>/<path>` URI — which is exactly the citation an answer needs.
 
-## Receipts — the part nobody else ships
+## Citations, traces and governance receipts
 
-This is the wedge. Three artifacts make "what did the agent know and do" provable.
+These artifacts record different parts of the pipeline. They do not prove that a model used a retrieved fact or that its answer is correct.
 
-**1. The spool candidate** — the Compiler's hand-off contract. Tenant-scoped, schema-versioned, content-capped, with a SHA-256 manifest:
+**1. The spool candidate** — the Compiler's hand-off contract. Tenant-scoped, schema-versioned and content-capped, with a SHA-256 manifest. Illustrative fragment; content, author and trust fields are omitted:
 
 ```json
 {
@@ -204,54 +198,52 @@ This is the wedge. Three artifacts make "what did the agent know and do" provabl
 }
 ```
 
-**2. The hash-chained trace** — every retrieval, promotion, and compile is one append-only JSONL event whose `prev_hash` is the SHA-256 of the previous line. Tamper with any record and the chain breaks, verifiably:
+**2. The Compiler trace** — `ico ask` writes an `ask` event to the Compiler's hash-chained JSONL trace. These are citation **counts**, not arrays of source URIs. This illustrative fragment omits other envelope and payload fields and abbreviates its hash:
 
 ```jsonc
-{ "event_type": "ask.complete", "correlation_id": "…",
-  "payload": { "verifiedCitations": ["qmd://kb-curated/guides/2daed212….md"],
-               "unverifiedCitations": [] },
-  "prev_hash": "9f2c…" }   // prev_hash = SHA-256(previous line)
+{ "event_type": "ask", "correlation_id": "…",
+  "payload": { "verifiedCitations": 1, "unverifiedCitations": 0 },
+  "prev_hash": "9f2c…" }
 ```
 
-**3. The verifier** — a runnable primitive that walks the chain and names any break:
+The separate JSON answer contains citation details. Registrar governance receipts instead live in SQLite `audit_events`; HTTP search access logs are not that chain. Pre-intake disclosure refusals do not create a candidate or governance receipt. Review-only flags can remain without a new receipt.
+
+**3. The Compiler verifier** — walks that JSONL chain, not the Registrar database. Illustrative output:
 
 ```console
 $ ico audit verify --json
 { "ok": true, "filesScanned": 1, "totalEvents": 61, "cleanFiles": 1, "breaks": [] }
 ```
 
-That's the receipt. A vector store can tell you what's *similar*. This tells you what was *used* and where it *came from* — and the hash chain **detects** any record altered or reordered after the fact.
+Use `ico audit verify` for Compiler traces and local `brain_audit_verify` for Registrar governance receipts and anchors. Passing one does not prove the other passed. Neither establishes what a model actually used. A writer who edits and re-hashes forward can evade a chain-only check; retained independent anchors matter.
 
 ### What the receipt does *not* do — read this before you trust it
 
 Honesty is the whole point of a receipt, so here's the trust model, stated per mode:
 
-| | **Local mode** (default) | **Shared / hosted mode** (your opt-in) |
-|---|---|---|
-| Guarantees | **Integrity + ordering + rewrite-detection** — every govern snapshots the chain head into an append-only, hash-chained anchor log committed to git; `brain_audit_verify` flags edits, deletions, reordering, **and** a silent full re-hash-forward rewrite (which the chain alone misses) | Adds **attributable, externally anchored** history once you push the anchor repo to a remote |
-| Does **not** guarantee | Non-repudiation on its own: a local actor would now have to rewrite the chain, the anchor log, **and** the git history in lockstep (plus the remote's history, if you've pushed it) — much harder, and it leaves git evidence — but not impossible on a single, unshared machine | — |
-| How it's closed | **Implemented:** `brain_govern` commits the chain head to a git-backed anchor log; `brain_audit_verify` / `verifyAnchors` cross-check the live chain against it. **Push that repo to a remote** for cross-actor tamper-evidence | Anchored + pushed chain head + per-actor signatures |
+| Surface | Evidence and limits |
+|---|---|
+| Local governance chain | Integrity and ordering checks over stored events. A writer able to edit and re-hash the whole chain can defeat a chain-only check. |
+| Local anchor log and git witness | The plugin attempts to commit chain-head snapshots. Retained prior snapshots can reveal rewrites; anchor or git failure can leave a write without a fresh witness. Local commit success does not prove a remote push or independent witness. |
+| Shared service | The team plugin is an authenticated proxy; it does not expose local `brain_audit_verify`. A remote service or pushed anchor alone does not prove per-actor attribution or non-repudiation. |
 
-So: *tamper-**evident**, not tamper-proof.* The chain plus the anchor prove a record wasn't *quietly* changed — even via a full rewrite, checked against the git-committed anchors; it is **not** a blockchain, it is **not** immutable storage, and on its own it does **not** prove *who* wrote what. Within a single trust boundary — your machine — that's exactly the integrity guarantee you want. Across actors, pushing the anchor to a remote + per-actor signatures is what upgrades detection into attribution.
+The trail is **tamper-evident, not tamper-proof**. Someone able to rewrite the store, anchor log and witness can evade those local checks. No immutable-storage or blockchain claim is made. Signed merge anchors have their own contract; they are not a universal identity guarantee for every local or remote write.
 
 ## Is it real? — the proof
 
 Not a claim — a trail:
 
-- **End-to-end, on a real corpus.** `scripts/demo-e2e.sh` drives the whole chain: compile → spool → govern → index → search → audit verify. Latest run: **7/7 stages green, 21 candidates promoted, 20 `qmd://` citations returned, 61 audit-chain events, 0 breaks.**
+- **Dated end-to-end evidence.** The committed [2026-06-14 demo summary](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/9dc7488/dogfood/runs/demo-2026-06-14T031420Z/summary.json) records seven passing stages. It is historical evidence, not a fresh run or deployed acceptance. Counts from older runs are not current product metrics.
 - **Continuously guarded.** A key-free nightly CI smoke replays the deterministic half (govern → retrieve → cite) off a frozen fixture — any regression in the chain trips a red build, with no API calls and no secrets.
 - **Public dog-food trail.** The Compiler eats its own cooking against real corpora and publishes the citation-verify-rate trend over time. The metrics are public; the source content stays private.
 
 ## Getting started
 
-**Most people want the plugin** — the packaged product that runs the whole stack locally inside Claude Code or Cowork:
+**Most people want the plugin** — local governance and cited search inside Claude Code or Cowork; compilation is optional:
 
-→ **[jeremylongshore/bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** — one command: `npx governed-second-brain init <folder>` *(`--index-only` for zero egress)*
+→ **[jeremylongshore/bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** — one command: `npx governed-second-brain init <folder> --index-only` *(skips model compilation; npm/native setup may still access the registry)*
 
-To instead see the raw chain run from source — no API key, no secrets:
-
-```bash
-# 1. clone both engines
+To run the deterministic fixture demo from source, use Node 22+, git and Corepack. Dependency installation needs registry access; the fixture path makes no model calls:
 
 <!-- intent-select-partner:start -->
 [![Intent Solutions: Claude Partner Network Select Services Partner](https://raw.githubusercontent.com/intent-solutions-io/.github/b82af5d3e7951d85e39ea9e65cc24ee8278722a7/assets/brand/claude-select-partner.svg)](https://intentsolutions.io/)
@@ -259,37 +251,46 @@ To instead see the raw chain run from source — no API key, no secrets:
 Intent Solutions is a Claude Partner Network Select Services Partner.
 <!-- intent-select-partner:end -->
 
+```bash
+corepack enable
+
+# 1. clone both engines
 git clone https://github.com/jeremylongshore/bobs-big-brain-compiler.git
 git clone https://github.com/jeremylongshore/bobs-big-brain-registrar.git
 
 # 2. build the Registrar (installs the pinned qmd binary)
-cd bobs-big-brain-registrar && pnpm install && pnpm build && cd ..
+cd bobs-big-brain-registrar && pnpm install --frozen-lockfile && pnpm build && cd ..
 
 # 3. run the deterministic half of the chain off a fixture (govern → retrieve → cite)
 cd bobs-big-brain-compiler
-scripts/demo-e2e.sh --from-spool dogfood/fixtures/smoke-spool
+pnpm install --frozen-lockfile
+pnpm build
+scripts/demo-e2e.sh --intkb-repo ../bobs-big-brain-registrar \
+  --from-spool dogfood/fixtures/smoke-spool
 ```
 
-For the full chain (including the compile step) set `ANTHROPIC_API_KEY` and run `scripts/demo-e2e.sh`. Per-repo quickstarts live in each engine's README.
+Full compilation uses the configured model provider and can send source content to it. Follow the Compiler's provider setup, and retain the explicit `--intkb-repo` path when running the full demo. The fixture command proves only the deterministic stages; it skips compilation and the Compiler audit stage.
 
-## Status
+## Release tags and source state
+
+Latest GitHub release tags checked 2026-10-26. A matching manifest version does not identify the current bundle or installed payload; merged source can lead these tags. Release/distribution reconciliation remains tracked separately.
 
 | Repo | Version | License |
 |------|---------|---------|
-| [bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin) (the installable product) | v1.2.0 ([npm](https://www.npmjs.com/package/governed-second-brain), SLSA-provenanced) | Apache-2.0 |
-| [bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler) (npm: `intentional-cognition-os`) | v1.22.0 | Apache-2.0 |
+| [bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin) (the installable product) | [v1.2.0](https://github.com/jeremylongshore/bobs-big-brain-plugin/releases/tag/v1.2.0) | Apache-2.0 |
+| [bobs-big-brain-compiler](https://github.com/jeremylongshore/bobs-big-brain-compiler) (npm: `intentional-cognition-os`) | [v1.23.1](https://github.com/jeremylongshore/bobs-big-brain-compiler/releases/tag/v1.23.1) | Apache-2.0 |
 | [bobs-big-brain-registrar](https://github.com/jeremylongshore/bobs-big-brain-registrar) | v0.8.0 | Apache-2.0 |
 | [qmd](https://github.com/tobi/qmd) (upstream dependency) | 2.5.3 — pinned · Dependabot-tracked · integration-test-gated | MIT |
 
 ## Documentation
 
-- **Ecosystem thesis** — *"Compile, Then Govern"*, peer-reviewed and Semantic-Scholar-grounded — lives byte-identical in both flagships at `000-docs/034-AT-NTRP-ecosystem-thesis.md`.
+- **Ecosystem thesis** — *"Compile, Then Govern"*, peer-reviewed and Semantic-Scholar-grounded — has separately maintained copies in both flagships at `000-docs/034-AT-NTRP-ecosystem-thesis.md`.
 - **Build-direction decision record** — `000-docs/035-AT-DECR-post-thesis-build-direction-2026-05-23.md` (both repos).
 - Per-repo architecture, standards, and ADRs live in each repo's `000-docs/`.
 
 ## License
 
-Apache-2.0 on both flagship repos and this umbrella. See each repo's `LICENSE`. (qmd, the upstream retrieval dependency, is MIT-licensed by its author, [@tobi](https://github.com/tobi).)
+Apache-2.0 covers repository code in both flagships, the plugin and this umbrella. Semantic model weights have separate upstream terms. See each repo's `LICENSE`. (qmd, the upstream retrieval dependency, is MIT-licensed by its author, [@tobi](https://github.com/tobi).)
 
 ---
 

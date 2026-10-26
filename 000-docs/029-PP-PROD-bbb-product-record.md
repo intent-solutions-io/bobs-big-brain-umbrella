@@ -9,7 +9,7 @@ blueprint:
   owner: Jeremy Longshore
   reviewers: [Jeremy Longshore]
   generatedAt: '2026-10-25'
-  updatedAt: '2026-10-25'
+  updatedAt: '2026-10-26'
   sourceRefs:
     - plugin@a1b74ca (jeremylongshore/bobs-big-brain-plugin origin/main)
     - registrar@2599598 (jeremylongshore/bobs-big-brain-registrar origin/main)
@@ -32,6 +32,28 @@ evidence state follows each claim in brackets (`verified` = read in code or prov
 clean-room run; `provided` = owner statement; `unknown` = not yet established). Edit this
 file, never the copy.
 
+## Source update, 2026-10-26
+
+The clean-room results below remain a dated observation of plugin `a1b74ca`;
+they are not a test of every later release or deployed installation. Current
+source was checked separately at plugin `09b6644`, Registrar `3dede3c` and
+Compiler `9dc7488`. Matching `1.2.0` manifest labels do not prove identical bundles.
+
+| Original finding | Later merged source evidence | Remaining boundary |
+|---|---|---|
+| LIM-01: only two local policy rules enabled | Plugin #90 seeds the canonical ten enabled rules for a fresh tenant. | Existing policies are not rewritten; enabled does not mean every rule decides every capture; best-effort seed failure is not fail-closed bootstrap. |
+| LIM-02: rejected inbox rows lack a receipt | Plugin #88 settles rejected candidates with canonical per-candidate rejection evidence; the real mixed-sweep tests retain content and verify receipts. | Review-only flags can remain in the inbox without a new receipt; a skipped or failed settlement is not a completed rejection. |
+| LIM-03: capture silently lost at intake | Plugin #89 returns disclosure feedback before writing an MCP capture. Plugin #95 reports safe refusal counts for raw spool intake. | Pre-intake refusals do not create candidate/memory/audit rows. Raw source/archive bytes can retain refused content. Regex filtering is not exhaustive disclosure prevention. |
+
+These source fixes do not establish that an older installed package contains them.
+Keep LIM-01–03 as dated installation findings with this source update beside them;
+do not present them as unqualified current-source behavior. Release/channel
+alignment remains open under `compile-then-govern-eqw.5`. Recheck a chosen artifact
+before claiming its behavior. Searches remain unreceipted, team audit verification
+is not exposed through the plugin, and current-answer ranking remains measured
+separately. Review-only decisions and pre-intake refusals must not inherit a
+per-decision receipt guarantee.
+
 ## Platform
 
 web
@@ -52,10 +74,9 @@ Cowork MCP plugin.)
 
 A governed knowledge brain for Claude. You capture facts, decisions and lessons; deterministic code
 decides what becomes durable memory; Claude answers from that memory with a `qmd://` citation to
-the exact entry; and every governance decision leaves a SHA-256 hash-chained receipt you can
+the exact entry; and durable governance settlements leave SHA-256 hash-chained receipts you can
 verify. Success for a builder [goal, not a measured result]: they install it, save something, get it back cited,
-and can detect any edit to the receipt trail (tamper-evident; an edit is caught by an anchor mismatch, and
-an outside witness needs the anchor log pushed to a remote).
+and can check the receipt trail against retained anchors. A writer able to rewrite all local witnesses can evade those checks; a local git commit does not prove an independent remote witness.
 
 ## Positioning
 
@@ -66,7 +87,7 @@ about the limit: tamper-evident, not tamper-proof [verified: `plugin/README.md:6
 ## Operating Context
 
 - Runs inside Claude Code and Cowork as an MCP plugin; Claude Desktop through a manual MCP entry
-  [verified: `plugin/README.md:219-221`]. macOS, Windows, Linux.
+  [verified in source]. The original clean-room proof covers its tested Linux environment; local native dependencies and owned-runtime platform/ABI requirements need separate checks on other hosts.
 - Two commands front it: `/brain` (cited answers, read-only) and `/brain-save` (governed capture,
   runs only when the user types it) [verified: `plugin/skills/brain/SKILL.md`,
   `plugin/skills/brain-save/SKILL.md:8`].
@@ -79,13 +100,12 @@ about the limit: tamper-evident, not tamper-proof [verified: `plugin/README.md:6
 - In-process stdio MCP server; data under `~/.teamkb`; no daemon. The plugin's govern never invokes the
   compiler; compiling files is a separate, optional step (CLM-11).
 - First start provisions three lockfile-pinned native modules once with npm (24 s in the clean
-  room); after that, search, capture and govern make no network calls [verified:
+  room); basic local governance needs no remote service; configured semantic retrieval can call a separately provisioned embedder [verified:
   `plugin/plugin-runtime/bootstrap.cjs:87-108`].
 - Six tools: `brain_search`, `brain_status`, `brain_audit_verify`, `brain_capture`,
   `brain_govern`, `brain_transition` [verified: clean-room `tools/list`].
 - Governed write path: capture to a spool, then govern runs dedupe → policy → promotion; each
-  promotion and supersession writes a hash-chained audit event; the chain head is committed to a
-  git-backed anchor log [verified: clean-room `brain_audit_verify` ok, 6 events, 2 anchors].
+  promotion and supersession writes a hash-chained audit event; the ordinary path attempts a local anchor commit and, with origin configured, a bounded background push; neither proves an independent witness [verified: clean-room `brain_audit_verify` ok, 6 events, 2 anchors].
 - Subject-keyed supersession: a decision on the same subject retires a stale reference, and search
   returns only the current entry [verified: clean-room run].
 - Retrieval: keyword arms (qmd BM25 when installed, native SQLite FTS5 always) fused by
@@ -94,8 +114,11 @@ about the limit: tamper-evident, not tamper-proof [verified: `plugin/README.md:6
   otherwise search stays keyword-based. No generative model runs at query time [verified:
   `registrar/packages/qmd-adapter/src/search/rrf-fusion.ts:11`, `config.ts:115-121`; plugin ships
   no embedder]. Search works without qmd installed; the index refresh warns [verified: clean room].
-- Requirements: Node 20+ and npm on PATH; qmd 2.x for the BM25 arm (optional); git for anchor
-  commits [verified: `plugin/gsb.lock.json:40`, `plugin/README.md:161`].
+- Requirements are artifact- and mode-specific. The older legacy setup documented Node 20+
+  and npm; the dated run is not proof for every such host. Current owned-runtime execution
+  and reviewed local recovery require Linux Node22 with matching ABI. qmd enables its BM25
+  arm; git enables local anchor commits. Provisioning and other-platform acceptance remain
+  separate evidence.
 
 **Team mode** [verified in code; not exercised in the clean room]
 - One governed brain on a server; teammates reach it over a private network with a per-user
@@ -105,16 +128,16 @@ about the limit: tamper-evident, not tamper-proof [verified: `plugin/README.md:6
   members read and propose, admins approve [verified: `plugin/src/remote-server.ts`].
 - `brain_audit_verify` is local-only; team users cannot verify from the plugin [verified].
 
-**Known limits (must be stated, not hidden)** [verified 2026-10-25; tracked in compile-then-govern-eqw]
+**Dated installation limits** [observed 2026-10-25 at a1b74ca; read the later-source update above]
 - Fresh local installs seed a policy that leaves 8 of 10 governance rules dormant; only the
-  secret and length checks gate a new brain (eqw.1).
+  secret and length checks gated that tested brain (eqw.1; source correction above).
 - Rejected candidates stay in the inbox and lack a per-candidate receipt (eqw.2).
 - A capture containing a secret is acknowledged, then dropped at ingest without a receipt or
-  feedback (eqw.3). The secret never becomes memory.
+  feedback in that tested build (eqw.3). Detected refused content did not become memory in that run.
 - Receipts cover governance decisions; searches are not hash-chained.
 - On a large brain, current truth does not always outrank older reference material (umbrella epic
   compile-then-govern-39z).
-- Distribution channels carry different builds labelled 1.2.0; 33 commits sit past tag v1.2.0 (eqw.5).
+- Distribution channels carry different builds labelled 1.2.0; the original audit counted 33 commits past tag v1.2.0 at its recorded revision (eqw.5).
 
 **Terminology**: "Bob's Big Brain" is the product; `governed-second-brain` is the plugin and
 marketplace id; `governed-brain` is the MCP server; "receipt" means a hash-chained governance
