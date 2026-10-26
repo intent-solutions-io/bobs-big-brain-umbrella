@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T08:09:42Z -->
+<!-- fetched-at: 2026-10-26T09:04:30Z -->
 
 # Changelog
 
@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Recovery integrations can check synchronous readiness under the shared flock
+  and the same immediate SQLite transaction before fresh application. Refusal
+  leaves recovery unsettled; historical replay and repair keep their existing
+  commit reporting and still require postcommit verification.
 
 - Add strict recovery-only qmd2.5.3 registry inspection for an explicit owned
   runtime. Compare YAML and SQLite collection names, source roots and behavior;
