@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T11:54:22Z -->
+<!-- fetched-at: 2026-10-26T12:13:38Z -->
 
 # Changelog
 
@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+
+- Preserve ordinary host `on`/`once` signal callback control when qmd forwards
+  shutdown to its tracked POSIX groups. Run bounded group cleanup before those
+  callbacks, including once callbacks registered before executor startup; retain
+  default termination when no host listener remains. Later prepended host
+  listeners and existing process-group limits remain outside this guarantee.
 
 ### Added
 
