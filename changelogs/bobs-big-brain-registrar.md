@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T09:27:04Z -->
+<!-- fetched-at: 2026-10-26T11:40:09Z -->
 
 # Changelog
 
@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Check every copied owned-launcher option field and parser configuration against
+  the SHA-256-pinned qmd2.5.3 CLI metadata without importing qmd. Regression
+  controls reject altered types, aliases, defaults, multiplicity, missing entries
+  and strict/positional drift; runtime behavior and dependencies are unchanged.
 
 - Expose canonical anchor JSONL parsing and verification of captured records, so
   fixed recovery integrations can verify their bounded read without reopening a
