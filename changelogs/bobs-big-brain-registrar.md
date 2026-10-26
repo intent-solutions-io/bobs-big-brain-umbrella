@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T21:42:08Z -->
+<!-- fetched-at: 2026-10-26T23:36:39Z -->
 
 # Changelog
 
@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- For API graph reads, enforce the selected tenant, API-derived token allowlist
+  and audience policy. Reject blank or repeated tenant selectors.
+  Constrain both link endpoints before recursive expansion so restricted tenant
+  or audience nodes cannot bridge to readable descendants or affect path ranking.
+  Indexed edge/endpoint lookups use cached statements. Unscoped API reads retain
+  cross-tenant access unless a tenant is selected; trusted repository calls that
+  omit scope retain prior behavior. No migration or deployment is included (`compile-then-govern-ion`).
 
 - Reconcile owning and stock harness verification using one installed verifier
   and additive patterns. Retain all eight existing protected policy paths and
