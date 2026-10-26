@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T02:11:40Z -->
+<!-- fetched-at: 2026-10-26T02:40:36Z -->
 
 # Changelog
 
@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add finite `governSelectedCandidates` over reviewed candidate snapshot bindings,
+  using the canonical curator under one immediate SQLite transaction. Preserve
+  unrelated queues and holds, member quarantine and policy decisions; refuse
+  unapproved supersession and roll back failed disposition/receipt writes.
+  Repeat runs return historical settlement evidence. This core API does not
+  ingest a recovery manifest, archive source memories, take the filesystem lock,
+  anchor or refresh derived files (`compile-then-govern-eqw.8.1.1`).
 
 - Add public `rejectReviewedCandidate` for person-reviewed inbox rejection on
   one SQLite connection. Check tenant, declared human/admin-or-owner authority,
