@@ -238,7 +238,7 @@ Not a claim — a trail:
 
 → **[jeremylongshore/bobs-big-brain-plugin](https://github.com/jeremylongshore/bobs-big-brain-plugin)** — one command: `npx governed-second-brain init <folder> --index-only` *(skips model compilation; npm/native setup may still access the registry)*
 
-To run the deterministic fixture demo from source, use Node 22+, git and Corepack. Dependency installation needs registry access; the fixture path makes no model calls:
+To run the deterministic fixture demo from source, use Node 22+, git, jq and Corepack. Dependency installation needs registry access; the fixture path makes no model calls:
 
 <!-- intent-select-partner:start -->
 [![Intent Solutions: Claude Partner Network Select Services Partner](https://raw.githubusercontent.com/intent-solutions-io/.github/b82af5d3e7951d85e39ea9e65cc24ee8278722a7/assets/brand/claude-select-partner.svg)](https://intentsolutions.io/)
@@ -260,6 +260,7 @@ cd bobs-big-brain-registrar && pnpm install --frozen-lockfile && pnpm build && c
 cd bobs-big-brain-compiler
 pnpm install --frozen-lockfile
 pnpm build
+export PATH="$PWD/../bobs-big-brain-registrar/node_modules/.bin:$PATH"
 scripts/demo-e2e.sh --intkb-repo ../bobs-big-brain-registrar \
   --from-spool dogfood/fixtures/smoke-spool
 ```

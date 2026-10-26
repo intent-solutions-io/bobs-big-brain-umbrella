@@ -28,7 +28,7 @@ live-brain, website-deployment or team-acceptance pass.
 
 ### Category 1: status drift
 
-- Warning D1, unowned `version-string`: baseline README status table listed
+- Warning D1, unowned `release-tag-version`: baseline README status table listed
   Compiler v1.22.0; the checked GitHub release is v1.23.1. Locations: umbrella
   README status table; Compiler package.json and releases/tag/v1.23.1. Auto-fixable:
   yes. The corrected table names release tags and date, not installed payload identity.
@@ -38,7 +38,8 @@ live-brain, website-deployment or team-acceptance pass.
 - Warning D2, unowned `ci-commands`: README source demo omitted `--intkb-repo`;
   Compiler scripts/demo-e2e.sh defaults to the old clone path and supports the
   explicit flag. Auto-fixable: yes. The source quickstart now builds both checkouts
-  and passes the renamed sibling path. Shell syntax/path inspection is not a new
+  and passes the renamed sibling path, exposes the Registrar workspace qmd binary on PATH
+  and names the required jq prerequisite. Shell syntax/path inspection is not a new
   execution of the full example.
 - Warning D3, unowned `code-fence-content`: README's source-command fence included
   partner-badge Markdown. Auto-fixable: yes. The badge is outside the bash fence.
@@ -141,7 +142,8 @@ Bootstrap draft for human review only; this audit does not write sot-map.yaml:
 ```yaml
 version: 1
 fact_classes:
-  version-string: {owner: package-manifest, mirrors: [readme], determinism: deterministic, depth_tier: T1, staleness_bound: 0, criticality: high, volatile: false}
+  manifest-version: {owner: package-manifest, mirrors: [package-labels], determinism: deterministic, depth_tier: T1, staleness_bound: 0, criticality: high, volatile: false}
+  release-tag-version: {owner: git-release-tag, mirrors: [readme-release-table], determinism: deterministic, depth_tier: T1, staleness_bound: 0, criticality: high, volatile: false}
   trace-event-schema: {owner: code, mirrors: [readme, canonical-docs], determinism: deterministic, depth_tier: T1, staleness_bound: 0, criticality: high, volatile: false}
   component-inventory: {owner: code, mirrors: [readme, canonical-docs], determinism: deterministic, depth_tier: T1, staleness_bound: 0, criticality: medium, volatile: false}
   capability-claims: {owner: code, mirrors: [readme, canonical-docs], determinism: llm-judged, depth_tier: T2, staleness_bound: 0, criticality: medium, volatile: false}
