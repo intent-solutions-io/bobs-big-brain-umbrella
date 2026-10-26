@@ -1,14 +1,12 @@
 ---
 name: teamkb-compile
 description: |
-  Nightly "compile the day's work into the governed brain." Gathers the team's daily work
-  signals (git commits, merged PRs, closed beads, decision records, Claude session transcripts)
-  across ~/000-projects for a date window, lets Claude COMPILE them into durable governed-memory
-  candidates (decisions, patterns, gotchas, conventions), then runs the deterministic GOVERN path
-  (brain_capture -> brain_govern: dedupe / policy / secret-scan / promotion) with a SHA-256
-  hash-chained receipt per decision. The model proposes; deterministic code disposes. Ships
-  digest-first (emails a review digest, no durable writes) then flips to auto-promote. Side-effecting
-  in auto mode — invoke it explicitly or via the nightly cron wrapper. Trigger with "/teamkb-compile".
+  Compile gathered work signals for a date window into memory candidates. Use when
+  an operator invokes /teamkb-compile to review a digest or request capture through
+  deterministic governance. The model proposes; policy, dedupe and disclosure
+  checks dispose. The prompt instructs digest mode to write local run artifacts
+  without brain captures; auto mode requests durable brain writes. Scheduling and notifications belong to
+  the selected nightly runner. Trigger with "/teamkb-compile".
 allowed-tools: 'Read, Write, Edit, Glob, Grep, Bash(command:*), Task, mcp__governed-brain__brain_search, mcp__governed-brain__brain_capture, mcp__governed-brain__brain_govern, mcp__governed-brain__brain_status, mcp__governed-brain__brain_audit_verify'
 version: 1.0.0
 author: Jeremy Longshore <jeremy@intentsolutions.io>
@@ -177,7 +175,8 @@ result is *no known coverage* → `new` (not a block).
 Emit `[phase: audit] ...`. Append **one** JSON line to
 `${CLAUDE_SKILL_DIR}/methodology/decisions.jsonl` per the schema in **`references/audit-and-digest.md`**
 (date, window, mode, candidate count, per-candidate disposition, govern counts, brain before/after).
-Append-only — never edit existing lines.
+Append new records; do not edit existing lines. This is an operating instruction,
+not a mechanism that prevents arbitrary local file changes.
 
 ### Phase 5 — Digest / summary
 
@@ -193,13 +192,27 @@ this file and emails it + pushes an ntfy status (single notification owner, exac
   flagged (with reasons), and the brain before/after totals. Call **`brain_audit_verify`** and include
   the verdict (chain + anchors intact?) at the foot.
 
+## Examples
+
+These describe requested invocations, not evidence that a run succeeded.
+
+- `/teamkb-compile 2026-06-27 --digest`: inspect one day's signals and produce a
+  review digest and local methodology record. Do not call capture or govern in
+  digest mode. The scheduled wrapper may deliver notifications separately.
+- `/teamkb-compile 2026-06-20 2026-06-27 --auto`: an explicitly requested date
+  window with writes through capture and deterministic governance. Report actual
+  returned dispositions and receipt verification; a requested promotion is not
+  proof it happened.
+- Expected outcome for an empty supplied signal document: zero candidates, with the normal
+  per-date outcome and digest. Never fill an empty day with invented memories.
+
 ## Output
 
 | Artifact | Location |
 |---|---|
 | Signal doc (transient) | `/tmp/teamkb-compile/signals-<DATE>.txt` |
 | Distilled candidates (transient) | `/tmp/teamkb-compile/candidates-<DATE>.json` |
-| Audit record (append-only) | `${CLAUDE_SKILL_DIR}/methodology/decisions.jsonl` |
+| Local methodology record | `${CLAUDE_SKILL_DIR}/methodology/decisions.jsonl` |
 | Human digest / run summary (markdown) | `/tmp/teamkb-compile/digest-<DATE>.md` (cron wrapper emails it) |
 | Governed memories (auto mode) | `~/.teamkb` (promoted via `brain_govern`; cited `qmd://...`) |
 
@@ -223,7 +236,7 @@ this file and emails it + pushes an ntfy status (single notification owner, exac
   candidates — a small honest set beats a padded one (the same anti-inflation discipline `/blog-backfill`
   uses for tiers).
 - A govern rejection/duplicate is the system working — surface it, don't route around it.
-- `decisions.jsonl` is append-only.
+- Append new records to `decisions.jsonl`; do not rewrite prior records.
 
 ## Scheduling
 
@@ -248,7 +261,7 @@ API binds the tailnet-only IP and the data is local `~/.teamkb`). The cron wrapp
 **Cron wrapper (owns scheduling + email/ntfy):** `~/bin/teamkb-compile-daily.sh` (see
 [scheduling](references/scheduling.md)).
 
-**Audit trail:** [decisions.jsonl](methodology/decisions.jsonl) (append-only).
+**Audit trail:** [decisions.jsonl](methodology/decisions.jsonl) (local methodology record).
 
 ## Related
 
