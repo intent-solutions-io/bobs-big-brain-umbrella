@@ -38,6 +38,17 @@ entry() {
     bash "$TEST_HOME/bin/teamkb-compile-daily.sh" "$@"
 }
 
+seed_audit() {
+  local audit="$TEST_HOME/.claude/skills/teamkb-compile/methodology/decisions.jsonl"
+  mkdir -p "$(dirname "$audit")"
+  printf 'audit sentinel\n\n' > "$audit"
+  cp "$audit" "$BATS_TEST_TMPDIR/audit-before.jsonl"
+}
+
+assert_audit_preserved() {
+  cmp "$TEST_HOME/.claude/skills/teamkb-compile/methodology/decisions.jsonl" "$BATS_TEST_TMPDIR/audit-before.jsonl"
+}
+
 seed_index() {
   local index="$TEST_HOME/.claude/skills/teamkb-compile/methodology/index.db"
   mkdir -p "$(dirname "$index")"
@@ -78,7 +89,7 @@ PY_INDEX
 @test "full deploy installs all canonical scripts and both skills without overwriting audit state" {
   local skill="$TEST_HOME/.claude/skills/teamkb-compile"
   mkdir -p "$skill/methodology"
-  printf 'audit sentinel\n' > "$skill/methodology/decisions.jsonl"
+  seed_audit
   seed_index
   printf 'stale\n' > "$skill/obsolete-fixture.txt"
   run deploy
@@ -91,7 +102,7 @@ PY_INDEX
   [ -f "$TEST_HOME/.claude/skills/teamkb-review/SKILL.md" ]
   [ -f "$skill/SKILL.md" ]
   [ ! -e "$skill/obsolete-fixture.txt" ]
-  [ "$(cat "$skill/methodology/decisions.jsonl")" = 'audit sentinel' ]
+  assert_audit_preserved
   assert_index_preserved
 }
 
@@ -102,9 +113,11 @@ PY_INDEX
     printf 'runtime sentinel\n' > "$TEST_HOME/bin/$name"
   done
   seed_index
+  seed_audit
   run deploy --compile-only
   [ "$status" -eq 0 ]
   assert_index_preserved
+  assert_audit_preserved
   [ "$(cat "$TEST_HOME/.claude/skills/teamkb-review/SKILL.md")" = 'review sentinel' ]
   for name in teamkb-quality-digest.sh teamkb-backup.sh; do
     [ "$(cat "$TEST_HOME/bin/$name")" = 'runtime sentinel' ]
@@ -118,10 +131,11 @@ PY_INDEX
   local audit="$TEST_HOME/.claude/skills/teamkb-compile/methodology/decisions.jsonl"
   [ -f "$audit" ]
   [ ! -s "$audit" ]
-  printf 'later audit\n' > "$audit"
+  printf 'later audit\n\n' > "$audit"
+  cp "$audit" "$BATS_TEST_TMPDIR/audit-before.jsonl"
   run deploy --compile-only
   [ "$status" -eq 0 ]
-  [ "$(cat "$audit")" = 'later audit' ]
+  assert_audit_preserved
 }
 
 @test "changed installed wrapper is backed up before replacement" {
