@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T04:11:27Z -->
+<!-- fetched-at: 2026-10-26T04:41:57Z -->
 
 # Changelog
 
@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add atomic same-store application and read-only status for frozen recovery
+  plans. Bind actual intake identities, selected governance with source floors,
+  verified conditional archival and final receipt to the complete reviewed plan.
+  Preserve mixed holds, flags and refusals as partial outcomes; verify earlier
+  receipts and final row snapshots, roll back unexpected faults and refuse
+  drifted replays. Later human reviews require separate finalization. Filesystem
+  locking, CLI, anchors, derived refresh and live recovery remain parent work
+  (`compile-then-govern-eqw.8.1.2.5`).
 
 - Add read-only finite recovery plans binding complete reviewed source snapshots,
   exclusions, target policies, store locator and declared human authority to
