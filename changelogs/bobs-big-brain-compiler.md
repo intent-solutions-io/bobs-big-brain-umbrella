@@ -1,12 +1,17 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T14:59:23Z -->
+<!-- fetched-at: 2026-10-26T16:43:59Z -->
 
 # Changelog
 
 ## [Unreleased]
 
 ### Fixed
+
+- Count only distinct prior digest nights with valid outcomes and matching read-proof
+  receipts before automatic compile graduation. Failed or unverified outcomes do
+  not count, duplicate rows count at most once, and changed valid outcomes invalidate
+  earlier read proofs. Explicit mode overrides and dry-run persistence are retained.
 
 - Disambiguate new wiki outputs using typed source/page identity suffixes and
   preserve `+`/`#` in derived-title comparison. Refuse conflicting file, path or

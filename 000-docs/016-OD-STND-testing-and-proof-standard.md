@@ -36,6 +36,28 @@ and boundary it exercised.
 Tests that cannot exercise their advertised dependency must fail or report an explicit skip. A green
 job with the load-bearing cases silently skipped is not evidence.
 
+## Compile deployment and wrapper tests
+
+Run `bash scripts/test-teamkb-compile-lock.sh` for the existing Python installer
+contracts and `bats scripts/test-compile-deploy.bats` for deployment and installed
+wrapper branches. The shell workflow installs Bats and rsync explicitly; these
+cases must run rather than silently skip a missing dependency.
+
+The Bats fixtures use private HOME directories and a small fixture-generated Git
+repository. They test full versus compile-only targets, audit-file bytes and SQLite
+fixture index preservation in both deploy modes, wrapper backup, unavailable-revision
+refusal, missing/malformed/drifted bundles, and exact argument/exit forwarding. A fixture installation is not a live deployment receipt.
+The backup script is copied for identity checks and is never executed by this suite.
+
+The installed umbrella wrapper validates its release manifest and the five payload
+hashes recorded there before delegating to the Compiler. This checks local
+manifest/payload consistency; it does not establish an independent trust anchor
+against a coordinated manifest-and-payload rewrite. Mode selection, soak counting
+and graduation belong to the Compiler's
+`scripts/distiller/teamkb-compile-daily.sh` and `nightly-entry.py`; they require
+owning-runtime branch evidence under `compile-then-govern-6ps.16`. Passing these
+umbrella tests alone does not complete that broader requirement.
+
 ## Enforcement and branch protection
 
 The table below is a dated operational snapshot, not a promise that workflow files and GitHub rules
