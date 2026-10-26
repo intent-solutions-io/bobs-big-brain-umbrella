@@ -6,14 +6,15 @@
 | Schema / template | 1 / blueprint-docs 3.0.0, architecture + ADR |
 | Status | Proposed; implementation, signer, witness and application are unapproved |
 | Owner / decision authority | Jeremy Longshore; explicit owner approval required for the bound cut-over |
-| Reviewers | Independent engineering design review complete; configured repository reviews pending |
+| Reviewers | Agent review notes incorporated; configured repository reviews tracked on PR #124 |
 | Updated / review date | 2026-10-26 / before any implementation approval or application |
 | Classification | Public design; private brain records, bodies and key material excluded |
 | Sources | S1–S6 below; assumptions A1–A2 and unknowns U1–U4 |
 | Related artifacts | Beads `compile-then-govern-eqw.8.1.2.9`, `.9.2`, `.9.3`; Registrar #421/#422; plugin #94 |
 | Supersedes | Nothing; D5 and existing verifier contracts remain controlling |
 
-The current private recovery copy has historical ordering forks. The proposed
+Operator-reported diagnostics on a private restored copy identify historical
+ordering forks; this documentation does not independently reproduce them. The proposed
 cut-over preserves every old audit row and head, records a signed, dated boundary,
 and verifies subsequent activity as a separate epoch. The old global chain stays
 strictly unverified. This proposal creates no migration authority and does not
@@ -25,7 +26,7 @@ make a fork eligible for an exception manifest.
 |---|---|---|
 | S1 / verified policy | D5 forbids silent rehashing and permits only an explicitly recorded, signed, externally anchored rebaseline preserving the old head. | [009 §Q5](009-AT-DECR-wiki-memory-positioning-and-adopt-decisions.md#q5--the-155-audit-chain-breaks) |
 | S2 / verified source | Canonical classification keeps `CHAIN_FORK` separate and `verified: false`; exception schemas exclude forks. | [Registrar exception classifier](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/8ea12e6ecfc2e74a16a29e87b242df589e77ba63/packages/store/src/exception-manifest.ts) |
-| S3 / verified private evidence | Existing restored copy: 33,887 audit rows, 155 forks, zero tamper signatures; 847 anchors with zero mismatches. These are snapshot results, not current live-state measurements. | Local operator receipt `canonical-anchor-snapshot-diagnostic.json`, SHA-256 recorded below; no private rows published |
+| S3 / operator-reported private snapshot | The operator reports 33,887 audit rows, 155 forks, zero tamper signatures and 847 anchors with zero mismatches from an existing restored copy. These private snapshot results are not independently reproduced by this PR or current live-state measurements. | Local operator receipt `canonical-anchor-snapshot-diagnostic.json`, SHA-256 recorded below; no private rows published |
 | S4 / verified source | Audit insertion serializes predecessor read and append in an immediate transaction; positive `seq` defines write order and current writers continue the last hashed row. | [Registrar audit repository](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/8ea12e6ecfc2e74a16a29e87b242df589e77ba63/packages/store/src/repositories/audit-repository.ts) |
 | S5 / verified source | Canonical verification recomputes each row and predecessor; global verification has no signed epoch contract. | [Registrar audit verifier](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/8ea12e6ecfc2e74a16a29e87b242df589e77ba63/packages/store/src/audit-verify.ts), [anchor verifier](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/8ea12e6ecfc2e74a16a29e87b242df589e77ba63/packages/store/src/audit-anchor.ts) |
 | S6 / verified source / limited precedent | Existing Ed25519 merge anchors supply signing primitives, but their embedded public key does not by itself establish owner authorization for this operation. Their merge schema does not describe this cut-over. | [Registrar signed merge anchors](https://github.com/jeremylongshore/bobs-big-brain-registrar/blob/8ea12e6ecfc2e74a16a29e87b242df589e77ba63/packages/store/src/signed-merge-anchor.ts) |
@@ -33,12 +34,18 @@ make a fork eligible for an exception manifest.
 S3 is the local file
 `/tmp/bbb-private-brain-rehearsal-5y952gzu/canonical-anchor-snapshot-diagnostic.json`.
 Its SHA-256 is `465cb8d1ec2b4f816639be676a3736990f1b7c90fea8d3eb73ac6d1cd43f479b`.
-Its content is operator evidence; it is not a public downloadable artifact or
-an independently signed witness. The private copied-command refusal proof is
+Its content is operator-reported evidence at an ephemeral local locator; it is
+not a durable public artifact, an independently reproduced result or a signed
+witness. Before any cut-over approval, recollect and retain the complete private
+evidence in a durable, access-controlled location with exact commands, exit
+status, source identities/digests and fresh verifier output. The private copied-command refusal proof is
 `fixed-plugin-copied-cli-readiness-v2.json`, SHA-256
 `3c6c3a0e69680e146359aaf03467644ab1d70e7ef93f2451ceb84bfea6878fac`:
 `committed: false`, all working files and both database table denominators
-unchanged. It proves refusal, not epoch support or a completed migration.
+unchanged. The operator receipt reports refusal and no observed changes. Its sanitized CLI
+output does not identify the underlying refusal cause, so this document does not
+independently prove fork-specific refusal. The canonical diagnostic separately
+reports forks. Neither receipt establishes epoch support or completed migration.
 
 A1 (proposed): one explicit cut-over per identified brain, with global audit
 scope across its tenants. A2 (proposed): preserve the same database and existing
@@ -64,7 +71,9 @@ second hash walker and does not change the canonical serializers or classifier.
 This is an explicit new acceptance contract requiring owner approval. It is not
 an implementation technique for silently making today's strict verifier green.
 Recovery would need a discriminated authorized-epoch result and a separately
-reviewed adoption change; the current plugin still refuses the historical forks.
+reviewed adoption change; the [merged plugin source at `914cbd7`](https://github.com/jeremylongshore/bobs-big-brain-plugin/blob/914cbd7d84ff9098759f79a19c1222689cbcd9e6/src/recovery-audit.ts)
+retains strict fork refusal. Plugin PR #94 merged as that exact commit; this is a
+source-state claim, not a release, installed-version or deployment claim.
 
 Alternatives considered: a fresh database and clean audit log would require a
 new projection/import lineage, preservation of receipt references, all domain
