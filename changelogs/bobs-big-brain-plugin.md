@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T14:30:01Z -->
+<!-- fetched-at: 2026-10-26T14:59:23Z -->
 
 # Changelog
 
@@ -11,6 +11,14 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+
+- Align team MCP initialization with the declared plugin version, ship the guidance and
+  standalone anchor verifier referenced by the npm package, and reconcile current source,
+  build, retrieval and distribution documentation (`compile-then-govern-eqw.6.4`).
+  Existing version labels do not imply a new release or installed-channel upgrade.
+
 
 ### Fixed
 
