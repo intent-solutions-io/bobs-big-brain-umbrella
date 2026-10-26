@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T20:59:18Z -->
+<!-- fetched-at: 2026-10-26T21:42:08Z -->
 
 # Changelog
 
@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Reconcile owning and stock harness verification using one installed verifier
+  and additive patterns. Retain all eight existing protected policy paths and
+  expand coverage to package/CI commands and verifier-selection controls, with
+  copied-file mutation checks in CI. Existing thresholds and waivers are unchanged;
+  manifest changes require explicit review (`compile-then-govern-ba9`).
 
 - Restrict global policy dormancy and index freshness diagnostics to unscoped
   administrators at `GET /api/health/diagnostics`. Anonymous `GET /api/health`
