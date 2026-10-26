@@ -115,8 +115,14 @@ are frozen and versioned. The implementation must publish canonical byte test
 vectors before any signing is approved; it must not depend on object insertion
 order supplied by a caller.
 
-- `legacy-audit-prefix.jsonl`: one canonical raw-row record per positive unique
-  `seq`, sorted ascending. Explicit fields are `id`, `action`, `memory_id`,
+- `legacy-audit-prefix.jsonl`: exactly one canonical raw-row record for every
+  historical `audit_events` row, retaining its unchanged row ID. Read the full
+  table without a positive-sequence filter, DISTINCT, deduplication or omission.
+  Before any digest is approved, require the inventory's total count and complete
+  row-ID set to equal the database table; every sequence must be a positive safe
+  integer and all sequences and IDs must be unique. Any failure refuses
+  preparation entirely; it never drops a row to manufacture an acceptable
+  prefix. Only after those checks, serialize every row sorted by ascending `seq`. Explicit fields are `id`, `action`, `memory_id`,
   `tenant_id`, `actor_json`, `reason`, `details_json`, `timestamp`, `entry_hash`,
   `prev_entry_hash`, `hash_version`, `seq`. JSON-bearing database fields remain
   their exact stored strings. Each record ends with one LF. Private content is
@@ -192,6 +198,13 @@ witness to preserve the sealed commit ancestry. A legitimate later append must
 not invalidate the baseline, while truncation, prefix rewrite, record splice or
 replacement of history must refuse.
 
+The old head is the last non-null stored entry hash in canonical ascending
+sequence order, after the complete inventory passes the preconditions above.
+Compare it with `AuditRepository.findChainTip()`. A duplicate or invalid sequence
+has no tie-break/rebaseline rule in this proposal: refuse rather than choose a
+head, reset an allocator or resequence history. Likewise, a boundary allocation
+other than approved last sequence + 1 rolls back the boundary transaction.
+
 The intent does not include the future boundary hash. The boundary references
 the intent and final approval digests; the later seal references all three. This avoids a circular hash
 or signature dependency. No private key, bearer token, source body or implicit
@@ -233,7 +246,7 @@ no test loads live keys, touches live state or publishes real external evidence.
 
 | Test | Requirements / risk | Expected evidence |
 |---|---|---|
-| TEST-01 | REQ-01; historical evidence loss | Entire old prefix and original archive/log/Git bytes and row identities preserved; no UPDATE/DELETE/rehash path. |
+| TEST-01 | REQ-01; historical evidence loss | Every audit row ID and raw field appears exactly once; total count and ID-set equality checked before signing; invalid or duplicate sequences refuse without omission. Entire old prefix and original archive/log/Git bytes and row identities preserved; no UPDATE/DELETE/rehash path. |
 | TEST-02 | REQ-01/02/05; baseline laundering | Row addition/deletion/reordering, any field change (explicitly action, memory ID, actor JSON and details JSON), tuple/head/count/break drift, changed old anchor or same count with different forks all refuse before activation; legitimate later anchor appends preserve the sealed prefix and pass canonical checks. |
 | TEST-03 | REQ-02/03/07; forged authority | Invalid signature, wrong approved key, substituted embedded key, expired approval, cross-brain replay, altered witness target and local-only publication all refuse. |
 | TEST-04 | REQ-04/05; false global green | Unchanged global verifier still reports all historical forks and false; qualified epoch output separately reports preserved legacy plus strictly verified current suffix. |
