@@ -165,6 +165,7 @@ PY_INDEX
   run deploy
   [ "$status" -ne 0 ]
   [ ! -e "$RELEASE" ]
+  [ ! -L "$RELEASE" ]
   [ "$(cat "$TEST_HOME/bin/teamkb-compile-daily.sh")" = 'old wrapper' ]
   [ ! -e "$TEST_HOME/bin/teamkb-backup.sh" ]
   [ ! -e "$TEST_HOME/.claude/skills/teamkb-review/SKILL.md" ]
