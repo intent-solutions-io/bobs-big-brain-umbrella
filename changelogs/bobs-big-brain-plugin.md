@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T12:13:38Z -->
+<!-- fetched-at: 2026-10-26T12:24:26Z -->
 
 # Changelog
 
@@ -11,6 +11,14 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+
+- Local `brain_govern` now exposes canonical safe spool-intake counts, including
+  disclosure refusals and unavailable intake, instead of silently dropping those
+  outcomes. Idle messages describe observed inactivity without asserting an empty
+  spool. Document raw archive retention, repeated refusal observations and the
+  absence of audit receipts for pre-intake refusals (`compile-then-govern-eqw.9`).
 
 ### Added
 
