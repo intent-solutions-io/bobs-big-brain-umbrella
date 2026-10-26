@@ -130,8 +130,8 @@ order supplied by a caller.
   `brainId`, `epochId`, `issuedAt`, `expiresAt`, `sourceRevision`,
   `legacyPrefix` (digest, row count, last sequence, old head), `legacyBreaks`
   (digest and reason counts), `legacyAnchors` (sealed-prefix raw-byte digest and byte length, record count,
-  anchor head and local Git evidence), `boundary` (reserved event ID, expected sequence,
-  previous entry hash, tenant/actor and dated reason), `authorizationPolicyDigest`,
+  anchor head and local Git evidence), `boundary` (reserved event ID, expected sequence, previous entry hash,
+  tenant ID, exact `actorJson` string, nullable reason and `detailsTemplateVersion: 1`), `authorizationPolicyDigest`,
   `signerKeyFingerprint`, `witnessPolicyDigest`. Optionality is not implicit.
 - `signed-intent.json`: intent digest, approved signer public key and signature
   over the UTF-8 domain prefix `bbb-audit-cutover-intent-v1\n` followed by the
@@ -159,6 +159,29 @@ order supplied by a caller.
   signed-intent artifact digest, final approval digest and original prefix/anchor digests, signed under
   a separate `bbb-audit-epoch-seal-v1\n` domain. Independent witness evidence binds
   this final seal digest to its configured external publication identity.
+
+The boundary raw row has no caller-chosen fields after final approval. Its
+complete derivation is: `id` = intent's reserved event ID; `seq` = approved last
+sequence + 1; `prev_entry_hash` = approved old head; `action` = proposed new
+schema literal `audit_epoch_cutover`; `memory_id` = the intent's UUID `epochId`;
+`tenant_id` = the approved boundary tenant ID; `timestamp` = signed `issuedAt`;
+`reason` = approved nullable boundary reason; `actor_json` = approved exact
+`actorJson` bytes; `hash_version` = 2 for this version-1 protocol. Validate the
+actor against the existing schema and refuse if the canonical insertion's stored
+serialization differs from the approved bytes.
+
+`detailsTemplateVersion: 1` defines `details_json` as compact UTF-8 JSON with
+exactly these fields in this order: `epochId`, `intentDigest`,
+`finalApprovalDigest`, `oldHead`, `cutoffSeq`, `issuedAt`. Values come from the
+approved intent, computed intent/final-approval digests and approved prefix; no
+extra fields or caller-provided JSON are accepted. There is no trailing LF inside
+the stored JSON string. Construct the details object in this order for ordinary
+canonical insertion. Compute `entry_hash` with the existing canonical v2 helper
+over these exact values, then compare every stored raw field to its specified
+value before sealing or activation. The full raw-row digest in the seal supplies
+an additional binding; it does not replace checking the approved derivation.
+The intent signs only the template version, not its future rendered digest
+fields, preserving the acyclic intent → approval → boundary → seal graph.
 
 The old anchor digest covers exactly the sealed byte length ending at the
 signed record boundary, not the entire subsequently growing active log. Every
@@ -211,10 +234,10 @@ no test loads live keys, touches live state or publishes real external evidence.
 | Test | Requirements / risk | Expected evidence |
 |---|---|---|
 | TEST-01 | REQ-01; historical evidence loss | Entire old prefix and original archive/log/Git bytes and row identities preserved; no UPDATE/DELETE/rehash path. |
-| TEST-02 | REQ-01/02/05; baseline laundering | Row addition/deletion/reordering, any field change, tuple/head/count/break drift, changed old anchor or same count with different forks all refuse before activation; legitimate later anchor appends preserve the sealed prefix and pass canonical checks. |
+| TEST-02 | REQ-01/02/05; baseline laundering | Row addition/deletion/reordering, any field change (explicitly action, memory ID, actor JSON and details JSON), tuple/head/count/break drift, changed old anchor or same count with different forks all refuse before activation; legitimate later anchor appends preserve the sealed prefix and pass canonical checks. |
 | TEST-03 | REQ-02/03/07; forged authority | Invalid signature, wrong approved key, substituted embedded key, expired approval, cross-brain replay, altered witness target and local-only publication all refuse. |
 | TEST-04 | REQ-04/05; false global green | Unchanged global verifier still reports all historical forks and false; qualified epoch output separately reports preserved legacy plus strictly verified current suffix. |
-| TEST-05 | REQ-05; suffix amnesty | Added fork, hash rewrite, unknown hash version, duplicate/nonpositive sequence, null-hash row, timestamp-only boundary edit and missing/spliced boundary refuse; unapproved second cut-over refuses. |
+| TEST-05 | REQ-05; suffix amnesty | Added fork, hash rewrite, unknown hash version, duplicate/nonpositive sequence, null-hash row, timestamp-only boundary edit, any non-derived boundary field, and missing/spliced boundary refuse; unapproved second cut-over refuses. |
 | TEST-06 | REQ-06; interleaved writes | Competing SQLite writer, kernel-lock contender and every supported append entrypoint cannot interleave the boundary or write during pending seal; assert refusal before the first durable memory, candidate, spool, export or other filesystem effect, not merely at a later audit append. Old unsupported binaries fail rollout readiness. |
 | TEST-07 | REQ-07/08; crash/witness outage | Crash at each transition, publication timeout, absent/stale witness and changed files leave truthful commitment, blocked activation and bounded idempotent resume; no network under transaction. |
 | TEST-08 | REQ-08; destructive rollback | Replay adds no duplicate boundary; exact resume succeeds; different intent/brain/boundary refuses; rollback preserves committed evidence. |
