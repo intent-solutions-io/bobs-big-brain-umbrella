@@ -107,11 +107,6 @@ flowchart TB
 A source proposal can become governed memory and then a cited search result:
 
 ```mermaid
-%%{init: {'theme':'base','themeVariables':{
-  'primaryColor':'#0ea5e9','primaryBorderColor':'#0284c7','primaryTextColor':'#ffffff',
-  'lineColor':'#38bdf8','signalColor':'#38bdf8','signalTextColor':'#e5e7eb',
-  'actorBkg':'#0ea5e9','actorBorder':'#0284c7','actorTextColor':'#ffffff',
-  'noteBkgColor':'#0c4a6e','noteTextColor':'#e5e7eb'}}}%%
 sequenceDiagram
     participant S as Raw source
     participant ICO as Compiler — compile
