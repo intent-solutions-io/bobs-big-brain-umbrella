@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T12:24:26Z -->
+<!-- fetched-at: 2026-10-26T12:39:58Z -->
 
 # Changelog
 
@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+
+- Scope `fast-uri` overrides by requested major: AJV and Swagger retain patched
+  3.1.9, while Fastify validation and serialization receive supported patched
+  4.2.3. Preserve real header, schema, SDK and URI security controls across both
+  selected lines (`compile-then-govern-1io.1.12`).
 
 ### Fixed
 
