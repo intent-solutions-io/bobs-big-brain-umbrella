@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T02:40:36Z -->
+<!-- fetched-at: 2026-10-26T03:02:10Z -->
 
 # Changelog
 
@@ -51,6 +51,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lifecycle or search activation is included (`compile-then-govern-39z.1.1`).
 
 ### Fixed
+
+- Commit audited candidate intake and its canonical proposal receipt together on
+  one SQLite connection. Verify candidate payload/hash and receipt readback so
+  aborted, ignored or drifted writes fail and roll back. The API reuses the shared
+  Curator intake boundary; schema, channel, disclosure, authority overrides,
+  tenant-scoped replay and redaction checks remain in use. Explicit unaudited
+  direct-service construction remains unreceipted; historical replays do not
+  fabricate missing receipts. Recovery orchestration and live transfer remain
+  separate (`compile-then-govern-eqw.8.1.2.1`).
 
 - Make API reviewer rejection atomic on one immediate SQLite transaction, with
   current candidate/hold/admitted-memory checks and verified status/receipt writes.
