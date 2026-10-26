@@ -3,7 +3,7 @@
  * audit-harness CLI dispatcher
  *
  * Thin wrapper that invokes the canonical shell/python implementations in scripts/.
- * Keeping the scripts as-is (not a TS port) for v0.x — they're battle-tested
+ * Keeping the scripts as-is (not a TS port) across stable releases — they're battle-tested
  * and language-portable. The CLI just adds discoverability + cross-platform-ish shell resolution.
  */
 const { spawn } = require('node:child_process');
@@ -30,6 +30,7 @@ const COMMANDS = {
   'fp-rate':       { script: 'fp-rate.py',       args: [] },
   'currency':      { script: 'currency.py',      args: [] },
   'migration-notes': { script: 'migration-notes.py', args: [] },
+  'report-lineage': { script: 'report-lineage.py', args: [] },
   'gen-layer-applicability': { script: 'gen-layer-applicability.py', args: [] },
   'worktree-run':  { script: 'worktree-run.sh',  args: [] },
 };
@@ -78,6 +79,10 @@ Commands:
                            turns any conformance violation into FAIL (exit 1).
                            OpenAPI -> spectral, Action -> yamllint (missing tool =
                            INDETERMINATE advisory).
+                           --tier marketplace validates SKILL.md against the kernel's
+                           full authoring/v1 skill-frontmatter contract (pinned
+                           @intentsolutions/core, sha256-checked); default --tier floor
+                           keeps the name + description structural floor.
   audit [repo]             Read-only testing-depth gate-runner. For each
                            testing-depth gate in the profile, reports coverage
                            PRESENCE per pyramid layer (unit/integration/e2e/perf/
@@ -88,11 +93,18 @@ Commands:
   scan [repo]              Read-only security/hygiene/skill-quality gate-runner.
                            hygiene-readme is a local presence check; every tool-
                            backed gate (gitleaks/osv-scanner/semgrep/syft/
-                           markdownlint/lychee) shells out (clean->PASS, findings->
-                           ADVISORY, tool absent->INDETERMINATE); skill-behavioral
+                           markdownlint/lychee) shells out. OSV detects supported
+                           lockfiles/manifests before invocation: no dependency
+                           graph->NOT_APPLICABLE; declared but unlocked graph->
+                           unmeasured; clean->PASS; findings->ADVISORY;
+                           skill-behavioral
                            CONSUMES a j-rig verdict (--jrig-verdict PATH), never
                            reimplementing judgment. Emits gate-result/v1 rows.
-                           Advisory by default; --strict turns findings into FAIL.
+                           Advisory by default; --strict turns every finding into
+                           FAIL. --fail-closed requires OSV to run when dependency
+                           inputs exist and blocks production/unknown findings at
+                           --osv-severity-threshold (HIGH by default); proven
+                           development-only findings remain advisory.
   fp-rate                  Measure each gate's false-positive / false-negative rate
                            over a labeled corpus (valid/ should be clean, malformed/
                            should flag). The metric that gates advisory->blocking
@@ -113,6 +125,11 @@ Commands:
                            a minor/patch boundary reports "no action required".
                            --json emits a migration-notes/v1 envelope. Exit 1 =
                            version/range not in CHANGELOG; 2 = CHANGELOG unreadable.
+  report-lineage            Verify J-Rig unified/suite Run/Grade/report lineage
+                           and arithmetic. Read-only, offline, advisory by default;
+                           --strict turns unverifiable reports into FAIL. Use
+                           --report PATH --audit-manifest PATH --json for a
+                           machine-readable gate-result/v1 row.
   gen-layer-applicability  Project schemas/audit-profile/registry.v1.json into
                            schemas/audit-profile/layer-applicability.md. --write to
                            regenerate, --check to fail on drift (CI gate). The doc
@@ -120,6 +137,10 @@ Commands:
   emit-evidence            Wrap a gate-result JSON envelope in an in-toto
                            Statement v1 (predicate https://evals.intentsolutions.io/gate-result/v1)
                            Read JSON on stdin: <gate> --json | audit-harness emit-evidence
+                           --output FILE writes one Statement (--out: deprecated
+                           alias). --append-to BUNDLE appends the unsigned row to
+                           the JSON-array bundle intent-rollout-gate consumes
+                           (validated, duplicate row ids refused, atomic write).
   worktree-run             Pre-push gate runner: checks the ref being pushed in
                            a disposable git worktree (verify + escape-scan on
                            the push range fail-closed; conform + audit advisory)
