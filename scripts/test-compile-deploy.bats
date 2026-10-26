@@ -38,6 +38,14 @@ entry() {
     bash "$TEST_HOME/bin/teamkb-compile-daily.sh" "$@"
 }
 
+selected_entry() {
+  local selected="$1"
+  shift
+  env -i HOME="$TEST_HOME" PATH=/usr/bin:/bin LANG=C \
+    TEAMKB_COMPILE_RELEASE="$selected" FIXTURE_RESULT="$RESULT" \
+    bash "$TEST_HOME/bin/teamkb-compile-daily.sh" "$@"
+}
+
 seed_audit() {
   local audit="$TEST_HOME/.claude/skills/teamkb-compile/methodology/decisions.jsonl"
   mkdir -p "$(dirname "$audit")"
@@ -225,12 +233,25 @@ PY
   printf 'invalid default manifest\n' > "$RELEASE/manifest.json"
   run entry
   [ "$status" -eq 69 ]
-  run env -i HOME="$TEST_HOME" PATH=/usr/bin:/bin LANG=C \
-    TEAMKB_COMPILE_RELEASE="$selected" FIXTURE_RESULT="$RESULT" \
-    bash "$TEST_HOME/bin/teamkb-compile-daily.sh" --selected
+  run selected_entry "$selected" --selected
   [ "$status" -eq 0 ]
   python3 - "$RESULT" <<'PY_ASSERT'
 import json,sys
 assert json.load(open(sys.argv[1])) == ['--selected']
 PY_ASSERT
+  rm -- "$RESULT"
+  cp "$selected/manifest.json" "$BATS_TEST_TMPDIR/selected-manifest.json"
+  printf 'invalid selected manifest\n' > "$selected/manifest.json"
+  run selected_entry "$selected"
+  [ "$status" -eq 69 ]
+  [ ! -e "$RESULT" ]
+  cp "$BATS_TEST_TMPDIR/selected-manifest.json" "$selected/manifest.json"
+  printf '\n# selected entry drift\n' >> "$selected/nightly-entry.py"
+  run selected_entry "$selected"
+  [ "$status" -eq 69 ]
+  [ ! -e "$RESULT" ]
+  cp "$RELEASE/nightly-entry.py" "$selected/nightly-entry.py"
+  run selected_entry "$selected" --selected
+  [ "$status" -eq 0 ]
+  [ -f "$RESULT" ]
 }
