@@ -203,7 +203,7 @@ These describe requested invocations, not evidence that a run succeeded.
   window with writes through capture and deterministic governance. Report actual
   returned dispositions and receipt verification; a requested promotion is not
   proof it happened.
-- An empty supplied signal document yields zero candidates, with the normal
+- Expected outcome for an empty supplied signal document: zero candidates, with the normal
   per-date outcome and digest. Never fill an empty day with invented memories.
 
 ## Output

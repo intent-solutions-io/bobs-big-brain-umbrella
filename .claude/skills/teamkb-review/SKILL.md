@@ -135,9 +135,9 @@ These are invocation examples, not run receipts.
 - `/teamkb-review --dry-run`: inspect the quarantined queue, search for existing
   coverage and print proposed promote/hold/reject decisions. Do not call approve
   or reject; report that no disposition requests were made.
-- An authenticated empty inbox produces a zero-review summary with no writes.
+- Expected outcome for an authenticated empty inbox: a zero-review summary with no writes.
   A failed inbox request must not be reported as an empty queue.
-- During an explicitly authorized live invocation, a candidate with uncertain
+- Expected behavior during an explicitly authorized live invocation: a candidate with uncertain
   sensitivity stays held. A deterministic approval refusal is recorded as a
   refusal, not counted as a promotion.
 
