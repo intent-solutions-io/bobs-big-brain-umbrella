@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T03:02:10Z -->
+<!-- fetched-at: 2026-10-26T03:22:51Z -->
 
 # Changelog
 
@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add conditional `archiveRecoveredSource` for a reviewed source/target manifest.
+  Verify current admitted target and candidate snapshots plus pinned canonical
+  promotion and selected-run receipts before archiving one active source with
+  its receipt on the same SQLite connection. Preserve source payload, metadata,
+  trust and sensitivity bounds; recheck evidence after writes and on replay.
+  This core does not capture, take a filesystem lock, anchor, refresh exports or
+  execute live recovery (`compile-then-govern-eqw.8.1.2.2`).
 
 - Add finite `governSelectedCandidates` over reviewed candidate snapshot bindings,
   using the canonical curator under one immediate SQLite transaction. Preserve
