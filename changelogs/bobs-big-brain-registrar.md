@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T20:30:13Z -->
+<!-- fetched-at: 2026-10-26T20:59:18Z -->
 
 # Changelog
 
@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Restrict global policy dormancy and index freshness diagnostics to unscoped
+  administrators at `GET /api/health/diagnostics`. Anonymous `GET /api/health`
+  retains liveness, DB connectivity, uptime and version, with no tenant or policy
+  metadata. Diagnostic consumers must migrate to the authenticated route;
+  no service deployment is performed (`compile-then-govern-zgh`).
 
 - Reconcile source documentation for retrieval defaults, package/API/MCP inventories,
   CI commands, and historical decision authority; repair the document index and links
