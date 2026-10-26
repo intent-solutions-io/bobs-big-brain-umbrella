@@ -6,6 +6,135 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-10-08
+
+Ships the 1.5.0 content to npm and crates.io. The `v1.5.0` tag and GitHub
+Release exist, but its release run failed before `npm publish`, so no
+registry carries 1.5.0; install 1.5.1.
+
+### Fixed
+
+- The release workflow now installs PyYAML and jsonschema (exact pins) before
+  `npm test`. The conform suite added in 1.5.0 parses SKILL.md frontmatter with
+  PyYAML; the release lane had neither package, so the `v1.5.0` tag run failed
+  13 conform cases and stopped before publishing. `.harness-hash` is re-pinned
+  for the workflow change and the version bump.
+
+## [1.5.0] - 2026-10-08
+
+First release since 1.4.0. The 1.5.0 version bump and the `scan --fail-closed`
+work were prepared on 2026-09-13 but never tagged or published; this release
+ships them together with everything merged since.
+
+### Added
+
+- **`emit-evidence --append-to BUNDLE` — assemble the Evidence Bundle the rollout
+  gate consumes.** Appends the unsigned Statement to a JSON array (created on the
+  first row), the plain-array form `intent-rollout-gate`'s `bundle-path` reads.
+  `scripts/bundle-append.py` validates every existing row and the new row: the
+  predicate against a frozen kernel `gate-result/v1` snapshot shipped at
+  `schemas/kernel-snapshot/` (a small keyword interpreter that refuses any
+  keyword it does not implement), the envelope against SPEC R8/R9. A duplicate
+  row id (gate_id) is refused; the write is atomic (temp file + rename) under an
+  exclusive lock, so every refusal leaves the bundle byte-identical. Refused with
+  `--output` or any signing flag. Contract suite:
+  `tests/emit-evidence/run-emit-evidence-tests.sh` (CI job
+  `emit-evidence-contract`), which also requires the snapshot to stay
+  byte-identical to the regression suite's kernel fixture and cross-checks rows
+  with `jsonschema`.
+
+- **`conform --tier marketplace` — full kernel skill-frontmatter validation.**
+  SKILL.md frontmatter can now be checked against the kernel's complete
+  `authoring/v1` skill-frontmatter contract (`@intentsolutions/core@0.11.0`):
+  the IS 8-field required set, strict SemVer `version`, the `allowed-tools`
+  string-or-array shape, and the three universal folds (deprecated fields,
+  reserved names and markup, the 1536-character description budget). The four
+  kernel files are vendored unmodified under `schemas/conform/kernel/` and
+  pinned by package version, tarball sha256 and per-file sha256 in `pin.json`;
+  a mismatch yields an indeterminate ADVISORY, never a verdict. The embedded
+  validator gains `$ref` (local `$id` registry, JSON pointers) and `not`; the
+  conform suite asserts it agrees with `jsonschema` on every in-repo SKILL
+  fixture (a one-off survey of 3,091 estate skills also found 0 disagreements;
+  that corpus is not committed). The default
+  tier stays `floor` (name + description), so existing consumers see the same
+  verdicts; adopt the strict check with `--tier marketplace --strict`.
+- **`install.sh` ships the conform schemas.** The vendoring installer now copies
+  `schemas/` (classify registry, conform floor schemas, pinned kernel subset)
+  into `.audit-harness/schemas/`, records a `schemas-sha256` line per file in
+  `PROVENANCE`, and its wrapper dispatches `classify` and `conform`. Before this,
+  a vendored install could only emit "bundled schema missing" ADVISORY rows.
+  `AUDIT_HARNESS_TARBALL_URL` overrides the tarball source (for example a
+  `file://` mirror) and is recorded in `PROVENANCE`. A new offline suite
+  (`tests/install/`) proves a fresh install runs `conform` with no network.
+
+- **`report-lineage` subcommand — deterministic Run/Grade/report verification.** The
+  read-only, stdlib-only gate validates J-Rig `unified-report/v1` and
+  `suite-report/v1` projections, recomputes summary and per-cell arithmetic,
+  checks selected Grader snapshot identity and unique per-cell `sample_index`
+  slots, and optionally cross-checks a suite against its `eval-suite/v1` audit
+  manifest. Failed/retried attempts may leave intentional index gaps; the gate
+  does not infer `target_n` from a report that does not declare it. Clean rows
+  now use the kernel-valid `audit-harness:ci:report-lineage` gate ID and carry
+  selected Grader identity, deterministic Run counts, report schema, and
+  sample-balance metadata for exact-byte promotion binding. Findings are
+  ADVISORY by default; `--strict` turns unverifiable or mismatched lineage into
+  FAIL. No SQLite, network, J-Rig import, or runtime dependency is introduced.
+
+- `scan --fail-closed` now makes OSV dependency measurement mandatory whenever
+  a supported lockfile or manifest exists. The gate emits honest
+  `NOT_APPLICABLE` only when no dependencies are declared, fails an unlocked
+  declared graph in required mode, separates vulnerability results from
+  scanner failures, records scanner/input/policy provenance, distinguishes
+  production, development-only, and unknown exposure, and blocks
+  production/unknown findings at a configurable severity threshold (HIGH by
+  default).
+- A shipped, checksum-pinned OSV-Scanner 2.5.1 installer for ephemeral CI
+  runners, plus deterministic golden coverage for clean, vulnerable,
+  unavailable, crashed, malformed, and not-applicable paths.
+
+### Changed
+
+- **Kernel currency and shadow detection:** the kernel-shadow gate now checks
+  both local re-declarations and dependency ranges that cannot resolve to the
+  current `@intentsolutions/core@0.10.0`. Its offline contract suite covers
+  the 0.x caret trap, lower-bound SemVer behavior, unknown-range surfacing,
+  and fail-closed lookup messaging. Release-time Evidence Bundle validation is
+  pinned to the same exact kernel version.
+
+- PyPI publishing is retired starting with this release. The
+  `intent-audit-harness` PyPI package remains frozen at `1.4.0`; npm is the
+  canonical distribution and crates.io remains an optional Rust wrapper.
+
+### Deprecated
+
+- **`emit-evidence --out`**: newly accepted, and deprecated on arrival. It behaves
+  exactly like the documented `--output` and prints a deprecation warning.
+  Downstream docs had advertised `--out`, which the script previously rejected as
+  an unknown flag; migrate to `--output`. A path flag given without a
+  value (`--input`, `--output`, `--out`, `--append-to`) now exits 1 instead of
+  aborting on an unbound variable.
+
+### Fixed
+
+- Root `npm test` now runs the aggregate deterministic suite instead of a
+  staged-diff command followed by `|| true`; `npm run check` is the contributor
+  gate for lint, tests, projection drift, and hash-manifest verification.
+- The self-pin denominator now includes delegated shell/Python test runners and
+  JSON policy schemas, closing routes that could weaken a suite or applicability
+  contract while leaving the pinned package command unchanged.
+- Root development dependencies now have a committed lockfile; CI and release
+  jobs use `npm ci` rather than resolving a fresh graph with `npm install`.
+- The release workflow is tag-only. The manual-dispatch path that could publish
+  arbitrary branch bytes without a matching version tag has been removed.
+
+### Security
+
+- Release and pull-request dependency lanes now install OSV-Scanner and execute
+  the harness fail-closed instead of accepting an unmeasured advisory result.
+- The 23-test signing-reconciler state-machine suite now runs in CI; it was
+  previously present but unwired despite protecting append-only Rekor outbox
+  and fail-closed persistence behavior.
+
 ## [1.4.0] - 2026-09-01
 
 ### Added
@@ -457,7 +586,9 @@ Initial release. Extracted from the `audit-tests` Claude Code skill v7.0.0 to en
 - **`audit-harness gherkin-lint`** — advisory Gherkin quality check.
 - **`audit-harness crap`** — CRAP (Complexity × Coverage) scorer for Python, JS/TS, Go, Rust.
 
-[Unreleased]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.5.0...v1.5.1
+[1.5.0]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.3.1...v1.4.0
 [1.2.2]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.2.1...v1.2.2
 [1.2.1]: https://github.com/jeremylongshore/intent-audit-harness/compare/v1.2.0...v1.2.1

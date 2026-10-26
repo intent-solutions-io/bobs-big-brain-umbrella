@@ -14,7 +14,7 @@ Deterministic test-enforcement toolkit. Companion to the `audit-tests` and `impl
 
 ## What it is
 
-A small CLI dispatching 17 released deterministic commands (shell + stdlib-Python scripts) — an 18th, `audit-harness migration-notes`, is on disk and staged for the next release (see CHANGELOG `[Unreleased]`):
+A small CLI dispatching deterministic commands (shell + stdlib-Python scripts), including read-only evidence and report verification:
 
 | Command | Purpose |
 |---|---|
@@ -27,18 +27,22 @@ A small CLI dispatching 17 released deterministic commands (shell + stdlib-Pytho
 | `audit-harness bias` | Count common test-bias patterns |
 | `audit-harness gherkin-lint` | Advisory Gherkin quality check |
 | `audit-harness crap` | CRAP (Complexity × Coverage) scorer — Python, Go, JS/TS, Rust |
-| `audit-harness emit-evidence` | Wrap a gate-result JSON envelope in an in-toto Statement v1 (predicate `gate-result/v1`) |
+| `audit-harness emit-evidence` | Wrap a gate-result JSON envelope in an in-toto Statement v1 (predicate `gate-result/v1`); `--output FILE` writes one row, `--append-to BUNDLE` appends it to the JSON-array bundle `intent-rollout-gate` consumes |
 | `audit-harness classify` | Read-only repo classifier → an `audit-profile/v1` value (never writes) |
-| `audit-harness conform` | Read-only conformance gate-runner → `gate-result/v1` rows against bundled content-addressed schemas |
+| `audit-harness conform` | Read-only conformance gate-runner → `gate-result/v1` rows against bundled content-addressed schemas; `--tier marketplace` checks SKILL.md against the pinned kernel `authoring/v1` skill-frontmatter contract (default `--tier floor`: name + description) |
 | `audit-harness audit` | Read-only testing-depth gate-runner → coverage presence per pyramid layer + crap-score |
-| `audit-harness scan` | Read-only security/hygiene/skill-quality gate-runner (gitleaks / osv-scanner / Semgrep / syft / markdownlint / lychee) |
+| `audit-harness scan` | Read-only security/hygiene/skill-quality gate-runner; `--fail-closed` makes applicable OSV measurement release-blocking |
 | `audit-harness fp-rate` | Measure each gate's false-positive / false-negative rate over a labeled corpus |
 | `audit-harness currency` | Advisory poll-freshness report over the per-upstream pin relation |
+| `audit-harness migration-notes` | Generate deterministic adopter-facing migration notes from the changelog and SemVer policy |
+| `audit-harness report-lineage` | Verify generic Run/Grade/report lineage, arithmetic, and per-cell sample-slot uniqueness; optionally cross-check a J-Rig suite audit manifest; emit promotion metadata for downstream binding |
 | `audit-harness gen-layer-applicability` | Project the canonical audit-profile registry into `layer-applicability.md` |
+| `audit-harness worktree-run` | Run pre-push gates against an exact ref in a disposable worktree |
 
 ## Install
 
-Pick the install flavor that matches your repo's ecosystem — all three publish the same CLI surface.
+The npm package is the canonical, actively released distribution. The Rust
+wrapper remains an optional crates.io distribution.
 
 **Node / JS / TS** (from npm):
 
@@ -48,13 +52,9 @@ pnpm add -D @intentsolutions/audit-harness
 # or: yarn add --dev @intentsolutions/audit-harness
 ```
 
-**Python** (from PyPI):
-
-```bash
-pip install intent-audit-harness
-# or inside a project venv:
-python -m pip install intent-audit-harness
-```
+**Python:** the PyPI package is frozen at `1.4.0` and does not receive releases
+starting with `1.5.0`. Do not use it for new estate rollouts; install the npm
+package above or use the vendored-script path below.
 
 **Rust** (from crates.io):
 
@@ -92,6 +92,27 @@ pnpm exec audit-harness verify
       - run: pnpm exec audit-harness verify
       - run: pnpm exec audit-harness escape-scan --range origin/main..HEAD
 ```
+
+### Dependency security in CI
+
+Install the repository-pinned, checksum-verified OSV binary and run the
+dependency gate in fail-closed mode:
+
+```bash
+OSV_BIN="$RUNNER_TEMP/osv-bin"
+bash node_modules/@intentsolutions/audit-harness/scripts/install-osv-scanner.sh "$OSV_BIN"
+export PATH="$OSV_BIN:$PATH"
+pnpm exec audit-harness scan --fail-closed --osv-severity-threshold HIGH . \
+  > dependency-gate-results.json
+```
+
+A supported lockfile requires a measured scan. Missing/crashed scanners and
+unparseable results fail. No supported dependency input emits `NOT_APPLICABLE`
+only when the repository also declares no dependencies; an unlocked declared
+graph fails closed. Production or unknown-exposure findings at HIGH or above
+block, while proven development-only findings remain visible for triage. See
+[Dependency vulnerability gate](docs/dependency-scanning.md) for the exact
+contract, evidence fields, and policy exceptions.
 
 ### Engineer workflow — change a policy threshold
 
@@ -153,6 +174,7 @@ Important for CI scripting:
 | 2 | verify | `HARNESS_TAMPERED` — pinned file changed |
 | 2 | escape-scan | REFUSE — pipeline halted |
 | 3 | verify | No manifest (fresh repo, not an error) |
+| 1 | scan `--fail-closed` | Required dependency measurement failed or policy-blocking OSV findings exist |
 
 ## Language support
 
