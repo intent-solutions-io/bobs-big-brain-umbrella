@@ -1,11 +1,11 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T16:43:59Z -->
+<!-- fetched-at: 2026-10-26T20:30:13Z -->
 
 # Changelog
 
 All notable changes to the **Governed Second Brain** plugin are documented here. This is the
-installable Claude Code + Cowork plugin (a local stdio MCP server); the engines it bundles
+installable Claude Code plugin (a local stdio MCP server); the engines it bundles
 (`ico` / `qmd` / govern kernel) carry their own changelogs in their repos. Format based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project aims at
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -13,6 +13,12 @@ installable Claude Code + Cowork plugin (a local stdio MCP server); the engines 
 ## [Unreleased]
 
 ### Fixed
+
+- Rebuild all four runtime helpers from Registrar `d87acb0` so proposals classified
+  as Registrar MCP AI submissions remain pending during automatic governance.
+  Preserve explicit review and eligible human hold resolution; classification
+  metadata does not authenticate a producer or a physical person
+  (`compile-then-govern-npx`). This source update does not upgrade installed channels.
 
 - Align team MCP initialization with the declared plugin version, ship the guidance and
   standalone anchor verifier referenced by the npm package, and reconcile current source,
