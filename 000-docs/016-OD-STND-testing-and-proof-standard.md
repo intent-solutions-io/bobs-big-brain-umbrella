@@ -49,7 +49,7 @@ fixture index preservation in both deploy modes, wrapper backup, unavailable-rev
 refusal, missing/malformed/drifted bundles, and exact argument/exit forwarding. A fixture installation is not a live deployment receipt.
 The backup script is copied for identity checks and is never executed by this suite.
 
-The installed umbrella wrapper validates its release manifest and the five payload
+The installed umbrella wrapper validates its release manifest and the six payload
 hashes recorded there before delegating to the Compiler. This checks local
 manifest/payload consistency; it does not establish an independent trust anchor
 against a coordinated manifest-and-payload rewrite. Mode selection, soak counting

@@ -95,6 +95,83 @@ class InstallTests(unittest.TestCase):
             installer.install(self.source, self.destination, revision)
         self.assertFalse((self.destination / "current").exists())
 
+    def test_notification_helper_is_pinned_and_missing_or_drifted_helper_refuses(self):
+        # This entry models the actual Compiler's sibling-source dependency.
+        (self.payload / "notify-routing.sh").write_text("notify_routing_load() { :; }\n")
+        (self.payload / "nightly-entry.py").write_text(
+            "import pathlib,subprocess\n"
+            "root=pathlib.Path(__file__).resolve().parent\n"
+            "raise SystemExit(subprocess.call(['bash', str(root/'teamkb-compile-daily.sh')]))\n")
+        (self.payload / "teamkb-compile-daily.sh").write_text(
+            '#!/bin/bash\nset -eu\n. "$(dirname "$0")/notify-routing.sh"\n'
+            'notify_routing_load\nprintf "fixture-dependency-ran\\n"\n')
+        self.git("add", ".")
+        self.git("commit", "-qm", "Fixture sibling-source dependency")
+        revision = self.git("rev-parse", "HEAD").strip()
+        self.git("update-ref", "refs/remotes/origin/main", revision)
+        receipt = installer.install(self.source, self.destination, revision)
+        release = self.destination / "current"
+        manifest = json.loads((release / "manifest.json").read_text())
+        self.assertIn("notify-routing.sh", manifest["sha256"])
+        self.assertEqual(receipt["files"], 6)
+        result = self.run_entry()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip(), "fixture-dependency-ran")
+        helper = release / "notify-routing.sh"
+        original = helper.read_bytes()
+        for content in (None, b'echo unverified-helper-executed\n'):
+            with self.subTest(content=content):
+                if content is None:
+                    helper.unlink()
+                else:
+                    helper.write_bytes(content)
+                result = self.run_entry()
+                self.assertEqual(result.returncode, 69, result.stdout + result.stderr)
+                self.assertNotIn("unverified-helper-executed", result.stdout)
+                self.assertEqual(result.stdout, "")
+        helper.write_bytes(original)
+
+    def test_missing_notification_helper_does_not_replace_current(self):
+        installer.install(self.source, self.destination, self.revision)
+        helper = self.payload / "notify-routing.sh"
+        helper.unlink(missing_ok=True)
+        # Ensure a new revision even before the installer includes this helper.
+        (self.payload / "nightly-entry.py").write_text("print('incomplete-upgrade')\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "Fixture missing notification helper")
+        revision = self.git("rev-parse", "HEAD").strip()
+        self.git("update-ref", "refs/remotes/origin/main", revision)
+        with self.assertRaises(subprocess.CalledProcessError):
+            installer.install(self.source, self.destination, revision)
+        self.assertEqual((self.destination / "current").resolve().name, self.revision)
+        self.assertEqual(self.run_entry().stdout.strip(), "fixture-compiler-ran")
+
+    def test_legacy_five_file_manifest_is_refused(self):
+        installer.install(self.source, self.destination, self.revision)
+        manifest = self.destination / "current/manifest.json"
+        data = json.loads(manifest.read_text())
+        del data["sha256"]["notify-routing.sh"]
+        manifest.write_text(json.dumps(data))
+        result = self.run_entry()
+        self.assertEqual(result.returncode, 69)
+        self.assertEqual(result.stdout, "")
+        # Do not overwrite a previously installed release under the same SHA.
+        with self.assertRaises(ValueError):
+            installer.install(self.source, self.destination, self.revision)
+        self.assertEqual((self.destination / "current").resolve().name, self.revision)
+
+    def test_invalid_notification_helper_does_not_replace_current(self):
+        installer.install(self.source, self.destination, self.revision)
+        (self.payload / "notify-routing.sh").write_text("if then broken shell\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "Fixture invalid notification helper")
+        revision = self.git("rev-parse", "HEAD").strip()
+        self.git("update-ref", "refs/remotes/origin/main", revision)
+        with self.assertRaises(subprocess.CalledProcessError):
+            installer.install(self.source, self.destination, revision)
+        self.assertEqual((self.destination / "current").resolve().name, self.revision)
+        self.assertEqual(self.run_entry().stdout.strip(), "fixture-compiler-ran")
+
     def test_runtime_drift_is_refused_before_compiler_exec(self):
         installer.install(self.source, self.destination, self.revision)
         (self.destination / "current/nightly-entry.py").write_text("print('untrusted')\n")

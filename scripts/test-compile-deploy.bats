@@ -16,7 +16,7 @@ def git(*args):
 git('init', '-q'); git('config', 'user.name', 'Fixture')
 git('config', 'user.email', 'fixture@example.invalid')
 payload = root / 'scripts/distiller'; payload.mkdir(parents=True)
-for name in ('nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs'):
+for name in ('nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs', 'notify-routing.sh'):
     (payload / name).write_text('#!/bin/sh\nexit 0\n' if name.endswith('.sh') else '# fixture\n' if name.endswith('.py') else '// fixture\n')
 (payload / 'nightly-entry.py').write_text('import json,os,pathlib,sys\npathlib.Path(os.environ["FIXTURE_RESULT"]).write_text(json.dumps(sys.argv[1:]))\nraise SystemExit(int(os.environ.get("FIXTURE_EXIT", "0")))\n')
 git('add', '.'); git('commit', '-qm', 'Compiler payload fixture')
@@ -192,10 +192,10 @@ PY_INDEX
   done
 }
 
-@test "drift in any of the five pinned payloads prevents entry execution" {
+@test "drift in any of the six pinned payloads prevents entry execution" {
   run deploy --compile-only
   [ "$status" -eq 0 ]
-  for name in nightly-entry.py runtime-proof.py c8-mcp.py teamkb-compile-daily.sh eval-distiller-output.mjs; do
+  for name in nightly-entry.py runtime-proof.py c8-mcp.py teamkb-compile-daily.sh eval-distiller-output.mjs notify-routing.sh; do
     cp "$RELEASE/$name" "$BATS_TEST_TMPDIR/original"
     printf '\n# fixture drift\n' >> "$RELEASE/$name"
     run entry
