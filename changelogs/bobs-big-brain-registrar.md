@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T01:30:31Z -->
+<!-- fetched-at: 2026-10-26T01:58:09Z -->
 
 # Changelog
 
@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lifecycle or search activation is included (`compile-then-govern-39z.1.1`).
 
 ### Fixed
+
+- Make API reviewer rejection atomic on one immediate SQLite transaction, with
+  current candidate/hold/admitted-memory checks and verified status/receipt writes.
+  Retain AI/system review of inbox and non-held quarantined proposals; refuse
+  repeated or already-admitted rejection without another receipt. Candidate content
+  survives, and silently ignored or aborted writes roll back (6ps.23).
 
 - Isolate DenseIndexer HTTP fixtures on private Unix sockets so unrelated host
   loopback requests cannot enter their strict rejection counters. Preserve the
