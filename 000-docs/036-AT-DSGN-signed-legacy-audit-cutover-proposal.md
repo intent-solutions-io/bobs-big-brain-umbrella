@@ -6,7 +6,7 @@
 | Schema / template | 1 / blueprint-docs 3.0.0, architecture + ADR |
 | Status | Proposed; implementation, signer, witness and application are unapproved |
 | Owner / decision authority | Jeremy Longshore; explicit owner approval required for the bound cut-over |
-| Reviewers | Agent review notes incorporated; configured repository reviews tracked on PR #124 |
+| Reviewers | [Review status is tracked on PR #124](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/pull/124) |
 | Updated / review date | 2026-10-26 / before any implementation approval or application |
 | Classification | Public design; private brain records, bodies and key material excluded |
 | Sources | S1–S6 below; assumptions A1–A2 and unknowns U1–U4 |
