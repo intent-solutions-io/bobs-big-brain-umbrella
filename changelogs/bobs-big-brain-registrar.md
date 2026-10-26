@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T06:01:08Z -->
+<!-- fetched-at: 2026-10-26T06:15:41Z -->
 
 # Changelog
 
@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add trusted asynchronous recovery composition that keeps the validated physical
+  store, existing database and acquired kernel flock bound through awaited postprocessing.
+  Fresh partial applies run that stage; apply replay skips it, while explicit
+  repair requires verified existing settlement and never governs. Keep known
+  commits after callback or cleanup faults, recheck store/settlement between
+  stages, retain sanitized warnings and snapshot operation identity before await.
+  Callback completion does not certify full recovery; concrete plugin anchoring,
+  tenant-isolated exports/indexes and their proof remain parent work
+  (`compile-then-govern-eqw.8.1.2.7`).
 
 - Add `curator-recovery plan`, `apply` and `status` for explicit private,
   current-schema stores. Pin reviewed plans to physical directory/database
