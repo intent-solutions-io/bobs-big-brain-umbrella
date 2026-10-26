@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-26T01:01:54Z -->
+<!-- fetched-at: 2026-10-26T01:30:31Z -->
 
 # Changelog
 
@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lifecycle or search activation is included (`compile-then-govern-39z.1.1`).
 
 ### Fixed
+
+- Isolate DenseIndexer HTTP fixtures on private Unix sockets so unrelated host
+  loopback requests cannot enter their strict rejection counters. Preserve the
+  original seven-request malformed-input assertion, explicitly test rejection of
+  a root request, and retain unchanged production-fetch TCP EmbedClient tests
+  (6ps.24). The earlier unexpected callers remain unidentified.
 
 - Run explicitly enabled retrieval acceptance over an internally owned export
   copy and rebuild qmd/native indexes in a private worker. Preserve source
