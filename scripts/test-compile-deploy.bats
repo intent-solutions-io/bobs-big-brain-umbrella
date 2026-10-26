@@ -19,7 +19,7 @@ payload = root / 'scripts/distiller'; payload.mkdir(parents=True)
 for name in ('nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs'):
     (payload / name).write_text('#!/bin/sh\nexit 0\n' if name.endswith('.sh') else '# fixture\n' if name.endswith('.py') else '// fixture\n')
 (payload / 'nightly-entry.py').write_text('import json,os,pathlib,sys\npathlib.Path(os.environ["FIXTURE_RESULT"]).write_text(json.dumps(sys.argv[1:]))\nraise SystemExit(int(os.environ.get("FIXTURE_EXIT", "0")))\n')
-git('add', '.'); git('commit', '-qm', 'Reviewed fixture')
+git('add', '.'); git('commit', '-qm', 'Compiler payload fixture')
 git('update-ref', 'refs/remotes/origin/main', git('rev-parse', 'HEAD').decode().strip())
 PY
   REVISION="$(git -C "$COMPILER" rev-parse HEAD)"
@@ -36,6 +36,29 @@ entry() {
   env -i HOME="$TEST_HOME" PATH=/usr/bin:/bin LANG=C \
     FIXTURE_RESULT="$RESULT" FIXTURE_EXIT="${FIXTURE_EXIT:-0}" \
     bash "$TEST_HOME/bin/teamkb-compile-daily.sh" "$@"
+}
+
+seed_index() {
+  local index="$TEST_HOME/.claude/skills/teamkb-compile/methodology/index.db"
+  mkdir -p "$(dirname "$index")"
+  python3 - "$index" <<'PY_INDEX'
+import sqlite3,sys
+with sqlite3.connect(sys.argv[1]) as db:
+    db.execute('CREATE TABLE fixture (id INTEGER PRIMARY KEY, value TEXT)')
+    db.execute('INSERT INTO fixture VALUES (1, ?)', ('preserved index fixture',))
+PY_INDEX
+  cp "$index" "$BATS_TEST_TMPDIR/index-before.db"
+}
+
+assert_index_preserved() {
+  local index="$TEST_HOME/.claude/skills/teamkb-compile/methodology/index.db"
+  cmp "$index" "$BATS_TEST_TMPDIR/index-before.db"
+  python3 - "$index" <<'PY_INDEX'
+import sqlite3,sys
+with sqlite3.connect('file:' + sys.argv[1] + '?mode=ro', uri=True) as db:
+    assert db.execute('PRAGMA integrity_check').fetchone() == ('ok',)
+    assert db.execute('SELECT value FROM fixture WHERE id=1').fetchone() == ('preserved index fixture',)
+PY_INDEX
 }
 
 @test "deploy rejects an unknown option before writing runtime paths" {
@@ -56,7 +79,7 @@ entry() {
   local skill="$TEST_HOME/.claude/skills/teamkb-compile"
   mkdir -p "$skill/methodology"
   printf 'audit sentinel\n' > "$skill/methodology/decisions.jsonl"
-  printf 'index sentinel\n' > "$skill/methodology/index.db"
+  seed_index
   printf 'stale\n' > "$skill/obsolete-fixture.txt"
   run deploy
   [ "$status" -eq 0 ]
@@ -69,7 +92,7 @@ entry() {
   [ -f "$skill/SKILL.md" ]
   [ ! -e "$skill/obsolete-fixture.txt" ]
   [ "$(cat "$skill/methodology/decisions.jsonl")" = 'audit sentinel' ]
-  [ "$(cat "$skill/methodology/index.db")" = 'index sentinel' ]
+  assert_index_preserved
 }
 
 @test "compile-only preserves review skill and unrelated executable bytes" {
@@ -78,8 +101,10 @@ entry() {
   for name in teamkb-quality-digest.sh teamkb-backup.sh; do
     printf 'runtime sentinel\n' > "$TEST_HOME/bin/$name"
   done
+  seed_index
   run deploy --compile-only
   [ "$status" -eq 0 ]
+  assert_index_preserved
   [ "$(cat "$TEST_HOME/.claude/skills/teamkb-review/SKILL.md")" = 'review sentinel' ]
   for name in teamkb-quality-digest.sh teamkb-backup.sh; do
     [ "$(cat "$TEST_HOME/bin/$name")" = 'runtime sentinel' ]
@@ -111,7 +136,7 @@ entry() {
   cmp "$ROOT/bin/teamkb-compile-daily.sh" "$TEST_HOME/bin/teamkb-compile-daily.sh"
 }
 
-@test "failed compiler installation cannot activate or overwrite an old wrapper" {
+@test "unavailable compiler revision fails before activation and leaves the old wrapper unchanged" {
   mkdir -p "$TEST_HOME/bin"
   printf 'old wrapper\n' > "$TEST_HOME/bin/teamkb-compile-daily.sh"
   REVISION=0000000000000000000000000000000000000000
