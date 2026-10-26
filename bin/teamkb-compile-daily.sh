@@ -19,7 +19,7 @@ try:
     manifest = json.loads((root / 'manifest.json').read_text())
     if not re.fullmatch(r'[a-f0-9]{40}', manifest['revision']):
         raise ValueError('revision')
-    expected = {'nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs'}
+    expected = {'nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs', 'notify-routing.sh'}
     if not isinstance(manifest['sha256'], dict) or set(manifest['sha256']) != expected:
         raise ValueError('bundle files')
     for name, digest in manifest['sha256'].items():

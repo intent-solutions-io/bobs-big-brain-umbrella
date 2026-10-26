@@ -121,6 +121,52 @@ passed [CI run 34779530820](https://github.com/jeremylongshore/bobs-big-brain-co
 The umbrella retains installation tooling and its installed-entry/rollback tests; moving the
 actual runner and lock test together removes the duplicate implementation that drifted.
 
+## Six-payload installation contract — source change 2026-10-26
+
+The current installer and matching umbrella wrapper require `nightly-entry.py`,
+`runtime-proof.py`, `c8-mcp.py`, `teamkb-compile-daily.sh`,
+`eval-distiller-output.mjs` and **`notify-routing.sh`**. The Compiler shell sources
+that sibling helper even when the external Intent OS alert-floor library is absent.
+Both shell payloads receive syntax checks before activation, and all six hashes
+must match the local manifest before entry execution. This is local consistency
+checking, not an independent trust anchor against coordinated manifest rewrites.
+The external alert-floor library remains operator-owned and outside this bundle.
+
+This source change is **not a deployment receipt**. The five-file deployment below
+is dated historical evidence. The new wrapper refuses five-file manifests. The
+installer refuses a same-SHA installation whose existing manifest or payloads
+differ; this does not prevent other tools from modifying installed files. Select
+a reviewed newer Compiler commit containing the helper; retain the old bundle
+and matching wrapper. Do not edit an old manifest to bypass refusal.
+
+For a later authorized rollout, use this explicitly quiescent sequence:
+
+1. Disable the compile cron entry, timers and other automatic/manual launchers;
+   wait for any existing compile to finish. Keep launches disabled through the
+   complete switch and verification. Merely observing a free lock is insufficient.
+2. Prepare a private rehearsal destination with `mktemp -d`, then run
+   `bin/install-teamkb-compiler.py --source <compiler-checkout> --destination
+   <rehearsal-directory> --revision <reviewed-full-SHA>`. This activates `current`
+   only inside that rehearsal directory. Verify its six payloads and manifest;
+   this is not a staging-only mode for the production destination.
+3. Retain the production `current` target and wrapper bytes. With launchers still
+   disabled, run `TEAMKB_COMPILER_REVISION=<reviewed-full-SHA>
+   bin/deploy-teamkb-compile.sh --compile-only` from the matching umbrella source.
+   This activates the production bundle before replacing the wrapper. The pair
+   is temporarily incompatible: this is a quiescent switch, not an atomic one.
+4. Verify the selected production target, all six manifest hashes and wrapper
+   bytes before re-enabling launches. If deployment or verification fails, keep
+   launches disabled and restore both the retained target and matching wrapper;
+   do not retry compilation against a partially switched pair.
+
+Rollback to a five-file bundle requires its matching five-file wrapper during
+that same disabled-launch interval; repointing `current` alone is insufficient.
+Rollback to a compatible six-file bundle can retain the six-file wrapper after
+verification. Preserve pending dates, verification receipts, methodology history
+and brain data. The September rollback example below applies only to its dated
+five-file wrapper/bundle pair. No production rollout is proved by these source
+fixtures or by a private rehearsal.
+
 ## Verified deployment and recovery — 2026-09-13
 
 The installed compiler is
