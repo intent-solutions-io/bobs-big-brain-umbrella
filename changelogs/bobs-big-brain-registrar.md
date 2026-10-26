@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-25T23:34:24Z -->
+<!-- fetched-at: 2026-10-26T00:23:33Z -->
 
 # Changelog
 
@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add public `rejectReviewedCandidate` for person-reviewed inbox rejection on
+  one SQLite connection. Check tenant, declared human/admin-or-owner authority,
+  audience standing, linked memories and active holds under a write lock; commit the retained
+  candidate's rejected status and canonical receipt together. Refuse repeats
+  without another receipt. This core API does not add an installed review command,
+  hold release, model tool, external anchor or export reconciliation
+  (`compile-then-govern-eqw.10.1`).
 
 - Add bounded generated audit-chain contracts with version-aware hash and
   tamper checks, bounded sequential insertion/sequence ordering, exception
