@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-27T05:00:10Z -->
+<!-- fetched-at: 2026-10-27T07:14:28Z -->
 
 # Changelog
 
@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add an internal finite reviewed contradiction-edge settlement core. Explicit
+  pairs bind captured compiler evidence, current memory/promotion snapshots and
+  independent approval; one immediate transaction writes deterministic edges
+  with canonical receipts, exact raw readback, full-store preservation checks
+  and strict no-write replay. No CLI/API activation, lifecycle change, search
+  surfacing or live conflict acceptance is included (`compile-then-govern-39z.1.2`).
 
 - Add an internal finite reviewed staleness settlement and separately reviewed
   reactivation core. It binds canonical and complete stored-row snapshots, rule
