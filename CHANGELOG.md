@@ -15,7 +15,9 @@ engine and plugin repos. Format based on
   Existing files, modes and symlinks are retained, and the helper reports whether
   it seeded or preserved the path. Publication of a complete seed cannot replace
   a concurrently created destination. The two new fixture regressions failed
-  against the old helper; fresh bootstrap and compile-only behavior remain covered.
+  against the old helper; deterministic publication-boundary competition and
+  seed/publication failure controls also pass. Fresh bootstrap and compile-only
+  behavior remain covered.
   Source repair only; no installed script or schedule is changed by this commit.
   Bead: `compile-then-govern-jgh`.
 

@@ -51,6 +51,19 @@ and its mode. The company host's quality observer is owned by private Intent OS;
 its implementation must be updated through that owner's reviewed deployment,
 not overwritten with this public bootstrap. The helper reports seeded/preserved;
 preservation does not certify the observer's health or provenance.
+
+| Existing observer | Operating owner and update source | Reviewed update path |
+|---|---|---|
+| Company host observer | Private Intent OS operating source; the operator maintains the installed caller. | Use that source's reviewed deployment and rollback procedure; do not replace it with the public bootstrap. |
+| Public bootstrap copy | The installing operator; source is this repository's `bin/teamkb-quality-digest.sh` at a deliberately selected reviewed revision. | Back up the installed file and its mode, then deliberately deploy the selected observer file through the operator's update procedure. The compiler helper only seeds absent paths and does not perform observer upgrades. |
+| Unknown file, directory or symlink | Ownership and provenance are unverified. | Preserve it, identify its owner and update procedure before replacement; preservation is not a health check. |
+
+Fresh seeding needs GNU-compatible `ln -T` and a destination filesystem supporting
+hard links. Seed preparation/publication failure can stop a full deploy before
+backup-script installation, after earlier compiler/skill steps; full deployment
+is not one transaction. Existing observer modes are retained, not normalized to
+0755. Only newly created seeds receive mode0755. No additional package is installed.
+
 It requires `TEAMKB_COMPILER_REVISION=<full 40-char compiler SHA>` (the compiler
 implementation is installed as a commit-addressed, hash-verified bundle under
 `~/.local/lib/teamkb-compile`), is idempotent, and is run **after merge**. Never hand-edit deployed

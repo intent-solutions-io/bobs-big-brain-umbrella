@@ -32,6 +32,12 @@ deploy() {
     bash "$ROOT/bin/deploy-teamkb-compile.sh" "$@"
 }
 
+deploy_with_tools() {
+  env -i HOME="$TEST_HOME" PATH="$TEST_HOME/tools:/usr/bin:/bin" LANG=C GIT_CONFIG_NOSYSTEM=1 \
+    TEAMKB_COMPILER_REPO="$COMPILER" TEAMKB_COMPILER_REVISION="$REVISION" \
+    bash "$ROOT/bin/deploy-teamkb-compile.sh" "$@"
+}
+
 entry() {
   env -i HOME="$TEST_HOME" PATH=/usr/bin:/bin LANG=C \
     FIXTURE_RESULT="$RESULT" FIXTURE_EXIT="${FIXTURE_EXIT:-0}" \
@@ -159,6 +165,54 @@ PY_INDEX
   [ "$(readlink "$digest")" = "$target" ]
   [ ! -e "$target" ]
   [[ "$output" == *'quality digest preserved'* ]]
+}
+
+@test "full deploy preserves an observer created at the publication boundary" {
+  mkdir -p "$TEST_HOME/tools"
+  cat > "$TEST_HOME/tools/ln" <<'TOOL'
+#!/usr/bin/env bash
+printf 'concurrent owner fixture\n' > "${@: -1}"
+exit 1
+TOOL
+  chmod +x "$TEST_HOME/tools/ln"
+  run deploy_with_tools
+  [ "$status" -eq 0 ]
+  [ "$(cat "$TEST_HOME/bin/teamkb-quality-digest.sh")" = 'concurrent owner fixture' ]
+  [[ "$output" == *'quality digest preserved'* ]]
+  cmp "$ROOT/bin/teamkb-backup.sh" "$TEST_HOME/bin/teamkb-backup.sh"
+  run compgen -G "$TEST_HOME/bin/.teamkb-quality-digest.*"
+  [ "$status" -eq 1 ]
+}
+
+@test "failed quality seed publication stops before backup and removes its seed" {
+  mkdir -p "$TEST_HOME/tools"
+  printf '#!/bin/sh\nexit 1\n' > "$TEST_HOME/tools/ln"
+  chmod +x "$TEST_HOME/tools/ln"
+  run deploy_with_tools
+  [ "$status" -eq 1 ]
+  [[ "$output" == *'Unable to seed quality digest'* ]]
+  [ ! -e "$TEST_HOME/bin/teamkb-quality-digest.sh" ]
+  [ ! -e "$TEST_HOME/bin/teamkb-backup.sh" ]
+  run compgen -G "$TEST_HOME/bin/.teamkb-quality-digest.*"
+  [ "$status" -eq 1 ]
+}
+
+@test "failed quality seed preparation removes its unpublished temporary file" {
+  mkdir -p "$TEST_HOME/tools"
+  cat > "$TEST_HOME/tools/install" <<'TOOL'
+#!/usr/bin/env bash
+case "${@: -1}" in
+  "$HOME/bin/.teamkb-quality-digest."*) exit 1 ;;
+esac
+exec /usr/bin/install "$@"
+TOOL
+  chmod +x "$TEST_HOME/tools/install"
+  run deploy_with_tools
+  [ "$status" -eq 1 ]
+  [ ! -e "$TEST_HOME/bin/teamkb-quality-digest.sh" ]
+  [ ! -e "$TEST_HOME/bin/teamkb-backup.sh" ]
+  run compgen -G "$TEST_HOME/bin/.teamkb-quality-digest.*"
+  [ "$status" -eq 1 ]
 }
 
 @test "first deploy seeds empty audit log and a repeat preserves its contents" {
