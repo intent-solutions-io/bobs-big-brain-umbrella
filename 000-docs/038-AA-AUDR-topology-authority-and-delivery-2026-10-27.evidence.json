@@ -1,0 +1,350 @@
+{
+  "record": "bbb-topology-public-evidence/v1",
+  "author_recorded": true,
+  "scope": "Dated unsigned observation and passive task-state evidence, not an independent attestation, sync surface, canonical task database or authority promotion. Host observations remain private and operator-attributed. Different capture timestamps do not constitute an atomic estate snapshot.",
+  "public_source_observations": {
+    "observed_at": "2026-10-27T00:10:22.370717+00:00",
+    "records": [
+      {
+        "repository": "bobs-big-brain-umbrella",
+        "observed_main": "2bb1457650bf7093be600dea208e27ebf66e6059",
+        "observed_ref": "refs/heads/main",
+        "command_exit": 0
+      },
+      {
+        "repository": "bobs-big-brain-compiler",
+        "observed_main": "9fe7f6d04ad51e9b55447b98ef240ccb41641642",
+        "observed_ref": "refs/heads/main",
+        "command_exit": 0,
+        "release_api_response": {
+          "html_url": "https://github.com/jeremylongshore/bobs-big-brain-compiler/releases/tag/v1.23.1",
+          "published_at": "2026-10-04T21:45:59Z",
+          "tag_name": "v1.23.1",
+          "target_commitish": "3e0a5902e594d4a63594fffd4de9104641ea166d"
+        },
+        "release_api_request": {
+          "method": "GET",
+          "url": "https://api.github.com/repos/jeremylongshore/bobs-big-brain-compiler/releases/latest",
+          "selection": "Fields retained from the API response returned at the original observation; no new fetch or immutable tag-commit resolution is claimed."
+        }
+      },
+      {
+        "repository": "bobs-big-brain-registrar",
+        "observed_main": "83d7d9075c9fd0cbf801427f14143b55e7b283f9",
+        "observed_ref": "refs/heads/main",
+        "command_exit": 0,
+        "release_api_response": {
+          "html_url": "https://github.com/jeremylongshore/bobs-big-brain-registrar/releases/tag/v0.8.0",
+          "published_at": "2026-07-18T14:50:50Z",
+          "tag_name": "v0.8.0",
+          "target_commitish": "main"
+        },
+        "release_api_request": {
+          "method": "GET",
+          "url": "https://api.github.com/repos/jeremylongshore/bobs-big-brain-registrar/releases/latest",
+          "selection": "Fields retained from the API response returned at the original observation; no new fetch or immutable tag-commit resolution is claimed."
+        }
+      },
+      {
+        "repository": "bobs-big-brain-plugin",
+        "observed_main": "cad3815c61c4e63306f599e49d2f10d716e1d3c9",
+        "observed_ref": "refs/heads/main",
+        "command_exit": 0,
+        "release_api_response": {
+          "html_url": "https://github.com/jeremylongshore/bobs-big-brain-plugin/releases/tag/v1.2.0",
+          "published_at": "2026-07-18T14:50:51Z",
+          "tag_name": "v1.2.0",
+          "target_commitish": "main"
+        },
+        "release_api_request": {
+          "method": "GET",
+          "url": "https://api.github.com/repos/jeremylongshore/bobs-big-brain-plugin/releases/latest",
+          "selection": "Fields retained from the API response returned at the original observation; no new fetch or immutable tag-commit resolution is claimed."
+        }
+      }
+    ],
+    "release_limitations": "Observed release response versions do not identify deployed payloads. target_commitish main is mutable metadata; immutable tag commits were not resolved in this audit."
+  },
+  "authority_comparison": {
+    "compared_at": "2026-10-27T00:49:24.113369+00:00",
+    "earlier_commit": "a6f06484ac52ef1a0c2eed138d5dadbb4af704e2",
+    "later_commit": "2bb1457650bf7093be600dea208e27ebf66e6059",
+    "sha256_by_path": {
+      "repos.yml": "ccde0cd5c4c8994fd0e86175fb4a766a2557ca8ec0af4c597475f399a1f5e28b",
+      "system-graph.yml": "8a009c77d879defae144538bcd4de7756ff4734030323ac6ffdaef420635462c",
+      "CLAUDE.md": "8a7744d7e4bc0d317cf377d7d47b39a940691806e1cc1b7464016c56313cb5a3",
+      "000-docs/005-AT-ARCH-grounded-system-map-and-backup-scope.md": "b2e80546ebdcd3485bc595e2c78f64a09d45f7eb32cf504de0c8991c05bd755f",
+      "000-docs/007-AT-SMAP-repo-topology-and-working-surface.md": "e43d07fd17475060155d77a67f13a1c23b2009542cb2832f6de9dd04eb470f7f",
+      "000-docs/017-PP-OKRS-definition-of-success.md": "47fa0e091a8862a676bcf1e5ddd06853ebfbbba35c716f7931b23d390e6ec16c",
+      "000-docs/019-PP-PLAN-master-blueprint-epics-and-beads.md": "f31a189b15d3a57566a2019aae08ffe3cf34b82dfd6d2dd81bd2a2985d2c7b27"
+    },
+    "both_commit_file_digests_match": true,
+    "changed_paths": [
+      "changelogs/README.md",
+      "changelogs/bobs-big-brain-compiler.md",
+      "changelogs/bobs-big-brain-plugin.md",
+      "changelogs/bobs-big-brain-registrar.md",
+      "changelogs/bobs-big-brain-umbrella.md",
+      "changelogs/team-intent-claude-plugins.md"
+    ],
+    "verification_command": "python3 - <<'PYTHON'\nimport hashlib, json, subprocess\nfrom pathlib import Path\nrecord = json.loads(Path(\"000-docs/038-AA-AUDR-topology-authority-and-delivery-2026-10-27.evidence.json\").read_text())[\"authority_comparison\"]\nfor path, expected in record[\"sha256_by_path\"].items():\n    for revision in (record[\"earlier_commit\"], record[\"later_commit\"]):\n        actual = subprocess.check_output([\"git\", \"show\", revision + \":\" + path])\n        assert hashlib.sha256(actual).hexdigest() == expected, (revision, path)\npaths = subprocess.check_output([\"git\", \"diff\", \"--name-only\", record[\"earlier_commit\"], record[\"later_commit\"]], text=True).splitlines()\nassert paths == record[\"changed_paths\"]\nassert all(path.startswith(\"changelogs/\") for path in paths)\nprint(\"7 authority files match at both full commits; all intervening changed paths are under changelogs/.\")\nPYTHON",
+    "author_run_result": {
+      "exit": 0,
+      "stdout": "7 authority files match at both full commits; all intervening changed paths are under changelogs/."
+    }
+  },
+  "task_state_snapshot": {
+    "captured_at": "2026-10-27T00:37:26.462385+00:00",
+    "authority": "Beads Dolt records; consult live bd for present status. Sensitive descriptions and unrelated records omitted.",
+    "records": [
+      {
+        "id": "compile-then-govern-obk.1",
+        "title": "Reconcile the brain topology, operating authority, and shipped-versus-planned claims",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-27T00:36:01Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-obk.2",
+        "title": "Audit whether project sessions retrieve useful context and return durable learning",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-09-25T22:17:48Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-39z.10",
+            "type": "relates-to"
+          },
+          {
+            "id": "compile-then-govern-ca6",
+            "type": "relates-to"
+          },
+          {
+            "id": "compile-then-govern-jfv.2.2",
+            "type": "relates-to"
+          },
+          {
+            "id": "compile-then-govern-39z.5",
+            "type": "relates-to"
+          },
+          {
+            "id": "compile-then-govern-obk",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-obk.3",
+        "title": "Compare second-brain-os with Bob's Big Brain and recommend bounded practices to adopt",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-09-24T22:59:40Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk.2",
+            "type": "blocks"
+          },
+          {
+            "id": "compile-then-govern-obk.4",
+            "type": "blocks"
+          },
+          {
+            "id": "compile-then-govern-obk.1",
+            "type": "blocks"
+          },
+          {
+            "id": "compile-then-govern-obk",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-obk.4",
+        "title": "Audit per-project knowledge graphs and the boundary with the Intent OS estate graph",
+        "status": "closed",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-26T22:58:12Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-39z.1",
+            "type": "relates-to"
+          },
+          {
+            "id": "compile-then-govern-obk",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-jgh",
+        "title": "Reconcile brain ops deployment provenance and canonical digest ownership",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-27T00:36:00Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk.1",
+            "type": "discovered-from"
+          }
+        ],
+        "acceptance_criteria": "Identify installed compiler bundle revision and verify its own manifest without executing nightly work. Trace the deployed digest to its owning reviewed source or explicitly record unavailable provenance. Reconcile canonical ownership through reviewed source/docs changes with disclosure review where required; specify paired deployment/rollback separately under applicable authority. Prove that source comparisons name exact revisions. No runtime replacement or activation is inferred from this task."
+      },
+      {
+        "id": "compile-then-govern-bhy",
+        "title": "Correct stale Brain component identities in the private estate inventory",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-27T00:17:57Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk.1",
+            "type": "discovered-from"
+          }
+        ],
+        "acceptance_criteria": "Locate and update the owning inventory source/generator for legacy component descriptions while retaining stable asset IDs unless an explicit migration is justified. Distinguish Registrar engine from upstream qmd retrieval, and qualify audit integrity as tamper-evident rather than absolute storage guarantees. Regenerate only through supported commands, verify selected projection/catalog output and required Intent OS gates. No graph rebuild, deployment or runtime authority promotion inferred."
+      },
+      {
+        "id": "compile-then-govern-1io.1",
+        "title": "Reconcile shipped Beads and prepare current releases and plugin distribution with evidence",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-24T06:26:41Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk.1",
+            "type": "relates-to"
+          },
+          {
+            "id": "compile-then-govern-1io",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-1io.8",
+        "title": "Diagnose dense query degradations in isolated estate evaluation and retain per-query reasons",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-23T23:12:24Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-1io",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-6ps.4",
+        "title": "Ship the Tier-B nightly and on-deploy tailnet acceptance round-trip \u2014 capture, govern, search, cite, audit-verify plus negative controls",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-07-12T23:16:36Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-6ps",
+            "type": "parent-child"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-eqw.8.1.2.9",
+        "title": "Resolve legacy audit-fork readiness without rehash or exception amnesty",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-26T10:54:00Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-eqw.8.1.2",
+            "type": "parent-child"
+          },
+          {
+            "id": "compile-then-govern-eqw.8.1.2.9.2",
+            "type": "blocks"
+          },
+          {
+            "id": "compile-then-govern-eqw.8.1.2.9.1",
+            "type": "blocks"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-8da",
+        "title": "Evaluate Dolt as the governed-second-brain substrate and scope a possible DoltHub collaboration",
+        "status": "deferred",
+        "assignee": null,
+        "updated_at": "2026-07-28T09:34:12Z",
+        "relationships": []
+      },
+      {
+        "id": "compile-then-govern-ca6",
+        "title": "Decide and build claim-level audience governance for promoted memory (who a fact is for, and when that changes)",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-10-22T04:51:37Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk.2",
+            "type": "relates-to"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-0py",
+        "title": "Correct the estate repo-to-service query without inventing build relationships",
+        "status": "in_progress",
+        "assignee": "jeremylongshore",
+        "updated_at": "2026-10-27T00:14:34Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk.4",
+            "type": "discovered-from"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-6ps",
+        "title": "Make the Governed Second Brain the most PROVEN \u2014 prove the tailnet path, gate the existing evals, and harden the tamper-evidence boundary",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-07-28T09:34:12Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-obk",
+            "type": "relates-to"
+          }
+        ]
+      },
+      {
+        "id": "compile-then-govern-obk",
+        "title": "Audit how Bob's Big Brain supports project work and assess second-brain-os practices",
+        "status": "open",
+        "assignee": null,
+        "updated_at": "2026-09-24T23:03:29Z",
+        "relationships": [
+          {
+            "id": "compile-then-govern-6ps",
+            "type": "relates-to"
+          }
+        ],
+        "observed_at": "2026-10-27T00:40:04.204768+00:00"
+      }
+    ],
+    "limitations": "A final-state snapshot does not independently prove task creation events, mutation history or absence of transient reopening. It is not a task-state rollback mechanism."
+  },
+  "historical_hosted_validation": {
+    "source_head": "5f00803ced95d77fe4a2e919ca3f062bcb2750e1",
+    "run": "https://github.com/intent-solutions-io/bobs-big-brain-umbrella/actions/runs/40426357968",
+    "scope": "Successful shell workflow including tracked-script lint, 13 installer cases and 13 Bats cases. This historical run does not certify the later evidence/wording increment."
+  },
+  "secondary_review": {
+    "kind": "authorized secondary-agent acceptance and claims review",
+    "reported_result": "Author-recorded secondary-agent comments covered the original two-file report and a later report/index/evidence-artifact increment, reporting no supported material blocker. The later limited review checked disclosure and Beads relationship consistency; it ran no tests or live operations.",
+    "limitations": "These comments are an author-recorded account, not a published review transcript or independently authenticated source-bound execution/review receipt. They are not configured-reviewer approval."
+  }
+}
