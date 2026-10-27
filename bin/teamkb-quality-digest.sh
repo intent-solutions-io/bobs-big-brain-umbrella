@@ -2,7 +2,7 @@
 #
 # Public bootstrap observer. The deploy helper seeds this only when the runtime
 # path is absent; an existing observer may have a separate operating owner.
-# This file is not the update source for the private company-host observer.
+# This bootstrap is not the update source for a separately managed observer.
 #
 # teamkb-quality-digest.sh — nightly GOVERN-QUALITY drift canary for the governed
 # brain (bead compile-then-govern-e06.7). The teamkb-compile skill already emits a

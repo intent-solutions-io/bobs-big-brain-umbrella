@@ -47,14 +47,14 @@ shellcheck bin/*.sh scripts/*.sh                     # shellcheck workflow lints
 `teamkb-backup.sh` (`teamkb-backup.service` 04:30), plus `.claude/skills/teamkb-{compile,review}/` →
 `~/.claude/skills/`. It seeds the public `teamkb-quality-digest.sh` bootstrap only
 when no destination exists; it preserves an existing observer, including symlinks
-and its mode. The company host's quality observer is owned by private Intent OS;
+and its mode. Where the operator separately confirms a privately managed observer,
 its implementation must be updated through that owner's reviewed deployment,
-not overwritten with this public bootstrap. The helper reports seeded/preserved;
+not overwritten with this public bootstrap. The helper does not identify ownership. The helper reports seeded/preserved;
 preservation does not certify the observer's health or provenance.
 
 | Existing observer | Operating owner and update source | Reviewed update path |
 |---|---|---|
-| Company host observer | Private Intent OS operating source; the operator maintains the installed caller. | Use that source's reviewed deployment and rollback procedure; do not replace it with the public bootstrap. |
+| Operator-confirmed private observer | The separately confirmed private operating source and its maintaining operator. | Use that source's reviewed deployment and rollback procedure; do not replace it with the public bootstrap. |
 | Public bootstrap copy | The installing operator; source is this repository's `bin/teamkb-quality-digest.sh` at a deliberately selected reviewed revision. | Back up the installed file and its mode, then deliberately deploy the selected observer file through the operator's update procedure. The compiler helper only seeds absent paths and does not perform observer upgrades. |
 | Unknown file, directory or symlink | Ownership and provenance are unverified. | Preserve it, identify its owner and update procedure before replacement; preservation is not a health check. |
 

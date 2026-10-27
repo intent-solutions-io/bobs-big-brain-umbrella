@@ -17,7 +17,8 @@ engine and plugin repos. Format based on
   a concurrently created destination. The two new fixture regressions failed
   against the old helper; deterministic publication-boundary competition and
   seed/publication failure controls also pass. Fresh bootstrap and compile-only
-  behavior remain covered.
+  behavior remain covered. Validation at source `a642db4`: [18 Bats and 13 installer
+  cases passed in hosted CI](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/actions/runs/40428535512).
   Source repair only; no installed script or schedule is changed by this commit.
   Bead: `compile-then-govern-jgh`.
 
