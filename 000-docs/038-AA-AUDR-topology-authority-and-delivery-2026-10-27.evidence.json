@@ -21,6 +21,11 @@
           "published_at": "2026-10-04T21:45:59Z",
           "tag_name": "v1.23.1",
           "target_commitish": "3e0a5902e594d4a63594fffd4de9104641ea166d"
+        },
+        "release_api_request": {
+          "method": "GET",
+          "url": "https://api.github.com/repos/jeremylongshore/bobs-big-brain-compiler/releases/latest",
+          "selection": "Fields retained from the API response returned at the original observation; no new fetch or immutable tag-commit resolution is claimed."
         }
       },
       {
@@ -33,6 +38,11 @@
           "published_at": "2026-07-18T14:50:50Z",
           "tag_name": "v0.8.0",
           "target_commitish": "main"
+        },
+        "release_api_request": {
+          "method": "GET",
+          "url": "https://api.github.com/repos/jeremylongshore/bobs-big-brain-registrar/releases/latest",
+          "selection": "Fields retained from the API response returned at the original observation; no new fetch or immutable tag-commit resolution is claimed."
         }
       },
       {
@@ -45,12 +55,18 @@
           "published_at": "2026-07-18T14:50:51Z",
           "tag_name": "v1.2.0",
           "target_commitish": "main"
+        },
+        "release_api_request": {
+          "method": "GET",
+          "url": "https://api.github.com/repos/jeremylongshore/bobs-big-brain-plugin/releases/latest",
+          "selection": "Fields retained from the API response returned at the original observation; no new fetch or immutable tag-commit resolution is claimed."
         }
       }
-    ]
+    ],
+    "release_limitations": "Observed release response versions do not identify deployed payloads. target_commitish main is mutable metadata; immutable tag commits were not resolved in this audit."
   },
   "authority_comparison": {
-    "compared_at": "2026-10-27T00:37:26.462308+00:00",
+    "compared_at": "2026-10-27T00:49:24.113369+00:00",
     "earlier_commit": "a6f06484ac52ef1a0c2eed138d5dadbb4af704e2",
     "later_commit": "2bb1457650bf7093be600dea208e27ebf66e6059",
     "sha256_by_path": {
@@ -71,10 +87,10 @@
       "changelogs/bobs-big-brain-umbrella.md",
       "changelogs/team-intent-claude-plugins.md"
     ],
-    "verification_command": "python3 - <<'PYTHON'\nimport hashlib, json, subprocess\nfrom pathlib import Path\nrecord = json.loads(Path(\"000-docs/038-AA-AUDR-topology-authority-and-delivery-2026-10-27.evidence.json\").read_text())[\"authority_comparison\"]\nfor path, expected in record[\"sha256_by_path\"].items():\n    for revision in (record[\"earlier_commit\"], record[\"later_commit\"]):\n        actual = subprocess.check_output([\"git\", \"show\", revision + \":\" + path])\n        assert hashlib.sha256(actual).hexdigest() == expected, (revision, path)\npaths = subprocess.check_output([\"git\", \"diff\", \"--name-only\", record[\"earlier_commit\"], record[\"later_commit\"]], text=True).splitlines()\nassert paths == record[\"changed_paths\"]\nassert all(path.startswith(\"changelogs/\") for path in paths)\nprint(\"7 authority files match at both full commits; all intervening changed paths are generated changelogs.\")\nPYTHON",
+    "verification_command": "python3 - <<'PYTHON'\nimport hashlib, json, subprocess\nfrom pathlib import Path\nrecord = json.loads(Path(\"000-docs/038-AA-AUDR-topology-authority-and-delivery-2026-10-27.evidence.json\").read_text())[\"authority_comparison\"]\nfor path, expected in record[\"sha256_by_path\"].items():\n    for revision in (record[\"earlier_commit\"], record[\"later_commit\"]):\n        actual = subprocess.check_output([\"git\", \"show\", revision + \":\" + path])\n        assert hashlib.sha256(actual).hexdigest() == expected, (revision, path)\npaths = subprocess.check_output([\"git\", \"diff\", \"--name-only\", record[\"earlier_commit\"], record[\"later_commit\"]], text=True).splitlines()\nassert paths == record[\"changed_paths\"]\nassert all(path.startswith(\"changelogs/\") for path in paths)\nprint(\"7 authority files match at both full commits; all intervening changed paths are under changelogs/.\")\nPYTHON",
     "author_run_result": {
       "exit": 0,
-      "stdout": "7 authority files match at both full commits; all intervening changed paths are generated changelogs."
+      "stdout": "7 authority files match at both full commits; all intervening changed paths are under changelogs/."
     }
   },
   "task_state_snapshot": {
@@ -318,7 +334,8 @@
         ],
         "observed_at": "2026-10-27T00:40:04.204768+00:00"
       }
-    ]
+    ],
+    "limitations": "A final-state snapshot does not independently prove task creation events, mutation history or absence of transient reopening. It is not a task-state rollback mechanism."
   },
   "historical_hosted_validation": {
     "source_head": "5f00803ced95d77fe4a2e919ca3f062bcb2750e1",
@@ -327,7 +344,7 @@
   },
   "secondary_review": {
     "kind": "authorized secondary-agent acceptance and claims review",
-    "reported_result": "No supported material blocker in the original two-file bounded report; three original private receipt hashes and seven authority digests matched. No live operations or independent runtime certification.",
-    "limitations": "Author-recorded result, not a published review transcript or configured-reviewer approval."
+    "reported_result": "Author-recorded secondary-agent comments covered the original two-file report and a later report/index/evidence-artifact increment, reporting no supported material blocker. The later limited review checked disclosure and Beads relationship consistency; it ran no tests or live operations.",
+    "limitations": "These comments are an author-recorded account, not a published review transcript or independently authenticated source-bound execution/review receipt. They are not configured-reviewer approval."
   }
 }
