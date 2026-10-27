@@ -1,0 +1,144 @@
+{
+  "bead": "compile-then-govern-obk.3",
+  "observation_date_utc": "2026-10-27",
+  "classification": "Unsigned author-recorded pinned-source comparison; not runtime attestation or task database.",
+  "external_reference": {
+    "repository": "undefined-ui/second-brain-os",
+    "revision": "347feee87b305b291f7264890e5024db422e3467",
+    "license": "MIT; inspected, no code imported",
+    "files": [
+      {
+        "path": "LICENSE",
+        "git_blob": "14fac913ccf80234b1848540089a3bbcb6e5283d",
+        "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
+      },
+      {
+        "path": "README.md",
+        "git_blob": "b55936296811727663f096b46f4a9771ec66b62f",
+        "sha256": "a8015a170c414ad97edf5485bf4f996ce479c5ae83325e5b9154d1d0c2dea0e1"
+      },
+      {
+        "path": "docs/01-concepts/two-layers.md",
+        "git_blob": "2c818d837ef6498f41dd2ecbcb216cb1ca1fa401",
+        "sha256": "5ef28653a9ac8c68bdb50903ad7596122fe254d5c2f5f798da0988137af84d0b"
+      },
+      {
+        "path": "docs/02-setup/project-scoping.md",
+        "git_blob": "ddaa83dc674b6fe0619dc0dd240520fe6fa3238e",
+        "sha256": "956c23087a944e864af873a69077def317ab7586cb8ef700297b512e14bca22e"
+      },
+      {
+        "path": "skills/second-brain-project/SKILL.md",
+        "git_blob": "4e2107e93f8c28b12bac7cd479718e863a942a25",
+        "sha256": "5acef2d659a866bd11c886eb72c1e80affcd387f5b2c4291103ff57966c614d1"
+      },
+      {
+        "path": "docs/09-maintenance/review-cadence.md",
+        "git_blob": "28c03c1667cf15c4014eef8598750f21fed22ea0",
+        "sha256": "0d08c4267d92964fdc56cdb8133ce1c096e5ba2728572393a425a99911c43bee"
+      },
+      {
+        "path": "docs/03-ingestion/README.md",
+        "git_blob": "011f7ffd2266ce5775866434b5eecf9d83a0a0df",
+        "sha256": "f1248827c6b11b72714ca95c5076c70a25220f9f755c89a4cb8e59107b428be6"
+      },
+      {
+        "path": "docs/04-structuring/contradictions-and-supersession.md",
+        "git_blob": "3ee20b9a0fab2cbbc2b6f71da888a03c524df28b",
+        "sha256": "a48a236dd190cf321e9aa14f1931c7c4e748f91c078123856d9960ea9153360e"
+      },
+      {
+        "path": "docs/05-graphs/metrics.md",
+        "git_blob": "2684b6790e6e6fcf1c3d83f4afaa9db3f68817a2",
+        "sha256": "2164185a7ffb8a7f6f68e81b19960a15a0f1cfc69ff4bc448fa0366a335879ca"
+      },
+      {
+        "path": "docs/06-agents/safety-and-guardrails.md",
+        "git_blob": "20ac33aabab465b472d026ba0949359137d597bc",
+        "sha256": "e1ad7ff9ec67f7b1afea4c532c03eb4a76374c200e52df7d0c1c427d6d948877"
+      },
+      {
+        "path": "docs/07-retrieval/asking-questions.md",
+        "git_blob": "3725de444aae74ad24b353fa040d02ee7c860ea7",
+        "sha256": "ad90258d45dabc02a0acdfac32aa4b51e6881e4259752d693fa65f5c052f20c2"
+      },
+      {
+        "path": "docs/09-maintenance/lint-and-health.md",
+        "git_blob": "b2964fdd7ce198297065e546cc1362e31071fee6",
+        "sha256": "137ed3d674d88dcc0b56cac9cc5533171dc1582a81ed6aa6c81bc6ad8d34fd12"
+      },
+      {
+        "path": "scripts/README.md",
+        "git_blob": "a7215f06bbabba4b2c95922403d48fc8119acc26",
+        "sha256": "ec4aeb96c10de37ea0862244517ecff37541f1ed8d988e2ec2f6d73b96de0c3c"
+      },
+      {
+        "path": "scripts/link_check.py",
+        "git_blob": "ed407da250b14fdf232fa33caf9f916b258aea6e",
+        "sha256": "9f1e17fcf1bfc276d701d5d5680ce01d62905797c9a6095c3fc50560c6850dec"
+      },
+      {
+        "path": "scripts/vault_stats.py",
+        "git_blob": "0ac0f2a4ddf3159626bf36eb1d329da801ad294b",
+        "sha256": "409fb97b9ed0c8474929d10d83a09c039ac70c455939a112f0cb89655c3a0c6b"
+      },
+      {
+        "path": "scripts/graph_export.py",
+        "git_blob": "8e0de4f342b7e3088b5b35699067a0274481680b",
+        "sha256": "1c4192a94e729a768c4afedf6589bc91166e7598d15167abf22b09ee9b6ee783"
+      }
+    ]
+  },
+  "bbb_audit_inputs": [
+    {
+      "bead": "compile-then-govern-obk.1",
+      "pr": 130,
+      "merge_commit": "d08de107fb6dab805f3305c50c87223011fc4309"
+    },
+    {
+      "bead": "compile-then-govern-obk.2",
+      "pr": 132,
+      "merge_commit": "29b1db6a4cdc125387cf46fd5ae4a26d9b976b1f"
+    },
+    {
+      "bead": "compile-then-govern-obk.4",
+      "private_receipt": "graph-audit.json",
+      "sha256": "74c0d2d81e2dc413ddaee1b26390e70764782a26f748164710ab2fdff01bf685",
+      "observation_date_utc": "2026-10-26",
+      "availability": "Private operator evidence, not publicly downloadable or independently signed."
+    }
+  ],
+  "private_source_packets": [
+    {
+      "file": "second-brain-os-pinned-primary-sources-20261027.json",
+      "sha256": "31bd22bc35f90691c1f7a4a0614d27c2c69d80f00757e53553f5d7d08e0d5243",
+      "availability": "Operator-held private packet; external source files themselves are publicly retrievable."
+    },
+    {
+      "file": "second-brain-os-pinned-workflow-sources-20261027.json",
+      "sha256": "1a1b8ed6b113c7bd6cf39100306c94179db83470fb77bda2b3e4b73b81f008c6",
+      "availability": "Operator-held private packet; external source files themselves are publicly retrievable."
+    }
+  ],
+  "recommendation": {
+    "disposition": "adapt",
+    "practices": [
+      "manual project brief",
+      "post-work knowledge feedback",
+      "short owner review"
+    ],
+    "pilot_owner": "compile-then-govern-oz7",
+    "execution_status": "open; not performed",
+    "sessions": 3,
+    "proposed_preparation_minutes": 45,
+    "proposed_owner_reading_minutes": 10,
+    "measured_outcomes": "unmeasured"
+  },
+  "constraints": [
+    "No imported script or skill execution",
+    "No installation, new vault, second tracker, or ingestion",
+    "No permission or automatic-hook change",
+    "No comparative retrieval benchmark or measured adoption claim",
+    "Existing source, capture, governance, graph, audience and acceptance owners retained"
+  ]
+}
