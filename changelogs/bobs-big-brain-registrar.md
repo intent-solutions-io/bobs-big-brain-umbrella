@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-27T07:50:57Z -->
+<!-- fetched-at: 2026-10-27T08:13:32Z -->
 
 # Changelog
 
@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add pure review-agent promote/hold/reject judgment scoring with independent
+  recall floors, explicit missing-prediction misses, full class confusion
+  metrics and a separate paraphrase-duplicate rejection gate. This scores
+  supplied labels only; frozen human labels, the runner and operational
+  acceptance remain unfinished under `compile-then-govern-6ps.13`.
 
 - Surface optional visible contradiction references on Registrar search hits,
   including API cited/SQLite responses and owning MCP mappings. Read-only current
