@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-10-27T03:10:22Z -->
+<!-- fetched-at: 2026-10-27T04:10:11Z -->
 
 # Changelog
 
@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changed
+
+- Qualify staleness declarations with pinned historical source references and
+  private/unsigned evidence limits. Repository renames request metadata review;
+  platform retirement candidates additionally require an explicit per-memory,
+  per-rule estate applicability assessment. External references and unknown scope
+  remain review findings. No live sweep, verified-authority gate or apply path is
+  included (`compile-then-govern-39z.2.2`). The private Curator source interface
+  now requires rule `remedy`/`authority` and returns finding `remedy`, `authority`
+  and `scopeEvidenceRef`; the optional third argument supplies applicability.
+  Default calls retain all non-exempt matches for manual review. No version bump
+  or package publication is included.
 
 ### Fixed
 
