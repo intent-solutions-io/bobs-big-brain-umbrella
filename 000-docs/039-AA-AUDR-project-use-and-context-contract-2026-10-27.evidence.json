@@ -1,0 +1,199 @@
+{
+  "bead": "compile-then-govern-obk.2",
+  "cases": [
+    {
+      "authority": "Public umbrella repos.yml/007; owning private living guidance and PR847",
+      "authority_revision": "f3ad9856d3f150360e6f437a2c724f7ee5b70d37",
+      "bead": "compile-then-govern-95c",
+      "capture_to_first_indexed_latency": "unmeasured",
+      "currentness": "Rename memory agrees with current source topology; two other snippets contain Source footers only.",
+      "historical_capture_at": "2026-07-23T09:35:42.067Z",
+      "historical_capture_source": "mcp",
+      "historical_promoted_at": "2026-07-23T09:35:53.616Z",
+      "later_operational_reuse": "unmeasured; retrieval in this audit observed",
+      "measured_client_mode": "Current Codex MCP call; response source local-qmd; curated scope; limit3",
+      "project": "IntentOS",
+      "promotion_candidate_link_matches": true,
+      "query": "brain compiler registrar",
+      "recorded_capture_to_promotion_seconds": 11.549,
+      "returned_citation_count": 3,
+      "returned_citations": "Preserved in the corresponding private query and export receipts.",
+      "team_client_roundtrip": "unmeasured",
+      "work_output": "PR847 source-guidance correction; local pnpm check passed; not merged/deployed at capture."
+    },
+    {
+      "authority": "000-docs/281-PP-RMAP-finish-roadmap.md P2 and src/lib/stripe/plan-mapping.ts",
+      "authority_revision": "3aca65905492da30c7cd2eeb3042767280039fb1",
+      "bead_mirror": "hustle-rs5 / GitHub issue54",
+      "capture_to_first_indexed_latency": "unmeasured",
+      "currentness": "Retrieved four-tier mapping agrees with current source; Free/Family is the roadmap target, not an already implemented state.",
+      "historical_capture_at": "2026-09-19T09:33:42.085Z",
+      "historical_capture_source": "mcp",
+      "historical_promoted_at": "2026-09-19T09:33:52.665Z",
+      "later_operational_reuse": "unmeasured; retrieval in this audit observed",
+      "measured_client_mode": "Current Codex MCP call; response source local-qmd; curated scope; limit3",
+      "project": "Hustle",
+      "promotion_candidate_link_matches": true,
+      "query": "Hustle billing plans",
+      "recorded_capture_to_promotion_seconds": 10.58,
+      "returned_citation_count": 3,
+      "returned_citations": "Preserved in the corresponding private query and export receipts.",
+      "team_client_roundtrip": "unmeasured",
+      "work_output": "No current billing implementation executed by this audit; source concordance only."
+    },
+    {
+      "authority": "000-docs/blueprint/07-ROADMAP.md E7; complete tracked server tree",
+      "authority_revision": "7bf1f7c735ae3d317505a3c5668631ae8b0880ac",
+      "bead_mirror": "guidewire-4ps / GitHub issue9",
+      "capture_to_first_indexed_latency": "unmeasured",
+      "currentness": "Reference/design guidance does not establish E7 implementation; specified claimcenter-mcp directory absent from the inspected complete tree.",
+      "historical_capture_at": "2026-07-16T20:15:47.574Z",
+      "historical_capture_source": "import",
+      "historical_promoted_at": "2026-07-16T22:08:14.939Z",
+      "later_operational_reuse": "unmeasured; retrieval in this audit observed",
+      "measured_client_mode": "Current Codex MCP call; response source local-qmd; curated scope; limit3",
+      "project": "Guidewire",
+      "promotion_candidate_link_matches": true,
+      "query": "Guidewire ClaimCenter",
+      "recorded_capture_to_promotion_seconds": 6747.365,
+      "returned_citation_count": 3,
+      "returned_citations": "Preserved in the corresponding private query and export receipts.",
+      "team_client_roundtrip": "unmeasured",
+      "work_output": "No ClaimCenter implementation executed by this audit; source scope inspection only."
+    }
+  ],
+  "classification": "Unsigned author-recorded audit observations; not independent runtime attestation or a task database.",
+  "controls": {
+    "analytics_first_indexed_latency": "unmeasured",
+    "analytics_focused_keyword_results": 3,
+    "analytics_recorded_capture_to_promotion_seconds": [
+      34.178,
+      11.895
+    ],
+    "analytics_three_keyword_query_results": 1,
+    "empty_query": "MCP -32602 validation refusal (minimum1 character)",
+    "whitespace_query": "Accepted; zero results, not wildcard"
+  },
+  "historical_denominator": {
+    "collection_date_utc": "2026-08-01",
+    "current_estate_census": "unmeasured",
+    "git_repo_records": 133,
+    "intentionally_excluded_reference_trees": 59,
+    "retired_project_classification": "Reference-tree exclusions are not a product-retirement verdict.",
+    "then_observed": 74
+  },
+  "limits": [
+    "Local-qmd response mode was measured; authenticated team round-trip was not.",
+    "Historical capture channel does not identify the client that originally invoked it.",
+    "Config metadata is not a complete hook/writer census or proof of execution.",
+    "Snapshot row linkage is not current capture health, content truth or strict-chain verification.",
+    "First indexed visibility, weekly teammate use, and later operational reuse remain unmeasured.",
+    "Known155historicalchainforks/failedstrictrecovery remain unchanged.",
+    "Raw HMAC equality is not the origin-receipt contract; stored16-hex SHA256-prefix comparisons follow pinned Registrar source; original HMAC validity was not verified."
+  ],
+  "observation_date_utc": "2026-10-27",
+  "origin_receipt_formula": {
+    "formula": "First16 hex characters of SHA256(candidate origin HMAC encoded as UTF-8) equal the stored promotion origin receipt prefix.",
+    "source_files": [
+      {
+        "path": "packages/common/src/origin-token.ts",
+        "sha256": "b30bccd626a5931000b86d215736c8b1a37ee89b1added5b70337d074b375711"
+      },
+      {
+        "path": "apps/curator/src/promotion/promoter.ts",
+        "sha256": "3c657e29e7f8b1b169961699dd211190db0ea6d12792281b6dbe553ae7135fc9"
+      }
+    ],
+    "source_ref": "83d7d9075c9fd0cbf801427f14143b55e7b283f9"
+  },
+  "privacy": "No memory bodies, private citation identifiers, actor identities, secret values, service addresses or raw client configuration are published. Full returned citations and row linkage remain in private receipts.",
+  "private_receipts": [
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-searches-20261027.json",
+      "sha256": "300a21dd387decd245dd7eea2ac1def1b07360f61e40f9b9fcfb782fca4371a6"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-cited-exports-20261027.json",
+      "sha256": "4c3ee04e37b845e3164aecb1bfb2d8ee6420be43a2e63c94a9b3483bd6b9b3a8"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-denominator-20261027.json",
+      "sha256": "a0e0b8e032caf4705c97cd372f8315cf09025526688c501612d8a489e97dc4fa"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-analytics-empty-controls-20261027.json",
+      "sha256": "6ed3ef64c85f0357df10c83e93b21ec3b8d1c20717b61db9e84a34e9d185f27b"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-goal-authorities-20261027.json",
+      "sha256": "b6a1c65b69e3cff60ab06c74b17be6dfc206624ba50d9e7f2d84a9d8e4a4b314"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-task-queries-20261027.json",
+      "sha256": "4acafb7597a8921c3c39349aa6d2a7e7a851bc4b63cc8b1307ce6069a8a79792"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-task-concordance-20261027.json",
+      "sha256": "87f0aac0e468b721204ecb43b55873bd58d7128d38e5d881ae31aab94f4e43c6"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-intentos-task-query-20261027.json",
+      "sha256": "3b18e75eb690babfabf135c012ad27a1e3b5936c7aa00d2982a191fae80457ea"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-intentos-task-exports-20261027.json",
+      "sha256": "3ad10807d8a76e826a07ab23ca1f0fb0b80d483adfbd96535ae6b991bdf76b08"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-client-wiring-20261027.json",
+      "sha256": "e2d130b3fb31336b8165b3a1b3305d276b437ace215c224fd82fb1f74def22f9"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-three-project-capture-traces-20261027.json",
+      "sha256": "b8c02e063d84d7faf915ad03f19cf7ea158105a8f81607cb4826e80591c256ac"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-analytics-governance-trace-20261027.json",
+      "sha256": "e99af2e303a11449b05ffe9ea01c5c376e8d99293b871c419a23562283371d9a"
+    },
+    {
+      "availability": "Operator-held private evidence; not publicly downloadable or independently signed.",
+      "file": "project-use-analytics-origin-binding-20261027.json",
+      "sha256": "4e0742152ee9826dd87914a564f06fd560f5f5db9f7a6f51b7c7c078f8f9c38d"
+    }
+  ],
+  "public_authority_files": [
+    {
+      "issue": "https://github.com/jeremylongshore/hustle/issues/54",
+      "issue_is_native_bead_state": false,
+      "issue_state_observed": "OPEN",
+      "path": "000-docs/281-PP-RMAP-finish-roadmap.md",
+      "repo": "jeremylongshore/hustle",
+      "revision": "3aca65905492da30c7cd2eeb3042767280039fb1",
+      "sha256": "4be77d1f7f7ee16a868406d71dded839e9ddda930022d109579bd09ceb285167"
+    },
+    {
+      "issue": "https://github.com/jeremylongshore/guidewire-mcp-for-claude/issues/9",
+      "issue_is_native_bead_state": false,
+      "issue_state_observed": "OPEN",
+      "path": "000-docs/blueprint/07-ROADMAP.md",
+      "repo": "jeremylongshore/guidewire-mcp-for-claude",
+      "revision": "7bf1f7c735ae3d317505a3c5668631ae8b0880ac",
+      "sha256": "2989bb96372685909cfed72fb2fe2c4e09322de907493ef17c539f6f0a234a63"
+    }
+  ],
+  "public_source_base": "f3ad9856d3f150360e6f437a2c724f7ee5b70d37",
+  "sample_design": "Purposive three-project sample plus analytics/empty-input controls; not representative usage telemetry."
+}
