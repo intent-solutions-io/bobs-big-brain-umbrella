@@ -32,6 +32,12 @@ deploy() {
     bash "$ROOT/bin/deploy-teamkb-compile.sh" "$@"
 }
 
+deploy_with_tools() {
+  env -i HOME="$TEST_HOME" PATH="$TEST_HOME/tools:/usr/bin:/bin" LANG=C GIT_CONFIG_NOSYSTEM=1 \
+    TEAMKB_COMPILER_REPO="$COMPILER" TEAMKB_COMPILER_REVISION="$REVISION" \
+    bash "$ROOT/bin/deploy-teamkb-compile.sh" "$@"
+}
+
 entry() {
   env -i HOME="$TEST_HOME" PATH=/usr/bin:/bin LANG=C \
     FIXTURE_RESULT="$RESULT" FIXTURE_EXIT="${FIXTURE_EXIT:-0}" \
@@ -131,6 +137,82 @@ PY_INDEX
     [ "$(cat "$TEST_HOME/bin/$name")" = 'runtime sentinel' ]
   done
   [ ! -e "$TEST_HOME/.claude/skills/teamkb-review/scripts" ]
+}
+
+@test "full deploy preserves a separately managed quality observer's bytes and mode" {
+  local digest="$TEST_HOME/bin/teamkb-quality-digest.sh"
+  mkdir -p "$TEST_HOME/bin"
+  printf '#!/bin/sh\n# separately managed observer\nexit 23\n' > "$digest"
+  chmod 0700 "$digest"
+  cp "$digest" "$BATS_TEST_TMPDIR/digest-before.sh"
+  run deploy
+  [ "$status" -eq 0 ]
+  cmp "$digest" "$BATS_TEST_TMPDIR/digest-before.sh"
+  [ "$(stat -c %a "$digest")" = 700 ]
+  [[ "$output" == *'quality digest preserved'* ]]
+  cmp "$ROOT/bin/teamkb-backup.sh" "$TEST_HOME/bin/teamkb-backup.sh"
+  [ -f "$TEST_HOME/.claude/skills/teamkb-review/SKILL.md" ]
+}
+
+@test "full deploy preserves an existing dangling quality observer symlink" {
+  local digest="$TEST_HOME/bin/teamkb-quality-digest.sh"
+  local target="$TEST_HOME/separately-managed-observer.sh"
+  mkdir -p "$TEST_HOME/bin"
+  ln -s "$target" "$digest"
+  run deploy
+  [ "$status" -eq 0 ]
+  [ -L "$digest" ]
+  [ "$(readlink "$digest")" = "$target" ]
+  [ ! -e "$target" ]
+  [[ "$output" == *'quality digest preserved'* ]]
+}
+
+@test "full deploy preserves an observer created at the publication boundary" {
+  mkdir -p "$TEST_HOME/tools"
+  cat > "$TEST_HOME/tools/ln" <<'TOOL'
+#!/usr/bin/env bash
+printf 'concurrent owner fixture\n' > "${@: -1}"
+exit 1
+TOOL
+  chmod +x "$TEST_HOME/tools/ln"
+  run deploy_with_tools
+  [ "$status" -eq 0 ]
+  [ "$(cat "$TEST_HOME/bin/teamkb-quality-digest.sh")" = 'concurrent owner fixture' ]
+  [[ "$output" == *'quality digest preserved'* ]]
+  cmp "$ROOT/bin/teamkb-backup.sh" "$TEST_HOME/bin/teamkb-backup.sh"
+  run compgen -G "$TEST_HOME/bin/.teamkb-quality-digest.*"
+  [ "$status" -eq 1 ]
+}
+
+@test "failed quality seed publication stops before backup and removes its seed" {
+  mkdir -p "$TEST_HOME/tools"
+  printf '#!/bin/sh\nexit 1\n' > "$TEST_HOME/tools/ln"
+  chmod +x "$TEST_HOME/tools/ln"
+  run deploy_with_tools
+  [ "$status" -eq 1 ]
+  [[ "$output" == *'Unable to seed quality digest'* ]]
+  [ ! -e "$TEST_HOME/bin/teamkb-quality-digest.sh" ]
+  [ ! -e "$TEST_HOME/bin/teamkb-backup.sh" ]
+  run compgen -G "$TEST_HOME/bin/.teamkb-quality-digest.*"
+  [ "$status" -eq 1 ]
+}
+
+@test "failed quality seed preparation removes its unpublished temporary file" {
+  mkdir -p "$TEST_HOME/tools"
+  cat > "$TEST_HOME/tools/install" <<'TOOL'
+#!/usr/bin/env bash
+case "${@: -1}" in
+  "$HOME/bin/.teamkb-quality-digest."*) exit 1 ;;
+esac
+exec /usr/bin/install "$@"
+TOOL
+  chmod +x "$TEST_HOME/tools/install"
+  run deploy_with_tools
+  [ "$status" -eq 1 ]
+  [ ! -e "$TEST_HOME/bin/teamkb-quality-digest.sh" ]
+  [ ! -e "$TEST_HOME/bin/teamkb-backup.sh" ]
+  run compgen -G "$TEST_HOME/bin/.teamkb-quality-digest.*"
+  [ "$status" -eq 1 ]
 }
 
 @test "first deploy seeds empty audit log and a repeat preserves its contents" {

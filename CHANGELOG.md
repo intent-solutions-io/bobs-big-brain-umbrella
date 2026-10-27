@@ -10,6 +10,18 @@ engine and plugin repos. Format based on
 
 ### Fixed
 
+- **Preserve separately managed quality observers:** full compiler deployment now
+  seeds the public quality-digest bootstrap only when its destination is absent.
+  Existing files, modes and symlinks are retained, and the helper reports whether
+  it seeded or preserved the path. Publication of a complete seed cannot replace
+  a concurrently created destination. The two new fixture regressions failed
+  against the old helper; deterministic publication-boundary competition and
+  seed/publication failure controls also pass. Fresh bootstrap and compile-only
+  behavior remain covered. Validation at source `a642db4`: [18 Bats and 13 installer
+  cases passed in hosted CI](https://github.com/intent-solutions-io/bobs-big-brain-umbrella/actions/runs/40428535512).
+  Source repair only; no installed script or schedule is changed by this commit.
+  Bead: `compile-then-govern-jgh`.
+
 - **Nightly recovery verified (2026-09-13):** reviewed compiler bundles restored the five
   September 8–12 target dates: 15 proposals, 14 promotions, refreshed indexes, and independent
   audit receipts with zero tamper signatures or anchor breaks. All 14 published memories
