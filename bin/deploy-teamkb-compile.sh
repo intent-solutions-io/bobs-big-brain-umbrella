@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Deploy the reviewed teamkb runtime scripts (this repo == source of truth) to
-# their runtime locations. The repo copy under bin/ is CANONICAL; ~/bin holds
-# deploy artifacts, never hand-edited (Track 0, bead compile-then-govern-6ps.1 —
-# a bash test must exercise the copy cron/systemd actually runs).
+# Deploy the reviewed compiler entry, backup script and skills to runtime paths.
+# Their repo copies are canonical; the compiler implementation is a selected
+# commit-addressed bundle. An existing quality observer is separately managed
+# and must not be replaced by this repo's bootstrap default (bead jgh).
 #   .claude/skills/teamkb-compile/  ->  ~/.claude/skills/teamkb-compile/
 #   .claude/skills/teamkb-review/   ->  ~/.claude/skills/teamkb-review/   (jfv.8 / 014-AT-DECR)
 #   bin/teamkb-compile-daily.sh     ->  ~/bin/teamkb-compile-daily.sh   (cron 03:30)
-#   bin/teamkb-quality-digest.sh    ->  ~/bin/teamkb-quality-digest.sh  (nightly govern-quality canary)
+#   bin/teamkb-quality-digest.sh    ->  ~/bin/teamkb-quality-digest.sh  (seed ONLY if absent)
 #   bin/teamkb-backup.sh            ->  ~/bin/teamkb-backup.sh          (teamkb-backup.service 04:30)
 #
 # The runtime-local methodology/decisions.jsonl audit log is PRESERVED (never
@@ -73,7 +73,24 @@ fi
 install -m 0755 "$WRAP_SRC" "$WRAP_DST.new"
 mv -f "$WRAP_DST.new" "$WRAP_DST"
 if [[ "$COMPILE_ONLY" = 0 ]]; then
-  install -m 0755 "$DIGEST_SRC" "$DIGEST_DST"
+  DIGEST_ACTION=preserved
+  if [[ ! -e "$DIGEST_DST" && ! -L "$DIGEST_DST" ]]; then
+    # Publish a complete seed without replacing a path another owner might
+    # create after the absence check. A dangling symlink is owned too.
+    digest_seed="$(mktemp "$HOME/bin/.teamkb-quality-digest.XXXXXXXX")"
+    if ! install -m 0755 "$DIGEST_SRC" "$digest_seed"; then
+      rm -f -- "$digest_seed"
+      exit 1
+    fi
+    if ln -T -- "$digest_seed" "$DIGEST_DST" 2>/dev/null; then
+      DIGEST_ACTION=seeded
+    elif [[ ! -e "$DIGEST_DST" && ! -L "$DIGEST_DST" ]]; then
+      printf '%s\n' 'Unable to seed quality digest; destination was not created' >&2
+      rm -f -- "$digest_seed"
+      exit 1
+    fi
+    rm -f -- "$digest_seed"
+  fi
   install -m 0755 "$BACKUP_SRC" "$BACKUP_DST"
 fi
 chmod +x "$SKILL_DST/scripts/gather-signals.sh" "$SKILL_DST/scripts/scan-session-transcripts.py" 2>/dev/null || true
@@ -84,7 +101,7 @@ echo "  compile wrapper-> $WRAP_DST"
 echo "  private backup -> $BACKUP_DIR"
 if [[ "$COMPILE_ONLY" = 0 ]]; then
   echo "  review skill   -> $REVIEW_DST"
-  echo "  quality digest -> $DIGEST_DST"
+  echo "  quality digest $DIGEST_ACTION -> $DIGEST_DST (existing observers are managed separately)"
   echo "  backup script  -> $BACKUP_DST"
 else
   echo "  review skill, quality digest and backup script left unchanged (--compile-only)"

@@ -43,12 +43,20 @@ shellcheck bin/*.sh scripts/*.sh                     # shellcheck workflow lints
 ## Runtime ops scripts (repo copy is canonical, `~/bin` is a deploy artifact)
 
 `bin/deploy-teamkb-compile.sh` copies the reviewed scripts to where cron/systemd run them —
-`teamkb-compile-daily.sh` (cron 03:30), `teamkb-quality-digest.sh` (nightly govern-quality canary),
+`teamkb-compile-daily.sh` (cron 03:30),
 `teamkb-backup.sh` (`teamkb-backup.service` 04:30), plus `.claude/skills/teamkb-{compile,review}/` →
-`~/.claude/skills/`. It requires `TEAMKB_COMPILER_REVISION=<full 40-char compiler SHA>` (the compiler
+`~/.claude/skills/`. It seeds the public `teamkb-quality-digest.sh` bootstrap only
+when no destination exists; it preserves an existing observer, including symlinks
+and its mode. The company host's quality observer is owned by private Intent OS;
+its implementation must be updated through that owner's reviewed deployment,
+not overwritten with this public bootstrap. The helper reports seeded/preserved;
+preservation does not certify the observer's health or provenance.
+It requires `TEAMKB_COMPILER_REVISION=<full 40-char compiler SHA>` (the compiler
 implementation is installed as a commit-addressed, hash-verified bundle under
-`~/.local/lib/teamkb-compile`), is idempotent, and is run **after merge**. Never hand-edit the `~/bin`
-copies; change `bin/` here, merge, redeploy. `teamkb-tailnet-canary.sh` (+ its deploy script) is the
+`~/.local/lib/teamkb-compile`), is idempotent, and is run **after merge**. Never hand-edit deployed
+copies: update each owning source and use its reviewed deployment path. Compiler entry and
+backup changes start in `bin/` here; an existing quality observer has its own owner.
+`teamkb-tailnet-canary.sh` (+ its deploy script) is the
 daily Tier-A proof run from a separate tailnet node through the plugin installed from its public
 GitHub marketplace (`jeremylongshore/bobs-big-brain-plugin`).
 

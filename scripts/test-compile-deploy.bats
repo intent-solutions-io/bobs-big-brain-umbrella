@@ -133,6 +133,34 @@ PY_INDEX
   [ ! -e "$TEST_HOME/.claude/skills/teamkb-review/scripts" ]
 }
 
+@test "full deploy preserves a separately managed quality observer's bytes and mode" {
+  local digest="$TEST_HOME/bin/teamkb-quality-digest.sh"
+  mkdir -p "$TEST_HOME/bin"
+  printf '#!/bin/sh\n# separately managed observer\nexit 23\n' > "$digest"
+  chmod 0700 "$digest"
+  cp "$digest" "$BATS_TEST_TMPDIR/digest-before.sh"
+  run deploy
+  [ "$status" -eq 0 ]
+  cmp "$digest" "$BATS_TEST_TMPDIR/digest-before.sh"
+  [ "$(stat -c %a "$digest")" = 700 ]
+  [[ "$output" == *'quality digest preserved'* ]]
+  cmp "$ROOT/bin/teamkb-backup.sh" "$TEST_HOME/bin/teamkb-backup.sh"
+  [ -f "$TEST_HOME/.claude/skills/teamkb-review/SKILL.md" ]
+}
+
+@test "full deploy preserves an existing dangling quality observer symlink" {
+  local digest="$TEST_HOME/bin/teamkb-quality-digest.sh"
+  local target="$TEST_HOME/separately-managed-observer.sh"
+  mkdir -p "$TEST_HOME/bin"
+  ln -s "$target" "$digest"
+  run deploy
+  [ "$status" -eq 0 ]
+  [ -L "$digest" ]
+  [ "$(readlink "$digest")" = "$target" ]
+  [ ! -e "$target" ]
+  [[ "$output" == *'quality digest preserved'* ]]
+}
+
 @test "first deploy seeds empty audit log and a repeat preserves its contents" {
   run deploy --compile-only
   [ "$status" -eq 0 ]
