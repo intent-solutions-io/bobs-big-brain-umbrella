@@ -46,3 +46,4 @@ root `CLAUDE.md` repo map.
 | [035-TQ-CASE-bbb-website-acceptance-criteria.md](035-TQ-CASE-bbb-website-acceptance-criteria.md) | Acceptance criteria AC-01 to AC-13 for the site, each mapped to a requirement and a verification method. |
 | [036-AT-DSGN-signed-legacy-audit-cutover-proposal.md](036-AT-DSGN-signed-legacy-audit-cutover-proposal.md) | Signed legacy cut-over proposal; unresolved authority prerequisites, not authorization to apply. |
 | [037-AA-AUDR-source-contract-reconciliation-2026-10-26.md](037-AA-AUDR-source-contract-reconciliation-2026-10-26.md) | Umbrella consistency reconciliation: source/trace/receipt boundaries, dated install versus later source, and validation scope. |
+| [038-AA-AUDR-topology-authority-and-delivery-2026-10-27.md](038-AA-AUDR-topology-authority-and-delivery-2026-10-27.md) | Dated read-only topology audit: owners, source/release/installed boundaries, private operating observations, unresolved acceptance and owning follow-ups. |
