@@ -1,10 +1,18 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-compiler/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-04T08:00:49Z -->
+<!-- fetched-at: 2026-11-04T08:23:53Z -->
 
 # Changelog
 
 ## [Unreleased]
+
+### Added
+
+- Add sanitized review-phase runtime observations with monotonic elapsed time,
+  provider selection, agent-reported counts and available terminal client usage.
+  Missing usage stays unavailable; fake-agent tests cover skips, failures and
+  timeouts. Installer integration remains separate; no live cron was activated
+  (`compile-then-govern-6ps.14`).
 
 ### Fixed
 
