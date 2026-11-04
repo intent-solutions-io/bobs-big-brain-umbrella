@@ -31,13 +31,21 @@ def install(source, destination, revision):
     releases.mkdir(exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix=".install-", dir=releases))
     try:
+        # Legacy reviewed revisions retain their exact six-file manifest. New
+        # revisions carry the helper as an additional hash-verified dependency.
+        files = list(FILES)
+        helper = "review-metrics.py"
+        if git("ls-tree", "--name-only", resolved, "--", f"scripts/distiller/{helper}").strip():
+            files.append(helper)
+        elif helper.encode() in git("show", f"{resolved}:scripts/distiller/teamkb-compile-daily.sh"):
+            raise ValueError("compiler declares a missing review metrics helper")
         hashes = {}
-        for name in FILES:
+        for name in files:
             data = git("show", f"{resolved}:scripts/distiller/{name}")
             (stage / name).write_bytes(data)
             (stage / name).chmod(0o755)
             hashes[name] = hashlib.sha256(data).hexdigest()
-        for name in FILES:
+        for name in files:
             if name.endswith(".sh"):
                 subprocess.run(["bash", "-n", str(stage / name)], check=True)
             if name.endswith(".py"):
@@ -65,7 +73,7 @@ def install(source, destination, revision):
         link.symlink_to(target)
         os.replace(link, current)
         return {"event": "compiler_bundle_installed", "revision": resolved,
-                "previous_revision": previous.name if previous else None, "files": len(FILES)}
+                "previous_revision": previous.name if previous else None, "files": len(files)}
     finally:
         if stage.exists():
             shutil.rmtree(stage)  # Only this invocation's newly-created staging directory.

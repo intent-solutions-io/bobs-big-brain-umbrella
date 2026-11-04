@@ -20,11 +20,15 @@ try:
     if not re.fullmatch(r'[a-f0-9]{40}', manifest['revision']):
         raise ValueError('revision')
     expected = {'nightly-entry.py', 'runtime-proof.py', 'c8-mcp.py', 'teamkb-compile-daily.sh', 'eval-distiller-output.mjs', 'notify-routing.sh'}
-    if not isinstance(manifest['sha256'], dict) or set(manifest['sha256']) != expected:
+    if not isinstance(manifest['sha256'], dict) or set(manifest['sha256']) not in (expected, expected | {'review-metrics.py'}):
         raise ValueError('bundle files')
     for name, digest in manifest['sha256'].items():
         if hashlib.sha256((root / name).read_bytes()).hexdigest() != digest:
             raise ValueError('bundle drift')
+    # Reject a newer wrapper packaged by an older six-file installer. Preserve
+    # genuine older six-file bundles for rollback; never execute an unpinned helper.
+    if b'review-metrics.py' in (root / 'teamkb-compile-daily.sh').read_bytes() and 'review-metrics.py' not in manifest['sha256']:
+        raise ValueError('required metrics helper is not pinned')
 except (OSError, ValueError, KeyError, TypeError):
     print('teamkb-compile: compiler bundle verification failed', file=sys.stderr)
     raise SystemExit(69) from None

@@ -146,6 +146,71 @@ class InstallTests(unittest.TestCase):
         self.assertEqual((self.destination / "current").resolve().name, self.revision)
         self.assertEqual(self.run_entry().stdout.strip(), "fixture-compiler-ran")
 
+    def metrics_revision(self, include_helper=True):
+        (self.payload / 'teamkb-compile-daily.sh').write_text(
+            '#!/bin/sh\npython3 "$(dirname "$0")/review-metrics.py"\n')
+        (self.payload / 'nightly-entry.py').write_text(
+            "import pathlib,subprocess\n"
+            "root=pathlib.Path(__file__).resolve().parent\n"
+            "raise SystemExit(subprocess.call(['bash',str(root/'teamkb-compile-daily.sh')]))\n")
+        if include_helper:
+            (self.payload / 'review-metrics.py').write_text("print('fixture-metrics-helper-ran')\n")
+        self.git('add', '.')
+        self.git('commit', '-qm', 'Fixture metrics bundle')
+        revision = self.git('rev-parse', 'HEAD').strip()
+        self.git('update-ref', 'refs/remotes/origin/main', revision)
+        return revision
+
+    def test_metrics_helper_is_copied_from_commit_and_verified_before_execution(self):
+        revision = self.metrics_revision()
+        (self.payload / 'review-metrics.py').write_text("print('wrong-checkout-helper')\n")
+        receipt = installer.install(self.source, self.destination, revision)
+        self.assertEqual(receipt['files'], 7)
+        release = self.destination / 'current'
+        manifest = json.loads((release / 'manifest.json').read_text())
+        self.assertIn('review-metrics.py', manifest['sha256'])
+        self.assertEqual(self.run_entry().stdout.strip(), 'fixture-metrics-helper-ran')
+        helper = release / 'review-metrics.py'
+        original = helper.read_bytes()
+        for payload in (None, b"print('unverified-metrics-helper')\n"):
+            with self.subTest(payload=payload):
+                if payload is None:
+                    helper.unlink()
+                else:
+                    helper.write_bytes(payload)
+                result = self.run_entry()
+                self.assertEqual(result.returncode, 69)
+                self.assertEqual(result.stdout, '')
+        helper.write_bytes(original)
+        # A six-file manifest produced by an old installer cannot silently omit
+        # the dependency declared by the hash-verified newer wrapper.
+        del manifest['sha256']['review-metrics.py']
+        (release / 'manifest.json').write_text(json.dumps(manifest))
+        result = self.run_entry()
+        self.assertEqual(result.returncode, 69)
+        self.assertEqual(result.stdout, '')
+
+    def test_missing_metrics_source_does_not_replace_current_legacy_bundle(self):
+        installer.install(self.source, self.destination, self.revision)
+        revision = self.metrics_revision(include_helper=False)
+        with self.assertRaises(ValueError):
+            installer.install(self.source, self.destination, revision)
+        self.assertEqual((self.destination / 'current').resolve().name, self.revision)
+        self.assertEqual(self.run_entry().stdout.strip(), 'fixture-compiler-ran')
+
+    def test_metrics_upgrade_and_legacy_rollback_are_both_verified(self):
+        installer.install(self.source, self.destination, self.revision)
+        revision = self.metrics_revision()
+        installer.install(self.source, self.destination, revision)
+        self.assertEqual(self.run_entry().stdout.strip(), 'fixture-metrics-helper-ran')
+        self.assertEqual((self.destination / 'previous').resolve().name, self.revision)
+        rollback = self.destination / 'rollback-metrics-link'
+        rollback.symlink_to((self.destination / 'previous').resolve())
+        os.replace(rollback, self.destination / 'current')
+        self.assertEqual(self.run_entry().stdout.strip(), 'fixture-compiler-ran')
+        installer.install(self.source, self.destination, self.revision)
+        self.assertEqual(self.run_entry().returncode, 0)
+
     def test_legacy_five_file_manifest_is_refused(self):
         installer.install(self.source, self.destination, self.revision)
         manifest = self.destination / "current/manifest.json"
