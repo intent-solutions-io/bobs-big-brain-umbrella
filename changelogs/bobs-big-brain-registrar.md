@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-04T04:49:41Z -->
+<!-- fetched-at: 2026-11-04T06:00:19Z -->
 
 # Changelog
 
@@ -64,6 +64,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or package publication is included.
 
 ### Fixed
+
+- Prevent the tested generic API-key false matches caused by joining ordinary
+  multiline task/risk prose. Validate source tokens and immediate prefix
+  boundaries while retaining line-start, wrapped, encoded and overlapping-key controls.
+  Detection remains syntax-based. No Plugin rebundle or live inbox governance
+  is included (`compile-then-govern-2i3.1`); separate env/Slack joining and
+  Heroku-context precision work remains under `2i3.5`.
 
 - Distinguish explicit prescriptive staleness candidates from manual-review
   matches in the dry-run detector. Completed narratives, quoted/code examples,
