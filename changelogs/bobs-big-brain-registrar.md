@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-02T06:01:09Z -->
+<!-- fetched-at: 2026-11-04T04:49:41Z -->
 
 # Changelog
 
@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add a read-only frozen review-agent evaluation runner with independent
+  manifest pins, exact case/inventory checks, preserved prior checkpoints and
+  manifest-bound predictions. Its subprocess self-test uses disposable synthetic
+  cases; human approval, real labels and operational qualification remain parent
+  work (`compile-then-govern-6ps.13.2`).
 
 - Add pure review-agent promote/hold/reject judgment scoring with independent
   recall floors, explicit missing-prediction misses, full class confusion
