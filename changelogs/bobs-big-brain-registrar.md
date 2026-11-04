@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-04T06:23:45Z -->
+<!-- fetched-at: 2026-11-04T07:17:16Z -->
 
 # Changelog
 
@@ -64,6 +64,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or package publication is included.
 
 ### Fixed
+
+- Associate Heroku UUID context with the original occurrence's source lines or
+  an immediately preceding credential-specific label, preserving labeled split and encoded
+  keys while excluding unrelated API-guide lines. Repeated encoded occurrences
+  reuse cached decoded bytes and evaluate their own context; context-free
+  findings retain deduplication. Same-line keyword ambiguity remains suspicious.
+  Evaluate source-line gates lazily and limit a preceding label to its final
+  256 UTF-16 code units plus one original boundary character, avoiding broad
+  context scans on unrelated long lines without inventing keyword boundaries.
+  Source-only correction; distribution and live work remain separate
+  (`compile-then-govern-2i3.5.2`).
 
 - Preserve horizontal spaces in the additional split-token scan for env and
   Slack values, so short ordinary fragments do not become secret-shaped values.
