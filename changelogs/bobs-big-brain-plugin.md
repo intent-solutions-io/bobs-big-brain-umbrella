@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-plugin/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-09T06:01:12Z -->
+<!-- fetched-at: 2026-11-12T08:17:02Z -->
 
 # Changelog
 
@@ -11,6 +11,12 @@ installable Claude Code plugin (a local stdio MCP server); the engines it bundle
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- Add separate hand-authored skill eval profiles for synthetic response-policy and
+  sibling-trigger cases; no real brain writes, provider run or schedule activation.
+  Refs bead `bd_000-projects-qkhp`.
 
 ### Fixed
 
