@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-12T08:17:23Z -->
+<!-- fetched-at: 2026-11-16T06:01:20Z -->
 
 # Changelog
 
@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add separate hand-authored skill eval profiles for synthetic response-policy and
+  sibling-trigger cases; no real brain writes, provider run or schedule activation.
+  Refs bead `bd_000-projects-qkhp`.
 
 - Add a bounded, fixture-only OKF v0.2 exchange experiment in the private eval
   package. Foreign provenance remains inert data; imports create untrusted inbox
