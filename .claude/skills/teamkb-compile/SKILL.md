@@ -98,21 +98,58 @@ Examples: `/teamkb-compile` · `/teamkb-compile 2026-06-27` · `/teamkb-compile 
 
 ## Instructions
 
-**Phase markers (MANDATORY for cron diagnosability)** — before each phase below, emit one Bash echo so
-the cron wrapper's log can be bisected by phase without parsing transcripts:
+**Phase markers (mandatory for nightly diagnosis)** — before entering each phase, run
+this Bash command with the indicated phase name. The wrapper supplies the helper and
+per-attempt context; the helper writes directly to its local run log, independently of tool stdout.
 
 ```bash
-echo "[phase: <name>] <one-line context>"
+if [ -n "${TEAMKB_PHASE_HELPER:-}" ]; then
+  python3 "$TEAMKB_PHASE_HELPER" phase --phase "<name>" || {
+    printf '%s\n' 'Phase logging failed; stop and report this run.' >&2
+    exit 1
+  }
+elif [ "${TEAMKB_PHASE_WRAPPED:-}" = "1" ]; then
+  printf '%s\n' 'Nightly wrapper context is present but its phase helper is missing.' >&2
+  exit 1
+else
+  printf '%s\n' 'Phase logging unavailable: wrapper context was not detected.' >&2
+fi
 ```
 
-Allowed `<name>` values in order: `setup`, `gather`, `distill`, `govern`, `audit`, `digest`. The
-`<one-line context>` is free text — the target date, the candidate count, the mode, an artifact path.
+Allowed names, in order: `setup`, `gather`, `distill`, `govern`, `audit`, `digest`.
+A helper failure in a wrapped run must be reported and the run stopped. Do not fall
+back to echoes, invent context, reuse another attempt ID, or backfill markers.
+Missing context does not prove the run is interactive. If invoked as a nightly or
+scheduled task, report missing context and stop, including with an older wrapper.
+Continue without a phase log only when the invocation is explicitly interactive
+requested by the current interactive operator, including the chosen digest or auto mode. A nonzero Bash command stops that shell; the agent
+must also follow this instruction to stop the overall task.
+
+The helper contract is owned by the
+[Compiler source](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/e0efb0b37d8d53eccba37ae16d06aff843cce9a6/scripts/distiller/runtime-proof.py)
+and its
+[wrapper](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/e0efb0b37d8d53eccba37ae16d06aff843cce9a6/scripts/distiller/teamkb-compile-daily.sh).
+This source pair supplies `TEAMKB_PHASE_WRAPPED=1`, `TEAMKB_PHASE_HELPER` and
+`TEAMKB_PHASE_*` attempt context; the command is `phase --phase <name>`.
+Coordinate adoption with that source pair or a verified compatible successor;
+these links identify source, not an installed release.
+
+Markers mean **agent-reported phase entry**, never successful completion. The wrapper
+supplies the attempt ID, date, mode and configured artifact paths, and invokes the
+helper after the agent exits. The helper writes the records and summarizes the
+observed phase-entry sequence relative to the expected order. This diagnostic log
+is not tamper-evident and does not establish a canonical total order. Artifact paths identify where to
+look; they do not establish that an artifact exists. Outcome records, audit verification,
+and retrieval checks remain authoritative. A hard kill can leave a start without an end;
+that is an incomplete attempt, not a completed run. Record attribution is explicitly
+unverified: the helper and agent share an OS user, and event/source labels do not
+authenticate the caller. The helper is not a sandbox or a restriction on local file writes.
 
 ---
 
 ### Phase 0 — Setup
 
-Emit `[phase: setup] ...`. Then:
+Record phase entry with `--phase setup` using the command above. Then:
 
 1. **Resolve the date window and mode.** Parse `$ARGUMENTS` per the table above. Compute `DATE`
    (`YYYY-MM-DD`, the start day) and `NEXT_DATE` (exclusive end). Resolve `MODE` (`auto` or `digest`):
@@ -127,7 +164,7 @@ Emit `[phase: setup] ...`. Then:
 
 ### Phase 1 — Gather the day's work
 
-Emit `[phase: gather] ...`. Read **`references/gather-signals.md`** for the exact pattern, then run
+Record phase entry with `--phase gather` using the command above. Read **`references/gather-signals.md`** for the exact pattern, then run
 the gather helper:
 
 ```bash
@@ -143,7 +180,7 @@ even an empty day needs a valid per-date outcome instead of an unverified clean 
 
 ### Phase 2 — Compile: distill candidates (the model PROPOSES)
 
-Emit `[phase: distill] ...`. **Dispatch the `memory-distiller` agent** (defined in
+Record phase entry with `--phase distill` using the command above. **Dispatch the `memory-distiller` agent** (defined in
 `agents/memory-distiller.md`) via the **Task** tool, handing it the signal doc. Read
 **`references/distill-candidates.md`** for the full briefing, the candidate JSON schema, the category
 enum, and the hard rules (one candidate per durable item; durable lessons not raw commits; **never emit a
@@ -153,7 +190,7 @@ audit record. **Do not inline-distill** unless the Task tool itself errors.
 
 ### Phase 3 — Govern (deterministic code DISPOSES)
 
-Emit `[phase: govern] ...`. Read **`references/govern-candidates.md`** for the exact flow.
+Record phase entry with `--phase govern` using the command above. Read **`references/govern-candidates.md`** for the exact flow.
 
 **For every candidate, first do search-before-save:** call **`brain_search`** with
 `{ query: "<title> <key terms>", scope: "all" }`. Summarize what the brain already knows from the
@@ -172,7 +209,7 @@ result is *no known coverage* → `new` (not a block).
 
 ### Phase 4 — Audit record
 
-Emit `[phase: audit] ...`. Append **one** JSON line to
+Record phase entry with `--phase audit` using the command above. Append **one** JSON line to
 `${CLAUDE_SKILL_DIR}/methodology/decisions.jsonl` per the schema in **`references/audit-and-digest.md`**
 (date, window, mode, candidate count, per-candidate disposition, govern counts, brain before/after).
 Append new records; do not edit existing lines. This is an operating instruction,
@@ -180,7 +217,7 @@ not a mechanism that prevents arbitrary local file changes.
 
 ### Phase 5 — Digest / summary
 
-Emit `[phase: digest] ...`. Read **`references/audit-and-digest.md`** for the format. **Write** the
+Record phase entry with `--phase digest` using the command above. Read **`references/audit-and-digest.md`** for the format. **Write** the
 digest to `/tmp/teamkb-compile/digest-$DATE.md` (markdown). The **cron wrapper owns delivery** — it reads
 this file and emails it + pushes an ntfy status (single notification owner, exactly like
 `/blog-backfill`). When run interactively you'll just see it on screen; also print the path.
