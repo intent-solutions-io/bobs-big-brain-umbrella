@@ -100,7 +100,7 @@ Examples: `/teamkb-compile` · `/teamkb-compile 2026-06-27` · `/teamkb-compile 
 
 **Phase markers (mandatory for nightly diagnosis)** — before entering each phase, run
 this Bash command with the indicated phase name. The wrapper supplies the helper and
-per-attempt context; the helper appends directly to its run log, independently of tool stdout.
+per-attempt context; the helper writes directly to its local run log, independently of tool stdout.
 
 ```bash
 if [ -n "${TEAMKB_PHASE_HELPER:-}" ]; then
@@ -135,8 +135,10 @@ Coordinate adoption with that source pair or a verified compatible successor;
 these links identify source, not an installed release.
 
 Markers mean **agent-reported phase entry**, never successful completion. The wrapper
-records the attempt ID, date, mode, and configured artifact paths, then summarizes
-missing or out-of-order phases when the agent exits. Artifact paths identify where to
+supplies the attempt ID, date, mode and configured artifact paths, and invokes the
+helper after the agent exits. The helper writes the records and summarizes the
+observed phase-entry sequence relative to the expected order. This diagnostic log
+is not tamper-evident and does not establish a canonical total order. Artifact paths identify where to
 look; they do not establish that an artifact exists. Outcome records, audit verification,
 and retrieval checks remain authoritative. A hard kill can leave a start without an end;
 that is an incomplete attempt, not a completed run. Record attribution is explicitly
