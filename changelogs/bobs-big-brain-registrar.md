@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T13:18:05Z -->
+<!-- fetched-at: 2026-11-22T20:34:50Z -->
 
 # Changelog
 
@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Security
+
+- Override the transitive hono, @hono/node-server, qs, glob and minimatch advisories reachable
+  through the qmd MCP SDK, testcontainers and Stryker so `pnpm audit` is clean again; six
+  production dependencies bumped by Dependabot (#457).
 
 ### Fixed
 
