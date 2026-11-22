@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T08:10:16Z -->
+<!-- fetched-at: 2026-11-22T08:34:54Z -->
 
 # Changelog
 
@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+
+- Recheck resolved qmd hits for tenant-scoped API queries and, when store lookup
+  succeeds, tenant and audience in local MCP search
+  (`compile-then-govern-39z.11.2`). Local admin does not confer owner standing.
+  Unresolved citations, stale index content and store-error fallback remain
+  tracked separately in `compile-then-govern-39z.11.3`.
 
 ### Added
 
