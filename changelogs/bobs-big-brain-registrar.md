@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T12:03:27Z -->
+<!-- fetched-at: 2026-11-22T13:09:48Z -->
 
 # Changelog
 
@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Expose the existing source-classification v1 schema and signing codec through
+  the schema package's dedicated `source-classification` subpath. Curator keeps
+  compatibility re-exports; canonical bytes and receiver policy are unchanged.
+  An isolated packed-artifact test covers independent consumption. This does
+  not publish the package, enroll producers or activate consumers
+  (`compile-then-govern-39z.11.4.4.4.5`).
 
 - Add an opt-in, authenticated source-governance API with strict v1 preview/apply
   envelopes, server-owned receiver/clock, current tenant authorization and the
