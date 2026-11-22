@@ -22,12 +22,17 @@ NEXT_DATE="${2:?usage: gather-signals.sh <DATE> <NEXT_DATE>}"
 
 PROJECTS_ROOT="${TEAMKB_COMPILE_PROJECTS_ROOT:-$HOME/000-projects}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRATCH="/tmp/teamkb-compile"
+SCRATCH="${TMPDIR:-/tmp}/teamkb-compile"
 mkdir -p "$SCRATCH"
 chmod 700 "$SCRATCH" 2>/dev/null || true   # tighten even if it pre-existed loose
 
 SINCE="$DATE 00:00:00"
 UNTIL="$NEXT_DATE 00:00:00"
+# Git's --until includes its boundary. Filter epochs for an exclusive next day;
+# --since-as-filter traverses old-dated children to reach in-window ancestors.
+SINCE_EPOCH=$(date -d "$SINCE" +%s) || exit 64
+UNTIL_EPOCH=$(date -d "$UNTIL" +%s) || exit 64
+[ "$UNTIL_EPOCH" -gt "$SINCE_EPOCH" ] || exit 64
 
 # Caps so a busy day can't produce a megabyte signal doc.
 PR_BODY_MAX_LINES=80
@@ -40,21 +45,40 @@ echo
 
 # Repos with activity in the window (drives the PR + bead + decision passes).
 ACTIVE_REPOS=()
+declare -A REPO_COMMITS=()
+TOTAL_COMMITS=0
 
 echo "===== GIT COMMITS (subject + body, by repo) ====="
 for dir in "$PROJECTS_ROOT"/*/; do
   [ -d "$dir" ] || continue          # glob didn't expand (no subdirs) → skip the literal
   [ -d "$dir/.git" ] || continue
-  commits=$(git -C "$dir" log --since="$SINCE" --until="$UNTIL" \
-              --format='%h %an  %s%n%b' 2>/dev/null | head -n "$COMMIT_BODY_MAX_LINES")
-  if [ -n "$commits" ]; then
-    repo=$(basename "$dir")
+  repo=$(basename "$dir")
+  if ! ids=$(git -C "$dir" log --all --since-as-filter="$SINCE" --until="$UNTIL" \
+          --format='%H %ct' 2>/dev/null \
+          | awk -v start="$SINCE_EPOCH" -v end="$UNTIL_EPOCH" '$2 >= start && $2 < end {print $1}'); then
+    printf '[gather-signals] failed all-ref scan: %s\n' "$repo" >&2
+    exit 1
+  fi
+  if [ -n "$ids" ]; then
+    count=$(printf '%s\n' "$ids" | wc -l)
+    TOTAL_COMMITS=$((TOTAL_COMMITS + count))
     ACTIVE_REPOS+=("$repo")
+    REPO_COMMITS["$repo"]="$ids"
     echo "=== $repo ==="
-    echo "$commits"
+    echo "Commits across all refs: $count (before body cap)"
+    printf '[gather-signals] %s: %s commits across all refs\n' "$repo" "$count" >&2
+    commits=$(printf '%s\n' "$ids" | git -C "$dir" log --no-walk=unsorted --stdin \
+                --format='%h %an  %s%n%b' 2>/dev/null)
+    printf '%s\n' "$commits" | head -n "$COMMIT_BODY_MAX_LINES"
+    lines=$(printf '%s\n' "$commits" | wc -l)
+    if [ "$lines" -gt "$COMMIT_BODY_MAX_LINES" ]; then
+      echo "[TRUNCATED: showing first $COMMIT_BODY_MAX_LINES of $lines commit lines]"
+    fi
     echo
   fi
 done
+echo "Total commits across all refs: $TOTAL_COMMITS"
+printf '[gather-signals] total: %s commits across all refs\n' "$TOTAL_COMMITS" >&2
 [ ${#ACTIVE_REPOS[@]} -eq 0 ] && echo "(no git commits in window)"
 echo
 
@@ -106,21 +130,25 @@ echo "===== DECISION RECORDS (added/modified in window) ====="
 decr_found=0
 for repo in "${ACTIVE_REPOS[@]}"; do
   dir="$PROJECTS_ROOT/$repo"
-  files=$(git -C "$dir" log --since="$SINCE" --until="$UNTIL" \
-            --name-only --diff-filter=AM --format='' -- \
-            '000-docs/*-AT-DECR-*' '000-docs/**/*-AT-DECR-*' 2>/dev/null \
-            | sort -u | sed '/^$/d')
-  if [ -n "$files" ]; then
-    decr_found=1
-    echo "=== $repo ==="
-    while IFS= read -r f; do
-      [ -n "$f" ] || continue
-      echo "--- $f ---"
-      # First ~25 lines carry the decision title + summary.
-      head -n 25 "$dir/$f" 2>/dev/null
+  # Use the same all-ref commit snapshot as the first pass. Reading blobs at
+  # each commit preserves branch-only and subsequently deleted/revised records.
+  while IFS= read -r commit; do
+    while IFS= read -r -d '' f; do
+      decr_found=1
+      echo "=== $repo ==="
+      printf '%s\n' "--- $f (commit $commit) ---"
+      # Only regular file blobs; never follow a decision-record symlink.
+      mode=$(git --literal-pathspecs -C "$dir" ls-tree "$commit" -- "$f" | cut -d ' ' -f 1)
+      if [[ "$mode" == 100644 || "$mode" == 100755 ]]; then
+        git -C "$dir" cat-file blob "$commit:$f" 2>/dev/null | head -n 25
+      else
+        echo "[SKIPPED: decision record is not a regular file]"
+      fi
       echo
-    done <<< "$files"
-  fi
+    done < <(git -C "$dir" diff-tree --root -r --no-commit-id --name-only -z \
+               --diff-filter=AM "$commit" -- \
+               '000-docs/*-AT-DECR-*' '000-docs/**/*-AT-DECR-*' 2>/dev/null)
+  done <<< "${REPO_COMMITS[$repo]}"
 done
 [ "$decr_found" -eq 0 ] && echo "(no decision records added/modified in window)"
 echo

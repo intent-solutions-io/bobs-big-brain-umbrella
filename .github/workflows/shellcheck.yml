@@ -44,6 +44,9 @@ jobs:
           # style) that are noisy-but-safe — gating on those would be a wall of nits.
           shellcheck --severity=warning "${FILES[@]}"
 
+      - name: Prove all-ref signal gathering on isolated Git histories
+        run: python3 scripts/test-gather-signals.py
+
       - name: Prove compiler deployment ownership and rollback
         run: bash scripts/test-teamkb-compile-lock.sh
 
