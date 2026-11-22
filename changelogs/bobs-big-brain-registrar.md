@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T08:34:54Z -->
+<!-- fetched-at: 2026-11-22T08:55:51Z -->
 
 # Changelog
 
@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Resolve API and local MCP qmd hits against current governed rows before
+  returning content. Withhold unresolved or unreadable authority, use current
+  snippets after redaction, and enforce current lifecycle/bulk scope independent
+  of stale index labels. Legacy non-row citations no longer return cached text;
+  consumer adoption and index/export refresh remain operator work
+  (`compile-then-govern-39z.11.3`).
 
 - Recheck resolved qmd hits for tenant-scoped API queries and, when store lookup
   succeeds, tenant and audience in local MCP search
