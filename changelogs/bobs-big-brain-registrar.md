@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T13:09:48Z -->
+<!-- fetched-at: 2026-11-22T13:18:05Z -->
 
 # Changelog
 
@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Include the repository's Apache-2.0 license text and package metadata in the
+  standalone schema artifact, verified against the packed consumer fixture.
+  No package publication or runtime adoption is included
+  (`compile-then-govern-39z.11.4.4.4.6`).
 
 - Expose the existing source-classification v1 schema and signing codec through
   the schema package's dedicated `source-classification` subpath. Curator keeps
