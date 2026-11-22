@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T05:47:40Z -->
+<!-- fetched-at: 2026-11-22T06:10:55Z -->
 
 # Changelog
 
@@ -85,6 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   or package publication is included.
 
 ### Fixed
+
+- Cap root test file workers at 50% of available CPUs and split independent FIFO recovery refusal cases into separate tests. Configured timeout values are unchanged, but each generated case receives its own test timeout (`compile-then-govern-bkr`).
 
 - Refuse affected candidate-ID/digest binding conflicts across destination tenants and lifecycles before merge writes, without exposing foreign row data or rewriting history.
 
