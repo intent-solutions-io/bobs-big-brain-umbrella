@@ -17,15 +17,25 @@ wc -l "$SIGNALS"
 
 | Source | How | Why it matters |
 |---|---|---|
-| **Git commits** | `git log --since --until --format='%h %an %s%n%b'` per repo | The skeleton of the day. Commit **bodies** carry rationale, not just subjects. |
+| **Git commits** | `git log --all --since-as-filter --until`, filtered to the exclusive end, per repo | The skeleton of the day. Commit **bodies** carry rationale, not just subjects. |
 | **Merged PRs** | `gh pr list --repo <slug> --state merged --search "merged:DATE..NEXT"` | Richest signal — PR bodies hold before/after tables, decisions, and review outcomes. |
 | **Closed beads** | `bd list -C <repo> --status closed --closed-after --closed-before` (per-repo + umbrella store) | The close **reason** is a one-line distilled lesson already. |
-| **Decision records** | `git log --diff-filter=AM -- '000-docs/*-AT-DECR-*'` + first 25 lines of each | An `AT-DECR` is a ratified decision — the highest-value durable memory there is. |
+| **Decision records** | Changed decision paths at the selected commits, with the first 25 lines of each committed blob | Preserves branch-only records and revisions with commit provenance; verify approval before treating a branch proposal as ratified. |
 | **Session transcripts** | `scan-session-transcripts.py --start --end` | Rationale, false starts, gotchas, and user intent that commits never record. |
 
 The signal doc is sectioned (`===== GIT COMMITS =====`, `===== MERGED PULL REQUESTS =====`, …) so the
 distiller can weight sources. Output is **capped** (commit/PR bodies truncated) so a busy day can't blow
-up the doc.
+up the doc. The commit pass reports unique commit counts across all local refs before the body cap,
+both in the signal document and on stderr. A visible truncation marker identifies capped commit text.
+The decision pass uses the same commit snapshot and reads each version from Git, never from the
+current working tree. Merge decisions are compared with the first parent so an in-window merge
+also records decisions originating on an older branch. Commit text is streamed through the line
+limiter rather than buffered in full. Unmerged work is evidence of work in progress, not evidence of deployment or
+approval. This is a local-ref scan; it does not fetch remote branches.
+
+The date window uses local time, includes the starting midnight, and excludes the next midnight.
+GNU `date` and Git supporting `--since-as-filter` are required. An old-dated descendant does not
+stop traversal to newer ancestors.
 
 ## The no-activity rule
 
@@ -43,5 +53,6 @@ gate. Never publish or commit the raw signal doc.
 ## Tuning
 
 - `TEAMKB_COMPILE_PROJECTS_ROOT` overrides the repo root (default `/home/jeremy/000-projects`).
-- Single-day default: pass `DATE` only; `NEXT_DATE` = `DATE` + 1.
+- Pass both `DATE` and `NEXT_DATE`; for one day, calculate `NEXT_DATE` as `DATE` + 1.
+- `TMPDIR` selects the scratch parent (default `/tmp`), allowing isolated fixture runs.
 - The transcript scanner accepts `--project <substring>` to narrow to one project when debugging.
