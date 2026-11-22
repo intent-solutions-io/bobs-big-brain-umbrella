@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T09:32:15Z -->
+<!-- fetched-at: 2026-11-22T10:34:28Z -->
 
 # Changelog
 
@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
+- Add an empty-by-default stored source registry and refuse legacy curator and
+  shared promotion paths for tenants with required source enrollment. Invalid
+  authority refuses admission; promotion rechecks inside its transaction.
+  This is a source-only guard: evidence-capable adapters, reviewed provisioning
+  and live enrollment remain unfinished (`compile-then-govern-39z.11.4.4.1`).
 
 - Resolve API and local MCP qmd hits against current governed rows before
   returning content. Withhold unresolved or unreadable authority, use current
@@ -27,6 +33,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tracked separately in `compile-then-govern-39z.11.3`.
 
 ### Added
+
+- Add transactional source-provenance governance with durable sensitivity floors,
+  replay settlement, content-alias tightening, current-authority rechecks and
+  authenticated snapshot transport support. The core has synthetic integration
+  tests; actual ingress wiring and live enrollment remain separate work
+  (`compile-then-govern-39z.11.4.3`).
 
 - Add a pure, versioned Ed25519 source-classification assertion verifier with
   receiver-owned profile/key scope, strict canonical encoding and candidate
