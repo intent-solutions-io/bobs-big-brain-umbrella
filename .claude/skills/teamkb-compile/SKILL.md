@@ -104,24 +104,44 @@ per-attempt context; the helper appends directly to its run log, independently o
 
 ```bash
 if [ -n "${TEAMKB_PHASE_HELPER:-}" ]; then
-  python3 "$TEAMKB_PHASE_HELPER" phase --phase "<name>"
+  python3 "$TEAMKB_PHASE_HELPER" phase --phase "<name>" || {
+    printf '%s\n' 'Phase logging failed; stop and report this run.' >&2
+    exit 1
+  }
+elif [ "${TEAMKB_PHASE_WRAPPED:-}" = "1" ]; then
+  printf '%s\n' 'Nightly wrapper context is present but its phase helper is missing.' >&2
+  exit 1
 else
-  printf '%s\n' 'Phase logging unavailable: no nightly wrapper context (interactive run).'
+  printf '%s\n' 'Phase logging unavailable: wrapper context was not detected.' >&2
 fi
 ```
 
 Allowed names, in order: `setup`, `gather`, `distill`, `govern`, `audit`, `digest`.
 A helper failure in a wrapped run must be reported and the run stopped. Do not fall
 back to echoes, invent context, reuse another attempt ID, or backfill markers.
-An interactive run without wrapper context may continue under its own authorization;
-report the missing phase log rather than guessing a destination.
+Missing context does not prove the run is interactive. If invoked as a nightly or
+scheduled task, report missing context and stop, including with an older wrapper.
+Continue without a phase log only when the invocation is explicitly interactive
+and independently authorized. A nonzero Bash command stops that shell; the agent
+must also follow this instruction to stop the overall task.
+
+The helper contract is owned by the
+[Compiler source](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/e0efb0b37d8d53eccba37ae16d06aff843cce9a6/scripts/distiller/runtime-proof.py)
+and its
+[wrapper](https://github.com/jeremylongshore/bobs-big-brain-compiler/blob/e0efb0b37d8d53eccba37ae16d06aff843cce9a6/scripts/distiller/teamkb-compile-daily.sh).
+This source pair supplies `TEAMKB_PHASE_WRAPPED=1`, `TEAMKB_PHASE_HELPER` and
+`TEAMKB_PHASE_*` attempt context; the command is `phase --phase <name>`.
+Coordinate adoption with that source pair or a verified compatible successor;
+these links identify source, not an installed release.
 
 Markers mean **agent-reported phase entry**, never successful completion. The wrapper
 records the attempt ID, date, mode, and configured artifact paths, then summarizes
 missing or out-of-order phases when the agent exits. Artifact paths identify where to
 look; they do not establish that an artifact exists. Outcome records, audit verification,
 and retrieval checks remain authoritative. A hard kill can leave a start without an end;
-that is an incomplete attempt, not a completed run.
+that is an incomplete attempt, not a completed run. Record attribution is explicitly
+unverified: the helper and agent share an OS user, and event/source labels do not
+authenticate the caller. The helper is not a sandbox or a restriction on local file writes.
 
 ---
 
