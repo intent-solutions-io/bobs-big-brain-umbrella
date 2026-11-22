@@ -122,7 +122,7 @@ back to echoes, invent context, reuse another attempt ID, or backfill markers.
 Missing context does not prove the run is interactive. If invoked as a nightly or
 scheduled task, report missing context and stop, including with an older wrapper.
 Continue without a phase log only when the invocation is explicitly interactive
-and independently authorized. A nonzero Bash command stops that shell; the agent
+requested by the current interactive operator, including the chosen digest or auto mode. A nonzero Bash command stops that shell; the agent
 must also follow this instruction to stop the overall task.
 
 The helper contract is owned by the
