@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T02:55:19Z -->
+<!-- fetched-at: 2026-11-22T04:09:29Z -->
 
 # Changelog
 
@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Document a proposed cross-clone sensitivity constraint contract, including
+  source authority, evidence completeness, monotonic floors and acceptance cases.
+  Transport and live policy remain unimplemented (`compile-then-govern-39z.11`).
 
 - Add an opt-in independent hold-expiry worker with private physical-store-bound
   configuration, shared writer locking, durable transport bindings, bounded
