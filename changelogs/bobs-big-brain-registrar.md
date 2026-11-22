@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-22T09:08:51Z -->
+<!-- fetched-at: 2026-11-22T09:32:15Z -->
 
 # Changelog
 
@@ -27,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tracked separately in `compile-then-govern-39z.11.3`.
 
 ### Added
+
+- Add a pure, versioned Ed25519 source-classification assertion verifier with
+  receiver-owned profile/key scope, strict canonical encoding and candidate
+  content binding. This library is not wired to live ingress; durable floors,
+  replay settlement and caller adoption remain separate work
+  (`compile-then-govern-39z.11.4.2`).
 
 - Specify a proposed authenticated provenance-classification contract and pin
   the existing origin HMAC boundary with eight synthetic field-mutation cases.
