@@ -67,12 +67,14 @@ for dir in "$PROJECTS_ROOT"/*/; do
     echo "=== $repo ==="
     echo "Commits across all refs: $count (before body cap)"
     printf '[gather-signals] %s: %s commits across all refs\n' "$repo" "$count" >&2
-    commits=$(printf '%s\n' "$ids" | git -C "$dir" log --no-walk=unsorted --stdin \
-                --format='%h %an  %s%n%b' 2>/dev/null)
-    printf '%s\n' "$commits" | head -n "$COMMIT_BODY_MAX_LINES"
-    lines=$(printf '%s\n' "$commits" | wc -l)
-    if [ "$lines" -gt "$COMMIT_BODY_MAX_LINES" ]; then
-      echo "[TRUNCATED: showing first $COMMIT_BODY_MAX_LINES of $lines commit lines]"
+    # Consume the stream to count truncation without buffering full commit bodies.
+    if ! printf '%s\n' "$ids" | git -C "$dir" log --no-walk=unsorted --stdin \
+        --format='%h %an  %s%n%b' 2>/dev/null | awk -v max="$COMMIT_BODY_MAX_LINES" '
+          NR <= max { print }
+          END { if (NR > max) printf "[TRUNCATED: showing first %d of %d commit lines]\n", max, NR }
+        '; then
+      printf '[gather-signals] failed commit-body scan: %s\n' "$repo" >&2
+      exit 1
     fi
     echo
   fi
@@ -145,7 +147,7 @@ for repo in "${ACTIVE_REPOS[@]}"; do
         echo "[SKIPPED: decision record is not a regular file]"
       fi
       echo
-    done < <(git -C "$dir" diff-tree --root -r --no-commit-id --name-only -z \
+    done < <(git -C "$dir" diff-tree --root -r --diff-merges=first-parent --no-commit-id --name-only -z \
                --diff-filter=AM "$commit" -- \
                '000-docs/*-AT-DECR-*' '000-docs/**/*-AT-DECR-*' 2>/dev/null)
   done <<< "${REPO_COMMITS[$repo]}"

@@ -28,7 +28,9 @@ distiller can weight sources. Output is **capped** (commit/PR bodies truncated) 
 up the doc. The commit pass reports unique commit counts across all local refs before the body cap,
 both in the signal document and on stderr. A visible truncation marker identifies capped commit text.
 The decision pass uses the same commit snapshot and reads each version from Git, never from the
-current working tree. Unmerged work is evidence of work in progress, not evidence of deployment or
+current working tree. Merge decisions are compared with the first parent so an in-window merge
+also records decisions originating on an older branch. Commit text is streamed through the line
+limiter rather than buffered in full. Unmerged work is evidence of work in progress, not evidence of deployment or
 approval. This is a local-ref scan; it does not fetch remote branches.
 
 The date window uses local time, includes the starting midnight, and excludes the next midnight.

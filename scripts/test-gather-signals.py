@@ -79,6 +79,21 @@ class GatherSignalsTest(unittest.TestCase):
         self.assertNotIn('UNCOMMITTED WRONG CONTENT', out)
         self.assertEqual((self.repo / path).read_text(), 'UNCOMMITTED WRONG CONTENT\n')
 
+    def test_merge_in_window_reads_decisions_from_older_branch(self):
+        self.git('switch', '-qc', 'older-branch')
+        path = '000-docs/002-AT-DECR-merged.md'
+        self.commit('older decision', '2026-11-03T18:00:00Z', path, 'MERGED DECISION\n')
+        self.git('switch', '-q', 'main')
+        self.commit('main advance', '2026-11-03T19:00:00Z')
+        env = dict(self.env, GIT_AUTHOR_DATE='2026-11-04T12:00:00Z',
+                   GIT_COMMITTER_DATE='2026-11-04T12:00:00Z')
+        self.git('merge', '--no-ff', '-qm', 'merge older decision', 'older-branch', env=env)
+        merge = self.git('rev-parse', 'HEAD')
+        out, _ = self.gather()
+        self.assertIn('Total commits across all refs: 1', out)
+        self.assertIn(f'(commit {merge})', out)
+        self.assertIn('MERGED DECISION', out)
+
     def test_exclusive_end_and_clock_skew(self):
         self.commit('inclusive-start', '2026-11-04T00:00:00Z')
         self.commit('last-second', '2026-11-04T23:59:59Z')
