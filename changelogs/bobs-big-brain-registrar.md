@@ -1,6 +1,6 @@
 <!-- fetched by CI — DO NOT HAND-EDIT. Source of truth: the repo's own CHANGELOG.md. -->
 <!-- source: https://raw.githubusercontent.com/jeremylongshore/bobs-big-brain-registrar/main/CHANGELOG.md -->
-<!-- fetched-at: 2026-11-16T06:01:20Z -->
+<!-- fetched-at: 2026-11-22T02:55:19Z -->
 
 # Changelog
 
@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+- Add an opt-in independent hold-expiry worker with private physical-store-bound
+  configuration, shared writer locking, durable transport bindings, bounded
+  executable notification protocol, and reconciliation instead of blind resend.
+  Preview is the default; systemd examples remain uninstalled. Estate notifier
+  integration and actual staged delivery remain open under
+  `compile-then-govern-2i3.6.2`.
 
 - Add separate hand-authored skill eval profiles for synthetic response-policy and
   sibling-trigger cases; no real brain writes, provider run or schedule activation.
